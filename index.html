@@ -1,95 +1,113 @@
-<!DOCTYPE html>
+<!doctype html>
 <html lang="en">
 <head>
-<meta charset="UTF-8">
-<meta name="viewport" content="width=device-width,initial-scale=1.0">
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
 <title>NiSa AI</title>
 <style>
-*{box-sizing:border-box;margin:0;padding:0;font-family:Arial,sans-serif}
-:root{--bg:#0b0f14;--panel:#171d24;--border:#29313b;--text:#fff;--muted:#9aa4b2;--blue:#2563eb}
-body{background:var(--bg);color:var(--text);min-height:100vh}
-.app{max-width:900px;height:100vh;margin:auto;display:flex;flex-direction:column}
-header{padding:12px 14px;border-bottom:1px solid var(--border);display:flex;align-items:center;gap:10px}
-.logo{width:42px;height:42px;border-radius:50%;background:#fff;color:#111;display:grid;place-items:center;font-weight:bold}
-.title{flex:1}.title h1{font-size:20px}.title p{font-size:11px;color:var(--muted);margin-top:3px}
-.btn{border:1px solid var(--border);background:var(--panel);color:#fff;border-radius:11px;padding:9px 12px}
-#chat{flex:1;overflow:auto;padding:16px}.welcome{margin-bottom:20px}.welcome h2{font-size:25px;margin-bottom:7px}.welcome p{color:var(--muted)}
-.message{max-width:90%;padding:13px 14px;border-radius:16px;margin:0 0 14px;line-height:1.55;white-space:pre-wrap;overflow-wrap:anywhere}
-.ai{background:var(--panel);border:1px solid var(--border);margin-right:auto}.user{background:var(--blue);margin-left:auto}
-.preview{display:block;max-width:230px;max-height:220px;border-radius:12px;margin-bottom:9px}
-.actions{display:flex;gap:6px;margin-top:9px;flex-wrap:wrap}.actions button{border:0;background:#202833;color:#e8eef7;border-radius:9px;padding:6px 9px;font-size:12px}
-.input{border-top:1px solid var(--border);padding:9px;background:var(--bg)}
-.toolbar{display:flex;gap:6px;overflow:auto;padding-bottom:8px}.toolbar button,.toolbar select{background:var(--panel);color:#fff;border:1px solid var(--border);border-radius:10px;padding:8px;white-space:nowrap}
-.composer{display:flex;gap:8px}.composer input{flex:1;min-width:0;background:#151a20;color:#fff;border:1px solid #303944;border-radius:14px;padding:13px;outline:none}.send{background:#fff;color:#000;border:0;border-radius:14px;padding:0 18px;font-weight:bold}.send:disabled{opacity:.5}
-.hidden{display:none!important}.thinking{display:flex;gap:5px}.dot{width:7px;height:7px;border-radius:50%;background:#9aa4b2;animation:b 1.2s infinite}.dot:nth-child(2){animation-delay:.2s}.dot:nth-child(3){animation-delay:.4s}@keyframes b{0%,80%,100%{opacity:.25}40%{opacity:1}}
+*{box-sizing:border-box}body{margin:0;background:#0b0f14;color:#fff;font-family:Arial,sans-serif}
+.app{height:100vh;max-width:900px;margin:auto;display:flex;flex-direction:column}
+header{padding:12px 14px;border-bottom:1px solid #29313b;display:flex;gap:10px;align-items:center}
+.logo{width:42px;height:42px;border-radius:50%;background:#fff;color:#111;display:grid;place-items:center;font-weight:bold}.title{flex:1}.title h1{font-size:20px;margin:0}.title p{font-size:11px;color:#9aa4b2;margin:3px 0 0}
+button,select,input{font:inherit}.icon,.tool{border:1px solid #29313b;background:#171d24;color:#fff;border-radius:10px;padding:9px;cursor:pointer}
+#chat{flex:1;overflow:auto;padding:15px}.welcome{margin-bottom:20px}.welcome h2{margin:0 0 7px;font-size:25px}.welcome p{margin:0;color:#9aa4b2}
+.msg{max-width:90%;padding:13px 14px;border-radius:16px;margin:0 0 14px;line-height:1.55;white-space:pre-wrap;overflow-wrap:anywhere}.user{background:#2563eb;margin-left:auto}.ai{background:#171d24;border:1px solid #29313b}
+.actions{display:flex;gap:6px;margin-top:9px}.actions button{background:#202833;color:#fff;border:0;border-radius:8px;padding:6px 9px;font-size:12px}
+.photo{max-width:230px;max-height:220px;border-radius:12px;display:block;margin-bottom:8px}
+.bottom{border-top:1px solid #29313b;padding:9px;background:#0b0f14}.tools{display:flex;gap:6px;overflow:auto;padding-bottom:8px}.tools select{border:1px solid #29313b;background:#171d24;color:#fff;border-radius:10px;padding:8px}
+.composer{display:flex;gap:8px}.composer input{flex:1;min-width:0;background:#151a20;color:#fff;border:1px solid #303944;border-radius:14px;padding:13px;outline:none}.send{background:#fff;color:#000;border:0;border-radius:14px;padding:0 19px;font-weight:bold}.send:disabled{opacity:.5}
+#preview{padding-bottom:8px}.hidden{display:none!important}.dots{display:flex;gap:5px}.dot{width:7px;height:7px;background:#9aa4b2;border-radius:50%;animation:x 1.1s infinite}.dot:nth-child(2){animation-delay:.2s}.dot:nth-child(3){animation-delay:.4s}@keyframes x{40%{opacity:1}0%,80%,100%{opacity:.25}}
 </style>
 </head>
 <body>
 <div class="app">
-<header>
-<div class="logo">N</div><div class="title"><h1>NiSa AI</h1><p>Your personal AI assistant</p></div>
-<button class="btn" onclick="clearChat()">🗑️</button>
-</header>
+<header><div class="logo">N</div><div class="title"><h1>NiSa AI</h1><p>Your personal AI assistant</p></div><button class="icon" id="clear">🗑️</button></header>
 <div id="chat"><div class="welcome"><h2>👋 Hello! I'm NiSa AI</h2><p>Ask me anything, upload a photo, or use the camera.</p></div></div>
-<div class="input">
-<div class="toolbar">
-<button onclick="document.getElementById('photo').click()">🖼️ Photo</button>
-<button onclick="camera()">📷 Camera</button>
-<button onclick="voice()">🎤 Voice</button>
+<div class="bottom">
+<div class="tools">
+<button class="tool" id="photoBtn">🖼️ Photo</button>
+<button class="tool" id="cameraBtn">📷 Camera</button>
+<button class="tool" id="voiceBtn">🎤 Voice</button>
 <select id="mode"><option>Normal</option><option>Simple</option><option>Teacher</option><option>Exam</option><option>Quiz</option><option>Expert</option></select>
 </div>
-<div id="previewBox" class="hidden"></div>
-<div class="composer">
-<input id="input" placeholder="Message NiSa AI..." autocomplete="off">
-<button class="send" id="send">Send</button>
-</div>
-<input id="photo" class="hidden" type="file" accept="image/*" capture="environment">
+<div id="preview" class="hidden"></div>
+<form id="form" class="composer">
+<input id="message" autocomplete="off" placeholder="Message NiSa AI...">
+<button class="send" id="send" type="submit">Send</button>
+</form>
+<input id="file" class="hidden" type="file" accept="image/*" capture="environment">
 </div>
 </div>
 <script>
-const chat=document.getElementById('chat'), input=document.getElementById('input'), send=document.getElementById('send');
-let image=null, history=JSON.parse(localStorage.getItem('nisa_history')||'[]');
+(function(){
+const chat=document.getElementById("chat"), form=document.getElementById("form"), input=document.getElementById("message");
+const send=document.getElementById("send"), file=document.getElementById("file"), preview=document.getElementById("preview");
+let selectedImage=null;
 
-function esc(s){return String(s).replace(/[&<>"']/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#039;'}[c]))}
-function answerHtml(s){s=String(s).replace(/<think>[\\s\\S]*?<\\/think>/gi,'').trim();return esc(s).replace(/\*\*(.*?)\*\*/g,'<strong>$1</strong>').replace(/`([^`]+)`/g,'<code>$1</code>')}
-function save(){localStorage.setItem('nisa_history',JSON.stringify(history.slice(-60)))}
+function clean(s){return String(s||"").replace(/<think>[\\s\\S]*?<\\/think>/gi,"").trim()}
+function esc(s){return String(s).replace(/[&<>"']/g,c=>({"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;","'":"&#039;"}[c]))}
+function render(s){return esc(clean(s)).replace(/\\*\\*(.*?)\\*\\*/g,"<b>$1</b>").replace(/`([^`]+)`/g,"<code>$1</code>")}
 function add(role,text,img){
- const d=document.createElement('div');d.className='message '+role;
- if(img){const im=document.createElement('img');im.src=img;im.className='preview';d.appendChild(im)}
- const body=document.createElement('div');body.innerHTML=role==='ai'?answerHtml(text):esc(text);d.appendChild(body);
- if(role==='ai'){const a=document.createElement('div');a.className='actions';a.innerHTML='<button onclick="copyMsg(this)">📋 Copy</button><button onclick="readMsg(this)">🔊 Read</button>';d.appendChild(a)}
- chat.appendChild(d);chat.scrollTop=chat.scrollHeight;
+ const d=document.createElement("div");d.className="msg "+role;
+ if(img){const im=document.createElement("img");im.src=img;im.className="photo";d.appendChild(im)}
+ const b=document.createElement("div");b.innerHTML=role==="ai"?render(text):esc(text);d.appendChild(b);
+ if(role==="ai"){
+  const a=document.createElement("div");a.className="actions";
+  const c=document.createElement("button");c.textContent="📋 Copy";c.onclick=()=>navigator.clipboard?.writeText(clean(text));
+  const r=document.createElement("button");r.textContent="🔊 Read";r.onclick=()=>speechSynthesis.speak(new SpeechSynthesisUtterance(clean(text)));
+  a.append(c,r);d.appendChild(a);
+ }
+ chat.appendChild(d);chat.scrollTop=chat.scrollHeight;return d;
 }
-function render(){chat.innerHTML='<div class="welcome"><h2>👋 Hello! I\'m NiSa AI</h2><p>Ask me anything, upload a photo, or use the camera.</p></div>';history.forEach(m=>add(m.role==='assistant'?'ai':'user',m.text,m.image))}
-function copyMsg(b){navigator.clipboard?.writeText(b.closest('.message').querySelector('div').innerText)}
-function readMsg(b){speechSynthesis.cancel();speechSynthesis.speak(new SpeechSynthesisUtterance(b.closest('.message').querySelector('div').innerText))}
-function showImage(src){image=src;previewBox.classList.remove('hidden');previewBox.innerHTML='<img class="preview" src="'+src+'"><button class="btn" onclick="removeImage()">✕ Remove</button>'}
-function removeImage(){image=null;previewBox.classList.add('hidden');previewBox.innerHTML=''}
-photo.onchange=()=>{const f=photo.files[0];if(!f)return;const r=new FileReader();r.onload=()=>showImage(r.result);r.readAsDataURL(f)}
-async function sendMessage(){
+function showPreview(src){selectedImage=src;preview.classList.remove("hidden");preview.innerHTML='<img class="photo" src="'+src+'"><button class="tool" type="button" id="remove">✕ Remove photo</button>';document.getElementById("remove").onclick=()=>{selectedImage=null;preview.classList.add("hidden");preview.innerHTML=""}}
+file.onchange=()=>{const f=file.files&&file.files[0];if(!f)return;const rd=new FileReader();rd.onload=()=>showPreview(rd.result);rd.readAsDataURL(f)}
+document.getElementById("photoBtn").onclick=()=>file.click();
+
+form.addEventListener("submit",async function(e){
+ e.preventDefault();
+ e.stopPropagation();
  const text=input.value.trim();
- if(!text&&!image)return;
- const img=image;
- add('user',text||'Please analyze this image.',img);
- history.push({role:'user',text:text||'Please analyze this image.',image:img||null});save();
- input.value='';removeImage();send.disabled=true;
- const thinking=document.createElement('div');thinking.className='message ai';thinking.innerHTML='<div class="thinking"><span class="dot"></span><span class="dot"></span><span class="dot"></span></div>';chat.appendChild(thinking);chat.scrollTop=chat.scrollHeight;
+ if(!text&&!selectedImage)return;
+ const image=selectedImage;
+ input.value=""; selectedImage=null; preview.classList.add("hidden"); preview.innerHTML="";
+ add("user",text||"Please analyze this image.",image);
+ const wait=add("ai","",null);
+ wait.innerHTML='<div class="dots"><span class="dot"></span><span class="dot"></span><span class="dot"></span></div>';
+ send.disabled=true;
  try{
-  const msgs=history.slice(-16).map(m=>({role:m.role,content:m.text}));
-  const r=await fetch('/api/chat',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({message:text||'Analyze this image.',image:img,mode:document.getElementById('mode').value,messages:msgs})});
-  const raw=await r.text();let data;try{data=JSON.parse(raw)}catch{throw new Error('Server returned invalid response.')}
-  if(!r.ok)throw new Error(data.error||'API request failed.');
-  const ans=data.answer||'No answer received.';
-  thinking.remove();add('ai',ans);history.push({role:'assistant',text:ans});save();
- }catch(e){thinking.textContent='❌ '+e.message}
- send.disabled=false;input.focus();
-}
-send.onclick=sendMessage;
-input.onkeydown=e=>{if(e.key==='Enter'){e.preventDefault();sendMessage()}}
-function clearChat(){history=[];save();render()}
-function voice(){const SR=window.SpeechRecognition||window.webkitSpeechRecognition;if(!SR)return alert('Voice input is not supported here.');const r=new SR();r.lang='en-IN';r.onresult=e=>input.value=e.results[0][0].transcript;r.start()}
-async function camera(){try{const s=await navigator.mediaDevices.getUserMedia({video:{facingMode:'environment'}});const v=document.createElement('video');v.autoplay=true;v.playsInline=true;v.srcObject=s;document.body.appendChild(v);v.style='position:fixed;inset:10%;width:80%;z-index:5;background:#000';const b=document.createElement('button');b.textContent='Capture';b.style='position:fixed;bottom:10%;left:40%;z-index:6;padding:15px';document.body.appendChild(b);b.onclick=()=>{const c=document.createElement('canvas');c.width=v.videoWidth;c.height=v.videoHeight;c.getContext('2d').drawImage(v,0,0);showImage(c.toDataURL('image/jpeg',.82));s.getTracks().forEach(t=>t.stop());v.remove();b.remove()}}catch(e){document.getElementById('photo').click()}}
-render();
+  const res=await fetch("/api/chat",{method:"POST",headers:{"Content-Type":"application/json"},body:JSON.stringify({
+   message:text||"Please analyze this image.",
+   image:image,
+   mode:document.getElementById("mode").value
+  })});
+  const raw=await res.text();
+  let data;try{data=JSON.parse(raw)}catch(_){throw new Error("API returned an invalid response.")}
+  if(!res.ok)throw new Error(data.error||("Request failed ("+res.status+")"));
+  const ans=clean(data.answer)||"No answer received.";
+  wait.innerHTML=render(ans);
+  const a=document.createElement("div");a.className="actions";
+  const c=document.createElement("button");c.textContent="📋 Copy";c.onclick=()=>navigator.clipboard?.writeText(ans);
+  const r=document.createElement("button");r.textContent="🔊 Read";r.onclick=()=>speechSynthesis.speak(new SpeechSynthesisUtterance(ans));
+  a.append(c,r);wait.appendChild(a);
+ }catch(err){
+  wait.textContent="❌ "+err.message;
+ }finally{send.disabled=false;input.focus();chat.scrollTop=chat.scrollHeight}
+});
+
+document.getElementById("clear").onclick=()=>{chat.innerHTML='<div class="welcome"><h2>👋 Hello! I\'m NiSa AI</h2><p>Ask me anything, upload a photo, or use the camera.</p></div>';localStorage.removeItem("nisa_history")};
+
+document.getElementById("voiceBtn").onclick=()=>{const SR=window.SpeechRecognition||window.webkitSpeechRecognition;if(!SR)return alert("Voice input is not supported.");const r=new SR();r.lang="en-IN";r.onresult=e=>{input.value=e.results[0][0].transcript;input.focus()};r.start()};
+
+document.getElementById("cameraBtn").onclick=async()=>{
+ try{const stream=await navigator.mediaDevices.getUserMedia({video:{facingMode:"environment"}});
+ const v=document.createElement("video");v.autoplay=true;v.playsInline=true;v.srcObject=stream;
+ Object.assign(v.style,{position:"fixed",inset:"8%",width:"84%",height:"70%",objectFit:"contain",background:"#000",zIndex:20});
+ const b=document.createElement("button");b.textContent="📸 Capture";Object.assign(b.style,{position:"fixed",bottom:"12%",left:"35%",zIndex:21,padding:"14px 22px"});
+ document.body.append(v,b);
+ b.onclick=()=>{const c=document.createElement("canvas");c.width=v.videoWidth;c.height=v.videoHeight;c.getContext("2d").drawImage(v,0,0);showPreview(c.toDataURL("image/jpeg",.82));stream.getTracks().forEach(t=>t.stop());v.remove();b.remove()}
+ }catch(e){file.click()}
+};
+})();
 </script>
 </body>
 </html>

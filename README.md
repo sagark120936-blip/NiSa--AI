@@ -1,14 +1,16 @@
-NiSa AI — ready Vercel project
+NiSa AI FINAL FIX
 
-Files:
-- index.html
-- api/chat.js
+Replace:
+1. index.html
+2. api/chat.js
 
-Deploy:
-1. Replace the files in your Vercel project with these files.
-2. In Vercel Project Settings → Environment Variables, add:
-   GROQ_API_KEY = your Groq API key
-3. Redeploy.
+Then deploy/redeploy on Vercel.
 
-The API uses Groq's qwen/qwen3.6-27b vision model so image questions work.
-Never put the API key inside index.html.
+Make sure Vercel Environment Variables contains:
+GROQ_API_KEY = your Groq API key
+
+Important:
+- Do NOT put the API key in index.html.
+- The backend uses qwen/qwen3.6-27b for text + images.
+- Reasoning is explicitly hidden.
+- Old <think> content is removed from browser history on reload.

@@ -1,280 +1,254 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-  <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
 
-  <title>NiSa AI</title>
+<title>NiSa AI</title>
 
-  <style>
-    * {
-      box-sizing: border-box;
-      margin: 0;
-      padding: 0;
-      font-family: Arial, sans-serif;
-    }
+<style>
+* {
+  box-sizing: border-box;
+  margin: 0;
+  padding: 0;
+  font-family: Arial, sans-serif;
+}
 
-    body {
-      background: #0b0f14;
-      color: white;
-      height: 100vh;
-      overflow: hidden;
-    }
+body {
+  background: #0b0f14;
+  color: white;
+  height: 100vh;
+}
 
-    .app {
-      max-width: 800px;
-      height: 100vh;
-      margin: auto;
-      display: flex;
-      flex-direction: column;
-    }
+.app {
+  max-width: 850px;
+  height: 100vh;
+  margin: auto;
+  display: flex;
+  flex-direction: column;
+}
 
-    /* HEADER */
-    header {
-      padding: 16px 20px;
-      border-bottom: 1px solid #252b33;
-      display: flex;
-      align-items: center;
-      gap: 12px;
-      background: #0d1117;
-    }
+/* HEADER */
+header {
+  padding: 16px 18px;
+  border-bottom: 1px solid #252b33;
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  background: #0b0f14;
+}
 
-    .logo {
-      width: 44px;
-      height: 44px;
-      border-radius: 50%;
-      background: white;
-      color: #111;
-      display: flex;
-      align-items: center;
-      justify-content: center;
-      font-size: 20px;
-      font-weight: bold;
-    }
+.logo {
+  width: 42px;
+  height: 42px;
+  border-radius: 50%;
+  background: white;
+  color: #111;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-weight: bold;
+  font-size: 18px;
+}
 
-    .header-info h1 {
-      font-size: 21px;
-    }
+.title h1 {
+  font-size: 21px;
+}
 
-    .header-info p {
-      color: #8c96a3;
-      font-size: 12px;
-      margin-top: 3px;
-    }
+.title p {
+  color: #8c96a3;
+  font-size: 12px;
+  margin-top: 3px;
+}
 
-    .header-buttons {
-      margin-left: auto;
-      display: flex;
-      gap: 8px;
-    }
+/* CHAT */
+#chat {
+  flex: 1;
+  overflow-y: auto;
+  padding: 20px;
+}
 
-    .icon-btn {
-      border: 1px solid #303741;
-      background: #151a20;
-      color: white;
-      border-radius: 10px;
-      padding: 9px 11px;
-      cursor: pointer;
-      font-size: 14px;
-    }
+.message {
+  max-width: 85%;
+  padding: 14px;
+  border-radius: 16px;
+  margin-bottom: 16px;
+  line-height: 1.5;
+  white-space: pre-wrap;
+  word-wrap: break-word;
+}
 
-    .icon-btn:active {
-      transform: scale(0.95);
-    }
+.ai {
+  background: #171d24;
+  border: 1px solid #252d36;
+  margin-right: auto;
+}
 
-    /* CHAT */
-    #chat {
-      flex: 1;
-      overflow-y: auto;
-      padding: 22px 18px;
-      scroll-behavior: smooth;
-    }
+.user {
+  background: #2563eb;
+  margin-left: auto;
+}
 
-    #chat::-webkit-scrollbar {
-      width: 5px;
-    }
+/* WELCOME */
+.welcome {
+  margin-bottom: 25px;
+}
 
-    #chat::-webkit-scrollbar-thumb {
-      background: #303741;
-      border-radius: 10px;
-    }
+.welcome h2 {
+  font-size: 28px;
+  margin-bottom: 8px;
+}
 
-    .message {
-      margin-bottom: 18px;
-      padding: 14px 16px;
-      border-radius: 16px;
-      max-width: 88%;
-      line-height: 1.55;
-      font-size: 15px;
-      white-space: pre-wrap;
-      overflow-wrap: anywhere;
-    }
+.welcome p {
+  color: #9aa4b2;
+}
 
-    .ai {
-      background: #171d25;
-      border: 1px solid #252d38;
-      margin-right: auto;
-    }
+/* INPUT */
+.input-area {
+  padding: 14px;
+  border-top: 1px solid #252b33;
+  display: flex;
+  gap: 10px;
+  background: #0b0f14;
+}
 
-    .user {
-      background: #2563eb;
-      margin-left: auto;
-      border-bottom-right-radius: 5px;
-    }
+input {
+  flex: 1;
+  padding: 14px;
+  border-radius: 14px;
+  border: 1px solid #303944;
+  background: #151a20;
+  color: white;
+  outline: none;
+  font-size: 15px;
+}
 
-    .ai {
-      border-bottom-left-radius: 5px;
-    }
+input:focus {
+  border-color: #4d8cff;
+}
 
-    /* TYPING */
-    .typing {
-      display: inline-flex;
-      gap: 5px;
-      align-items: center;
-      height: 18px;
-    }
+button {
+  border: none;
+  border-radius: 14px;
+  background: white;
+  color: black;
+  padding: 0 20px;
+  font-weight: bold;
+  cursor: pointer;
+  font-size: 15px;
+}
 
-    .dot {
-      width: 6px;
-      height: 6px;
-      background: #9aa4b2;
-      border-radius: 50%;
-      animation: bounce 1.2s infinite;
-    }
+button:active {
+  transform: scale(0.96);
+}
 
-    .dot:nth-child(2) {
-      animation-delay: 0.15s;
-    }
+.clear-btn {
+  background: #20262e;
+  color: white;
+  padding: 10px 13px;
+  border-radius: 10px;
+}
 
-    .dot:nth-child(3) {
-      animation-delay: 0.3s;
-    }
+/* THINKING */
+.thinking {
+  display: flex;
+  gap: 5px;
+  align-items: center;
+}
 
-    @keyframes bounce {
-      0%, 60%, 100% {
-        transform: translateY(0);
-      }
+.dot {
+  width: 7px;
+  height: 7px;
+  background: #9aa4b2;
+  border-radius: 50%;
+  animation: blink 1.2s infinite;
+}
 
-      30% {
-        transform: translateY(-5px);
-      }
-    }
+.dot:nth-child(2) {
+  animation-delay: .2s;
+}
 
-    /* INPUT */
-    .input-area {
-      padding: 14px 18px 18px;
-      border-top: 1px solid #252b33;
-      background: #0d1117;
-      display: flex;
-      gap: 10px;
-    }
+.dot:nth-child(3) {
+  animation-delay: .4s;
+}
 
-    input {
-      flex: 1;
-      padding: 14px 16px;
-      border-radius: 14px;
-      border: 1px solid #303944;
-      background: #151a20;
-      color: white;
-      outline: none;
-      font-size: 15px;
-    }
+@keyframes blink {
+  0%, 80%, 100% {
+    opacity: .25;
+  }
+  40% {
+    opacity: 1;
+  }
+}
 
-    input:focus {
-      border-color: #4b5563;
-    }
+/* MOBILE */
+@media (max-width: 600px) {
 
-    input::placeholder {
-      color: #737d89;
-    }
+  .app {
+    width: 100%;
+  }
 
-    #sendBtn {
-      min-width: 75px;
-      border: none;
-      border-radius: 14px;
-      background: white;
-      color: black;
-      font-weight: bold;
-      cursor: pointer;
-      font-size: 14px;
-    }
+  #chat {
+    padding: 14px;
+  }
 
-    #sendBtn:active {
-      transform: scale(0.96);
-    }
+  .message {
+    max-width: 92%;
+  }
 
-    #sendBtn:disabled {
-      opacity: 0.5;
-      cursor: not-allowed;
-    }
+  .welcome h2 {
+    font-size: 24px;
+  }
 
-    /* MOBILE */
-    @media (max-width: 600px) {
-      .app {
-        width: 100%;
-      }
+  .input-area {
+    padding: 10px;
+  }
 
-      header {
-        padding: 14px 16px;
-      }
+  input {
+    min-width: 0;
+  }
 
-      .header-info h1 {
-        font-size: 19px;
-      }
-
-      .message {
-        max-width: 92%;
-        font-size: 15px;
-      }
-
-      #chat {
-        padding: 18px 14px;
-      }
-
-      .input-area {
-        padding: 12px;
-      }
-
-      #sendBtn {
-        min-width: 70px;
-      }
-    }
-  </style>
+  button {
+    padding: 0 16px;
+  }
+}
+</style>
 </head>
 
 <body>
 
 <div class="app">
 
-  <!-- HEADER -->
   <header>
+
     <div class="logo">N</div>
 
-    <div class="header-info">
+    <div class="title">
       <h1>NiSa AI</h1>
       <p>Your personal AI assistant</p>
     </div>
 
-    <div class="header-buttons">
-      <button class="icon-btn" onclick="clearChat()" title="Clear chat">
-        🗑️
-      </button>
-    </div>
+    <button class="clear-btn" onclick="clearChat()">
+      Clear
+    </button>
+
   </header>
 
 
-  <!-- CHAT -->
   <div id="chat">
 
+    <div class="welcome">
+      <h2>👋 Hello! I'm NiSa AI</h2>
+      <p>Ask me anything and I'll try my best to help.</p>
+    </div>
+
     <div class="message ai">
-      👋 Hello! I'm <b>NiSa AI</b>.<br><br>
-      How can I help you today?
+      Hello! 👋 How can I help you today?
     </div>
 
   </div>
 
 
-  <!-- INPUT -->
   <div class="input-area">
 
     <input
@@ -282,10 +256,10 @@
       type="text"
       placeholder="Message NiSa AI..."
       autocomplete="off"
-      onkeydown="handleKey(event)"
+      onkeydown="if(event.key==='Enter') sendMessage()"
     >
 
-    <button id="sendBtn" onclick="sendMessage()">
+    <button onclick="sendMessage()" id="sendBtn">
       Send
     </button>
 
@@ -296,153 +270,120 @@
 
 <script>
 
+async function sendMessage() {
+
   const input = document.getElementById("messageInput");
   const chat = document.getElementById("chat");
   const sendBtn = document.getElementById("sendBtn");
 
+  const text = input.value.trim();
 
-  // ENTER KEY
-  function handleKey(event) {
-    if (event.key === "Enter") {
-      event.preventDefault();
-      sendMessage();
-    }
-  }
+  if (!text) return;
 
 
-  // SCROLL TO BOTTOM
-  function scrollBottom() {
-    chat.scrollTop = chat.scrollHeight;
-  }
+  // USER MESSAGE
+
+  const userMessage = document.createElement("div");
+
+  userMessage.className = "message user";
+
+  userMessage.textContent = text;
+
+  chat.appendChild(userMessage);
+
+  input.value = "";
+
+  chat.scrollTop = chat.scrollHeight;
 
 
-  // ADD MESSAGE
-  function addMessage(text, type) {
+  // AI MESSAGE
 
-    const message = document.createElement("div");
+  const aiMessage = document.createElement("div");
 
-    message.className = "message " + type;
+  aiMessage.className = "message ai";
 
-    message.innerHTML = text;
+  aiMessage.innerHTML = `
+    <div class="thinking">
+      <span class="dot"></span>
+      <span class="dot"></span>
+      <span class="dot"></span>
+    </div>
+  `;
 
-    chat.appendChild(message);
+  chat.appendChild(aiMessage);
 
-    scrollBottom();
+  chat.scrollTop = chat.scrollHeight;
 
-    return message;
-  }
-
-
-  // ESCAPE HTML
-  function escapeHTML(text) {
-
-    const div = document.createElement("div");
-
-    div.textContent = text;
-
-    return div.innerHTML;
-  }
+  sendBtn.disabled = true;
 
 
-  // SEND MESSAGE
-  async function sendMessage() {
+  try {
 
-    const text = input.value.trim();
+    const response = await fetch("/api/chat", {
 
-    if (!text) return;
+      method: "POST",
 
+      headers: {
+        "Content-Type": "application/json"
+      },
 
-    // USER MESSAGE
-    addMessage(escapeHTML(text), "user");
+      body: JSON.stringify({
+        message: text
+      })
 
-    input.value = "";
-
-    sendBtn.disabled = true;
-
-
-    // TYPING MESSAGE
-    const aiMessage = document.createElement("div");
-
-    aiMessage.className = "message ai";
-
-    aiMessage.innerHTML = `
-      <div class="typing">
-        <span class="dot"></span>
-        <span class="dot"></span>
-        <span class="dot"></span>
-      </div>
-    `;
-
-    chat.appendChild(aiMessage);
-
-    scrollBottom();
+    });
 
 
-    try {
-
-      const response = await fetch("/api/chat", {
-
-        method: "POST",
-
-        headers: {
-          "Content-Type": "application/json"
-        },
-
-        body: JSON.stringify({
-          message: text
-        })
-
-      });
+    const data = await response.json();
 
 
-      const data = await response.json();
-
-
-      if (response.ok) {
-
-        aiMessage.textContent =
-          data.answer || "Sorry, I couldn't generate an answer.";
-
-      } else {
-
-        aiMessage.textContent =
-          "⚠️ " + (data.error || "Something went wrong.");
-
-      }
-
-
-    } catch (error) {
+    if (response.ok) {
 
       aiMessage.textContent =
-        "⚠️ Connection error. Please try again.";
+        data.answer || "Sorry, I couldn't generate an answer.";
+
+    } else {
+
+      aiMessage.textContent =
+        "Error: " + (data.error || "Something went wrong.");
 
     }
 
+  }
 
-    sendBtn.disabled = false;
+  catch (error) {
 
-    input.focus();
-
-    scrollBottom();
+    aiMessage.textContent =
+      "Connection error. Please try again.";
 
   }
 
 
-  // CLEAR CHAT
-  function clearChat() {
+  sendBtn.disabled = false;
 
-    chat.innerHTML = `
-      <div class="message ai">
-        👋 Hello! I'm <b>NiSa AI</b>.<br><br>
-        How can I help you today?
-      </div>
-    `;
-
-  }
-
-
-  // AUTO FOCUS
   input.focus();
+
+  chat.scrollTop = chat.scrollHeight;
+
+}
+
+
+function clearChat() {
+
+  const chat = document.getElementById("chat");
+
+  chat.innerHTML = `
+    <div class="welcome">
+      <h2>👋 Hello! I'm NiSa AI</h2>
+      <p>Ask me anything and I'll try my best to help.</p>
+    </div>
+
+    <div class="message ai">
+      Chat cleared. How can I help you?
+    </div>
+  `;
+
+}
 
 </script>
 

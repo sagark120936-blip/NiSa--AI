@@ -51,7 +51,7 @@ const chat=document.getElementById('chat'), input=document.getElementById('input
 let image=null, history=JSON.parse(localStorage.getItem('nisa_history')||'[]');
 
 function esc(s){return String(s).replace(/[&<>"']/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#039;'}[c]))}
-function answerHtml(s){return esc(s).replace(/\*\*(.*?)\*\*/g,'<strong>$1</strong>').replace(/`([^`]+)`/g,'<code>$1</code>')}
+function answerHtml(s){s=String(s).replace(/<think>[\\s\\S]*?<\\/think>/gi,'').trim();return esc(s).replace(/\*\*(.*?)\*\*/g,'<strong>$1</strong>').replace(/`([^`]+)`/g,'<code>$1</code>')}
 function save(){localStorage.setItem('nisa_history',JSON.stringify(history.slice(-60)))}
 function add(role,text,img){
  const d=document.createElement('div');d.className='message '+role;

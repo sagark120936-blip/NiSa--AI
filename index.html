@@ -1,113 +1,214 @@
-<!doctype html>
+<!DOCTYPE html>
 <html lang="en">
 <head>
-<meta charset="utf-8">
-<meta name="viewport" content="width=device-width,initial-scale=1">
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
+<meta name="theme-color" content="#0b0f14">
 <title>NiSa AI</title>
 <style>
-*{box-sizing:border-box}body{margin:0;background:#0b0f14;color:#fff;font-family:Arial,sans-serif}
-.app{height:100vh;max-width:900px;margin:auto;display:flex;flex-direction:column}
-header{padding:12px 14px;border-bottom:1px solid #29313b;display:flex;gap:10px;align-items:center}
-.logo{width:42px;height:42px;border-radius:50%;background:#fff;color:#111;display:grid;place-items:center;font-weight:bold}.title{flex:1}.title h1{font-size:20px;margin:0}.title p{font-size:11px;color:#9aa4b2;margin:3px 0 0}
-button,select,input{font:inherit}.icon,.tool{border:1px solid #29313b;background:#171d24;color:#fff;border-radius:10px;padding:9px;cursor:pointer}
-#chat{flex:1;overflow:auto;padding:15px}.welcome{margin-bottom:20px}.welcome h2{margin:0 0 7px;font-size:25px}.welcome p{margin:0;color:#9aa4b2}
-.msg{max-width:90%;padding:13px 14px;border-radius:16px;margin:0 0 14px;line-height:1.55;white-space:pre-wrap;overflow-wrap:anywhere}.user{background:#2563eb;margin-left:auto}.ai{background:#171d24;border:1px solid #29313b}
-.actions{display:flex;gap:6px;margin-top:9px}.actions button{background:#202833;color:#fff;border:0;border-radius:8px;padding:6px 9px;font-size:12px}
-.photo{max-width:230px;max-height:220px;border-radius:12px;display:block;margin-bottom:8px}
-.bottom{border-top:1px solid #29313b;padding:9px;background:#0b0f14}.tools{display:flex;gap:6px;overflow:auto;padding-bottom:8px}.tools select{border:1px solid #29313b;background:#171d24;color:#fff;border-radius:10px;padding:8px}
-.composer{display:flex;gap:8px}.composer input{flex:1;min-width:0;background:#151a20;color:#fff;border:1px solid #303944;border-radius:14px;padding:13px;outline:none}.send{background:#fff;color:#000;border:0;border-radius:14px;padding:0 19px;font-weight:bold}.send:disabled{opacity:.5}
-#preview{padding-bottom:8px}.hidden{display:none!important}.dots{display:flex;gap:5px}.dot{width:7px;height:7px;background:#9aa4b2;border-radius:50%;animation:x 1.1s infinite}.dot:nth-child(2){animation-delay:.2s}.dot:nth-child(3){animation-delay:.4s}@keyframes x{40%{opacity:1}0%,80%,100%{opacity:.25}}
+*{box-sizing:border-box}html,body{margin:0;height:100%;font-family:Inter,Arial,sans-serif}
+body{background:#0b0f14;color:#fff}
+button,input,select{font:inherit}
+button{cursor:pointer}
+.app{height:100dvh;max-width:920px;margin:auto;display:flex;flex-direction:column;background:#0b0f14}
+header{height:68px;display:flex;align-items:center;gap:11px;padding:10px 14px;border-bottom:1px solid #252d36;flex:none}
+.logo{width:42px;height:42px;border-radius:50%;display:grid;place-items:center;background:#fff;color:#111;font-weight:800}
+.brand{flex:1}.brand h1{font-size:19px;margin:0}.brand p{font-size:11px;color:#8994a3;margin:3px 0 0}
+.icon{border:1px solid #2a3440;background:#171d24;color:#fff;border-radius:11px;padding:9px 11px}
+#chat{flex:1;overflow:auto;padding:20px 16px 12px;scroll-behavior:smooth}
+.welcome{padding:10px 2px 22px}.welcome h2{font-size:27px;margin:0 0 7px}.welcome p{margin:0;color:#9aa4b2}
+.message{max-width:88%;margin:0 0 14px;padding:13px 14px;border-radius:17px;line-height:1.55;word-break:break-word;white-space:pre-wrap}
+.message.user{margin-left:auto;background:#2563eb}.message.ai{margin-right:auto;background:#171d24;border:1px solid #29313b}
+.preview{display:block;max-width:260px;max-height:220px;border-radius:13px;margin-bottom:9px;object-fit:cover}
+.actions{display:flex;gap:6px;flex-wrap:wrap;margin-top:10px}
+.actions button{border:0;background:#232c37;color:#dce5f2;border-radius:9px;padding:6px 9px;font-size:12px}
+.conf{font-size:10px;color:#7f8997;margin-top:7px}
+.thinking{display:flex;gap:5px;padding:3px 0}.dot{width:7px;height:7px;border-radius:50%;background:#9aa4b2;animation:b 1.1s infinite}.dot:nth-child(2){animation-delay:.18s}.dot:nth-child(3){animation-delay:.36s}
+@keyframes b{0%,80%,100%{opacity:.25}40%{opacity:1}}
+.composer{border-top:1px solid #252d36;padding:9px 10px calc(9px + env(safe-area-inset-bottom));background:#0b0f14}
+.tools{display:flex;gap:6px;overflow-x:auto;padding-bottom:8px}.tools button,.tools select{white-space:nowrap;border:1px solid #29313b;background:#171d24;color:#fff;border-radius:10px;padding:8px 10px}
+.row{display:flex;gap:8px}.row input{flex:1;min-width:0;background:#151a20;color:#fff;border:1px solid #303944;border-radius:14px;padding:13px 14px;outline:none}.row input:focus{border-color:#4d8cff}
+.send{border:0;background:#fff;color:#111;border-radius:14px;padding:0 18px;font-weight:800}.send:disabled{opacity:.45}
+.hidden{display:none!important}
+.panel{position:fixed;inset:0;background:rgba(0,0,0,.72);display:none;align-items:flex-end;z-index:10}.panel.open{display:flex}
+.sheet{width:min(920px,100%);max-height:86dvh;overflow:auto;background:#111720;border:1px solid #29313b;border-radius:20px 20px 0 0;padding:18px}
+.sheet h3{margin:0 0 14px}.sheet button{border:0;background:#202833;color:#fff;border-radius:10px;padding:9px 12px}.sheet select,.sheet textarea{width:100%;background:#151a20;color:#fff;border:1px solid #303944;border-radius:10px;padding:10px}
+.sheet .line{margin:10px 0}.timer{text-align:center;font-size:42px;margin:12px}
+pre{white-space:pre-wrap;overflow:auto;background:#0b0f14;padding:10px;border-radius:10px}
+code{background:#0b0f14;padding:2px 5px;border-radius:5px}
+@media(max-width:600px){#chat{padding:14px}.message{max-width:94%}.welcome h2{font-size:23px}.brand h1{font-size:18px}}
 </style>
 </head>
 <body>
 <div class="app">
-<header><div class="logo">N</div><div class="title"><h1>NiSa AI</h1><p>Your personal AI assistant</p></div><button class="icon" id="clear">🗑️</button></header>
-<div id="chat"><div class="welcome"><h2>👋 Hello! I'm NiSa AI</h2><p>Ask me anything, upload a photo, or use the camera.</p></div></div>
-<div class="bottom">
-<div class="tools">
-<button class="tool" id="photoBtn">🖼️ Photo</button>
-<button class="tool" id="cameraBtn">📷 Camera</button>
-<button class="tool" id="voiceBtn">🎤 Voice</button>
-<select id="mode"><option>Normal</option><option>Simple</option><option>Teacher</option><option>Exam</option><option>Quiz</option><option>Expert</option></select>
+<header>
+  <div class="logo">N</div>
+  <div class="brand"><h1>NiSa AI</h1><p>Your personal AI assistant</p></div>
+  <button class="icon" onclick="openPanel('settings')">⚙️</button>
+  <button class="icon" onclick="clearChat()">🗑️</button>
+</header>
+
+<main id="chat">
+  <div class="welcome"><h2>👋 Hello! I'm NiSa AI</h2><p>Ask me anything, upload a photo, or use the camera.</p></div>
+</main>
+
+<section class="composer">
+  <div class="tools">
+    <button onclick="pickImage()">🖼️ Photo</button>
+    <button onclick="openCamera()">📷 Camera</button>
+    <button onclick="voiceInput()">🎤 Voice</button>
+    <button onclick="openPanel('study')">📚 Study</button>
+    <select id="mode"><option value="normal">Normal</option><option value="simple">Simple</option><option value="teacher">Teacher</option><option value="exam">Exam</option><option value="quiz">Quiz</option><option value="expert">Expert</option></select>
+  </div>
+  <div id="previewBox" class="hidden"></div>
+  <div class="row">
+    <input id="input" placeholder="Message NiSa AI..." autocomplete="off">
+    <button class="send" id="send">Send</button>
+  </div>
+  <input id="file" class="hidden" type="file" accept="image/*">
+</section>
 </div>
-<div id="preview" class="hidden"></div>
-<form id="form" class="composer">
-<input id="message" autocomplete="off" placeholder="Message NiSa AI...">
-<button class="send" id="send" type="submit">Send</button>
-</form>
-<input id="file" class="hidden" type="file" accept="image/*" capture="environment">
+
+<div id="camera" class="panel">
+  <div class="sheet">
+    <h3>📷 Camera</h3>
+    <video id="video" autoplay playsinline style="width:100%;max-height:55vh;background:#000;border-radius:14px"></video>
+    <canvas id="canvas" class="hidden"></canvas>
+    <img id="shot" class="preview hidden">
+    <div class="line">
+      <button onclick="capture()">📸 Capture</button>
+      <button onclick="useShot()">✅ Use</button>
+      <button onclick="closeCamera()">Close</button>
+    </div>
+  </div>
 </div>
+
+<div id="settings" class="panel">
+  <div class="sheet">
+    <h3>⚙️ Settings</h3>
+    <div class="line"><label>Language</label><select id="language"><option value="auto">Auto</option><option value="en">English</option><option value="mr">मराठी</option><option value="hi">हिन्दी</option></select></div>
+    <div class="line"><label>Memory</label><textarea id="memory" rows="5" placeholder="Optional preferences for NiSa AI"></textarea></div>
+    <div class="line"><button onclick="saveSettings()">Save</button> <button onclick="closePanel('settings')">Close</button></div>
+  </div>
 </div>
+
+<div id="study" class="panel">
+  <div class="sheet">
+    <h3>📚 Study Tools</h3>
+    <div class="line">
+      <button onclick="study('teacher')">Teacher</button>
+      <button onclick="study('exam')">Exam</button>
+      <button onclick="study('quiz')">Quiz</button>
+    </div>
+    <div id="timer" class="timer">25:00</div>
+    <button onclick="startTimer()">Start</button> <button onclick="resetTimer()">Reset</button>
+    <div class="line"><button onclick="closePanel('study')">Close</button></div>
+  </div>
+</div>
+
 <script>
-(function(){
-const chat=document.getElementById("chat"), form=document.getElementById("form"), input=document.getElementById("message");
-const send=document.getElementById("send"), file=document.getElementById("file"), preview=document.getElementById("preview");
-let selectedImage=null;
+const KEY='nisa_history_v4', MEM='nisa_memory_v4';
+let history=JSON.parse(localStorage.getItem(KEY)||'[]');
+let selectedImage=null, cameraStream=null, captured=null, timer=1500, timerId=null;
 
-function clean(s){return String(s||"").replace(/<think>[\\s\\S]*?<\\/think>/gi,"").trim()}
-function esc(s){return String(s).replace(/[&<>"']/g,c=>({"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;","'":"&#039;"}[c]))}
-function render(s){return esc(clean(s)).replace(/\\*\\*(.*?)\\*\\*/g,"<b>$1</b>").replace(/`([^`]+)`/g,"<code>$1</code>")}
-function add(role,text,img){
- const d=document.createElement("div");d.className="msg "+role;
- if(img){const im=document.createElement("img");im.src=img;im.className="photo";d.appendChild(im)}
- const b=document.createElement("div");b.innerHTML=role==="ai"?render(text):esc(text);d.appendChild(b);
- if(role==="ai"){
-  const a=document.createElement("div");a.className="actions";
-  const c=document.createElement("button");c.textContent="📋 Copy";c.onclick=()=>navigator.clipboard?.writeText(clean(text));
-  const r=document.createElement("button");r.textContent="🔊 Read";r.onclick=()=>speechSynthesis.speak(new SpeechSynthesisUtterance(clean(text)));
-  a.append(c,r);d.appendChild(a);
- }
- chat.appendChild(d);chat.scrollTop=chat.scrollHeight;return d;
+const chat=document.getElementById('chat'), input=document.getElementById('input'), send=document.getElementById('send');
+
+function esc(s){return String(s??'').replace(/[&<>"']/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#039;'}[c]))}
+function format(s){
+  let x=esc(s);
+  x=x.replace(/```([\s\S]*?)```/g,'<pre>$1</pre>');
+  x=x.replace(/\*\*(.*?)\*\*/g,'<strong>$1</strong>');
+  x=x.replace(/`([^`]+)`/g,'<code>$1</code>');
+  return x;
 }
-function showPreview(src){selectedImage=src;preview.classList.remove("hidden");preview.innerHTML='<img class="photo" src="'+src+'"><button class="tool" type="button" id="remove">✕ Remove photo</button>';document.getElementById("remove").onclick=()=>{selectedImage=null;preview.classList.add("hidden");preview.innerHTML=""}}
-file.onchange=()=>{const f=file.files&&file.files[0];if(!f)return;const rd=new FileReader();rd.onload=()=>showPreview(rd.result);rd.readAsDataURL(f)}
-document.getElementById("photoBtn").onclick=()=>file.click();
+function save(){localStorage.setItem(KEY,JSON.stringify(history.slice(-60)))}
+function add(role,text,image=null,idx=-1){
+  const el=document.createElement('div');el.className='message '+role;
+  if(image){const im=document.createElement('img');im.src=image;im.className='preview';el.appendChild(im)}
+  const body=document.createElement('div');body.innerHTML=role==='ai'?format(text):esc(text);el.appendChild(body);
+  const a=document.createElement('div');a.className='actions';
+  if(role==='ai'){
+    a.innerHTML='<button>📋 Copy</button><button>🔊 Read</button>';
+    a.children[0].onclick=()=>navigator.clipboard?.writeText(body.innerText);
+    a.children[1].onclick=()=>{speechSynthesis.cancel();speechSynthesis.speak(new SpeechSynthesisUtterance(body.innerText))};
+    el.appendChild(a);const c=document.createElement('div');c.className='conf';c.textContent='AI answer • verify important facts';el.appendChild(c);
+  } else {
+    const b=document.createElement('button');b.textContent='✏️ Edit';b.onclick=()=>{input.value=text;input.focus()};a.appendChild(b);el.appendChild(a);
+  }
+  chat.appendChild(el);chat.scrollTop=chat.scrollHeight;
+}
+function render(){
+  chat.innerHTML='<div class="welcome"><h2>👋 Hello! I\'m NiSa AI</h2><p>Ask me anything, upload a photo, or use the camera.</p></div>';
+  history.forEach(m=>add(m.role,m.text,m.image||null));
+}
+function clearChat(){if(confirm('Clear this conversation?')){history=[];save();render()}}
+function pickImage(){document.getElementById('file').click()}
+document.getElementById('file').onchange=e=>{if(e.target.files[0])compressImage(e.target.files[0])};
 
-form.addEventListener("submit",async function(e){
- e.preventDefault();
- e.stopPropagation();
- const text=input.value.trim();
- if(!text&&!selectedImage)return;
- const image=selectedImage;
- input.value=""; selectedImage=null; preview.classList.add("hidden"); preview.innerHTML="";
- add("user",text||"Please analyze this image.",image);
- const wait=add("ai","",null);
- wait.innerHTML='<div class="dots"><span class="dot"></span><span class="dot"></span><span class="dot"></span></div>';
- send.disabled=true;
- try{
-  const res=await fetch("/api/chat",{method:"POST",headers:{"Content-Type":"application/json"},body:JSON.stringify({
-   message:text||"Please analyze this image.",
-   image:image,
-   mode:document.getElementById("mode").value
-  })});
-  const raw=await res.text();
-  let data;try{data=JSON.parse(raw)}catch(_){throw new Error("API returned an invalid response.")}
-  if(!res.ok)throw new Error(data.error||("Request failed ("+res.status+")"));
-  const ans=clean(data.answer)||"No answer received.";
-  wait.innerHTML=render(ans);
-  const a=document.createElement("div");a.className="actions";
-  const c=document.createElement("button");c.textContent="📋 Copy";c.onclick=()=>navigator.clipboard?.writeText(ans);
-  const r=document.createElement("button");r.textContent="🔊 Read";r.onclick=()=>speechSynthesis.speak(new SpeechSynthesisUtterance(ans));
-  a.append(c,r);wait.appendChild(a);
- }catch(err){
-  wait.textContent="❌ "+err.message;
- }finally{send.disabled=false;input.focus();chat.scrollTop=chat.scrollHeight}
-});
+function compressImage(file){
+  const r=new FileReader();
+  r.onload=()=>{const im=new Image();im.onload=()=>{
+    const max=1600, scale=Math.min(1,max/Math.max(im.width,im.height));
+    const c=document.createElement('canvas');c.width=Math.round(im.width*scale);c.height=Math.round(im.height*scale);
+    c.getContext('2d').drawImage(im,0,0,c.width,c.height);
+    selectedImage=c.toDataURL('image/jpeg',.78);showPreview();
+  };im.src=r.result};r.readAsDataURL(file);
+}
+function showPreview(){
+  const b=document.getElementById('previewBox');b.classList.remove('hidden');
+  b.innerHTML='<img class="preview" src="'+selectedImage+'"><button onclick="selectedImage=null;document.getElementById(\'previewBox\').classList.add(\'hidden\')">✕ Remove</button>';
+}
+async function sendMessage(){
+  const text=input.value.trim();
+  if(!text&&!selectedImage)return;
+  const image=selectedImage;
+  const mode=document.getElementById('mode').value;
+  const language=document.getElementById('language').value;
+  const memory=localStorage.getItem(MEM)||'';
+  history.push({role:'user',text:text||'Analyze this image.',image:image||null});save();
+  add('user',text||'Analyze this image.',image);
+  input.value='';selectedImage=null;document.getElementById('previewBox').classList.add('hidden');
+  const ai=document.createElement('div');ai.className='message ai';ai.innerHTML='<div class="thinking"><span class="dot"></span><span class="dot"></span><span class="dot"></span></div>';chat.appendChild(ai);chat.scrollTop=chat.scrollHeight;send.disabled=true;
+  try{
+    const messages=history.slice(-16).map(m=>({role:m.role,content:m.text}));
+    const res=await fetch('/api/chat',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({message:text,image,mode,language,memory,messages})});
+    const data=await res.json().catch(()=>({error:'Server returned invalid JSON'}));
+    if(!res.ok)throw new Error(data.error||('Server error '+res.status));
+    const answer=data.answer||'No answer received.';
+    ai.innerHTML=format(answer);
+    const a=document.createElement('div');a.className='actions';
+    const cp=document.createElement('button');cp.textContent='📋 Copy';cp.onclick=()=>navigator.clipboard?.writeText(answer);
+    const rd=document.createElement('button');rd.textContent='🔊 Read';rd.onclick=()=>{speechSynthesis.cancel();speechSynthesis.speak(new SpeechSynthesisUtterance(answer))};
+    a.append(cp,rd);ai.appendChild(a);
+    const c=document.createElement('div');c.className='conf';c.textContent='AI answer • verify important facts';ai.appendChild(c);
+    history.push({role:'assistant',text:answer});save();
+  }catch(e){ai.innerHTML='<strong>❌ Error</strong><br>'+esc(e.message)}
+  send.disabled=false;input.focus();chat.scrollTop=chat.scrollHeight;
+}
+send.onclick=sendMessage;
+input.addEventListener('keydown',e=>{if(e.key==='Enter'&&!e.shiftKey){e.preventDefault();sendMessage()}});
 
-document.getElementById("clear").onclick=()=>{chat.innerHTML='<div class="welcome"><h2>👋 Hello! I\'m NiSa AI</h2><p>Ask me anything, upload a photo, or use the camera.</p></div>';localStorage.removeItem("nisa_history")};
-
-document.getElementById("voiceBtn").onclick=()=>{const SR=window.SpeechRecognition||window.webkitSpeechRecognition;if(!SR)return alert("Voice input is not supported.");const r=new SR();r.lang="en-IN";r.onresult=e=>{input.value=e.results[0][0].transcript;input.focus()};r.start()};
-
-document.getElementById("cameraBtn").onclick=async()=>{
- try{const stream=await navigator.mediaDevices.getUserMedia({video:{facingMode:"environment"}});
- const v=document.createElement("video");v.autoplay=true;v.playsInline=true;v.srcObject=stream;
- Object.assign(v.style,{position:"fixed",inset:"8%",width:"84%",height:"70%",objectFit:"contain",background:"#000",zIndex:20});
- const b=document.createElement("button");b.textContent="📸 Capture";Object.assign(b.style,{position:"fixed",bottom:"12%",left:"35%",zIndex:21,padding:"14px 22px"});
- document.body.append(v,b);
- b.onclick=()=>{const c=document.createElement("canvas");c.width=v.videoWidth;c.height=v.videoHeight;c.getContext("2d").drawImage(v,0,0);showPreview(c.toDataURL("image/jpeg",.82));stream.getTracks().forEach(t=>t.stop());v.remove();b.remove()}
- }catch(e){file.click()}
-};
-})();
+async function openCamera(){
+  openPanel('camera');
+  try{cameraStream=await navigator.mediaDevices.getUserMedia({video:{facingMode:'environment'},audio:false});document.getElementById('video').srcObject=cameraStream}
+  catch(e){alert('Camera permission is unavailable. Use Photo instead.')}
+}
+function capture(){const v=document.getElementById('video'),c=document.getElementById('canvas'),im=document.getElementById('shot');c.width=v.videoWidth||1280;c.height=v.videoHeight||720;c.getContext('2d').drawImage(v,0,0,c.width,c.height);captured=c.toDataURL('image/jpeg',.78);im.src=captured;im.classList.remove('hidden')}
+function useShot(){if(!captured)return alert('Capture a photo first.');selectedImage=captured;showPreview();closeCamera()}
+function closeCamera(){if(cameraStream){cameraStream.getTracks().forEach(t=>t.stop());cameraStream=null}closePanel('camera')}
+function voiceInput(){
+  const SR=window.SpeechRecognition||window.webkitSpeechRecognition;if(!SR)return alert('Voice input is not supported here.');
+  const r=new SR();const l=document.getElementById('language').value;r.lang=l==='mr'?'mr-IN':l==='hi'?'hi-IN':'en-IN';r.onresult=e=>input.value=e.results[0][0].transcript;r.start();
+}
+function openPanel(id){document.getElementById(id).classList.add('open');if(id==='settings')document.getElementById('memory').value=localStorage.getItem(MEM)||''}
+function closePanel(id){document.getElementById(id).classList.remove('open')}
+document.querySelectorAll('.panel').forEach(p=>p.onclick=e=>{if(e.target===p)closePanel(p.id)});
+function saveSettings(){localStorage.setItem(MEM,document.getElementById('memory').value.trim());closePanel('settings')}
+function study(type){closePanel('study');const p={teacher:'Teach me this topic step by step like a teacher.',exam:'Exam mode: give important questions, short answers and revision points.',quiz:'Quiz mode: ask one question at a time and wait for my answer.'};input.value=p[type];input.focus()}
+function updateTimer(){document.getElementById('timer').textContent=String(Math.floor(timer/60)).padStart(2,'0')+':'+String(timer%60).padStart(2,'0')}
+function startTimer(){if(timerId)return;timerId=setInterval(()=>{timer--;updateTimer();if(timer<=0){clearInterval(timerId);timerId=null;alert('Study timer finished!')}},1000)}
+function resetTimer(){clearInterval(timerId);timerId=null;timer=1500;updateTimer()}
+render();updateTimer();
 </script>
 </body>
 </html>

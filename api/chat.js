@@ -103,9 +103,19 @@ If an image is provided:
       });
     }
 
-    const answer =
-      data?.choices?.[0]?.message?.content ||
-      "Sorry, I couldn't generate an answer.";
+    let answer =
+  data?.choices?.[0]?.message?.content ||
+  "Sorry, I couldn't generate an answer.";
+
+// Hide model reasoning / thinking
+answer = answer
+  .replace(/<think>[\s\S]*?<\/think>/gi, "")
+  .replace(/<thinking>[\s\S]*?<\/thinking>/gi, "")
+  .trim();
+
+if (!answer) {
+  answer = "Sorry, I couldn't generate an answer.";
+}
 
     return res.status(200).json({
       answer

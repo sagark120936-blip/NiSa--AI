@@ -1,188 +1,48 @@
-<!DOCTYPE html>
-<html lang="en">
-<head>
-  <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>NISA AI</title>
+<script>
+async function sendMessage() {
+  const input = document.getElementById("messageInput");
+  const chat = document.getElementById("chat");
+  const text = input.value.trim();
 
-  <style>
-    * {
-      box-sizing: border-box;
-      margin: 0;
-      padding: 0;
-      font-family: Arial, sans-serif;
+  if (!text) return;
+
+  const userMessage = document.createElement("div");
+  userMessage.className = "message user";
+  userMessage.textContent = text;
+  chat.appendChild(userMessage);
+
+  input.value = "";
+
+  const aiMessage = document.createElement("div");
+  aiMessage.className = "message ai";
+  aiMessage.textContent = "Thinking...";
+  chat.appendChild(aiMessage);
+
+  chat.scrollTop = chat.scrollHeight;
+
+  try {
+    const response = await fetch("/api/chat", {
+      method: "POST",
+      headers: {
+        "Content-Type": "application/json"
+      },
+      body: JSON.stringify({
+        message: text
+      })
+    });
+
+    const data = await response.json();
+
+    if (response.ok) {
+      aiMessage.textContent = data.answer;
+    } else {
+      aiMessage.textContent = "Error: " + (data.error || "Something went wrong");
     }
 
-    body {
-      background: #0b0f14;
-      color: white;
-      height: 100vh;
-    }
+  } catch (error) {
+    aiMessage.textContent = "Connection error. Please try again.";
+  }
 
-    .app {
-      max-width: 700px;
-      height: 100vh;
-      margin: auto;
-      display: flex;
-      flex-direction: column;
-    }
-
-    header {
-      padding: 18px;
-      border-bottom: 1px solid #252b33;
-      display: flex;
-      align-items: center;
-      gap: 12px;
-    }
-
-    .logo {
-      width: 42px;
-      height: 42px;
-      border-radius: 50%;
-      background: white;
-      color: #111;
-      display: flex;
-      align-items: center;
-      justify-content: center;
-      font-weight: bold;
-      font-size: 18px;
-    }
-
-    header h1 {
-      font-size: 22px;
-    }
-
-    header p {
-      color: #8c96a3;
-      font-size: 12px;
-      margin-top: 3px;
-    }
-
-    #chat {
-      flex: 1;
-      overflow-y: auto;
-      padding: 20px;
-    }
-
-    .message {
-      margin-bottom: 18px;
-      padding: 14px;
-      border-radius: 14px;
-      max-width: 85%;
-      line-height: 1.5;
-    }
-
-    .ai {
-      background: #171d24;
-      border: 1px solid #252d36;
-    }
-
-    .user {
-      background: #2563eb;
-      margin-left: auto;
-    }
-
-    .input-area {
-      padding: 14px;
-      border-top: 1px solid #252b33;
-      display: flex;
-      gap: 10px;
-    }
-
-    input {
-      flex: 1;
-      padding: 14px;
-      border-radius: 12px;
-      border: 1px solid #303944;
-      background: #151a20;
-      color: white;
-      outline: none;
-      font-size: 15px;
-    }
-
-    button {
-      border: none;
-      border-radius: 12px;
-      background: white;
-      color: black;
-      padding: 0 18px;
-      font-weight: bold;
-      cursor: pointer;
-    }
-
-    button:active {
-      transform: scale(0.96);
-    }
-  </style>
-</head>
-
-<body>
-
-  <div class="app">
-
-    <header>
-      <div class="logo">N</div>
-      <div>
-        <h1>NISA AI</h1>
-        <p>Your personal AI assistant</p>
-      </div>
-    </header>
-
-    <div id="chat">
-      <div class="message ai">
-        👋 Hello! I'm <b>NISA AI</b>.<br>
-        How can I help you today?
-      </div>
-    </div>
-
-    <div class="input-area">
-      <input
-        id="messageInput"
-        type="text"
-        placeholder="Message NISA AI..."
-        onkeydown="if(event.key==='Enter') sendMessage()"
-      >
-
-      <button onclick="sendMessage()">Send</button>
-    </div>
-
-  </div>
-
-  <script>
-    function sendMessage() {
-
-      const input = document.getElementById("messageInput");
-      const chat = document.getElementById("chat");
-
-      const text = input.value.trim();
-
-      if (text === "") return;
-
-      const userMessage = document.createElement("div");
-      userMessage.className = "message user";
-      userMessage.textContent = text;
-
-      chat.appendChild(userMessage);
-
-      input.value = "";
-
-      setTimeout(() => {
-
-        const aiMessage = document.createElement("div");
-        aiMessage.className = "message ai";
-
-        aiMessage.textContent =
-          "I'm NISA AI 🤖. My AI brain is being connected. Soon I'll be able to answer your questions!";
-
-        chat.appendChild(aiMessage);
-
-        chat.scrollTop = chat.scrollHeight;
-
-      }, 600);
-
-      chat.scrollTop = chat.scrollHeight;
-    }
-  </script>
-
-</body>
-</html>
+  chat.scrollTop = chat.scrollHeight;
+}
+</script>

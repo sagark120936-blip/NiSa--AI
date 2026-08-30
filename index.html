@@ -3,389 +3,245 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-
 <title>NiSa AI</title>
-
 <style>
-* {
-  box-sizing: border-box;
-  margin: 0;
-  padding: 0;
-  font-family: Arial, sans-serif;
-}
-
-body {
-  background: #0b0f14;
-  color: white;
-  height: 100vh;
-}
-
-.app {
-  max-width: 850px;
-  height: 100vh;
-  margin: auto;
-  display: flex;
-  flex-direction: column;
-}
-
-/* HEADER */
-header {
-  padding: 16px 18px;
-  border-bottom: 1px solid #252b33;
-  display: flex;
-  align-items: center;
-  gap: 12px;
-  background: #0b0f14;
-}
-
-.logo {
-  width: 42px;
-  height: 42px;
-  border-radius: 50%;
-  background: white;
-  color: #111;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  font-weight: bold;
-  font-size: 18px;
-}
-
-.title h1 {
-  font-size: 21px;
-}
-
-.title p {
-  color: #8c96a3;
-  font-size: 12px;
-  margin-top: 3px;
-}
-
-/* CHAT */
-#chat {
-  flex: 1;
-  overflow-y: auto;
-  padding: 20px;
-}
-
-.message {
-  max-width: 85%;
-  padding: 14px;
-  border-radius: 16px;
-  margin-bottom: 16px;
-  line-height: 1.5;
-  white-space: pre-wrap;
-  word-wrap: break-word;
-}
-
-.ai {
-  background: #171d24;
-  border: 1px solid #252d36;
-  margin-right: auto;
-}
-
-.user {
-  background: #2563eb;
-  margin-left: auto;
-}
-
-/* WELCOME */
-.welcome {
-  margin-bottom: 25px;
-}
-
-.welcome h2 {
-  font-size: 28px;
-  margin-bottom: 8px;
-}
-
-.welcome p {
-  color: #9aa4b2;
-}
-
-/* INPUT */
-.input-area {
-  padding: 14px;
-  border-top: 1px solid #252b33;
-  display: flex;
-  gap: 10px;
-  background: #0b0f14;
-}
-
-input {
-  flex: 1;
-  padding: 14px;
-  border-radius: 14px;
-  border: 1px solid #303944;
-  background: #151a20;
-  color: white;
-  outline: none;
-  font-size: 15px;
-}
-
-input:focus {
-  border-color: #4d8cff;
-}
-
-button {
-  border: none;
-  border-radius: 14px;
-  background: white;
-  color: black;
-  padding: 0 20px;
-  font-weight: bold;
-  cursor: pointer;
-  font-size: 15px;
-}
-
-button:active {
-  transform: scale(0.96);
-}
-
-.clear-btn {
-  background: #20262e;
-  color: white;
-  padding: 10px 13px;
-  border-radius: 10px;
-}
-
-/* THINKING */
-.thinking {
-  display: flex;
-  gap: 5px;
-  align-items: center;
-}
-
-.dot {
-  width: 7px;
-  height: 7px;
-  background: #9aa4b2;
-  border-radius: 50%;
-  animation: blink 1.2s infinite;
-}
-
-.dot:nth-child(2) {
-  animation-delay: .2s;
-}
-
-.dot:nth-child(3) {
-  animation-delay: .4s;
-}
-
-@keyframes blink {
-  0%, 80%, 100% {
-    opacity: .25;
-  }
-  40% {
-    opacity: 1;
-  }
-}
-
-/* MOBILE */
-@media (max-width: 600px) {
-
-  .app {
-    width: 100%;
-  }
-
-  #chat {
-    padding: 14px;
-  }
-
-  .message {
-    max-width: 92%;
-  }
-
-  .welcome h2 {
-    font-size: 24px;
-  }
-
-  .input-area {
-    padding: 10px;
-  }
-
-  input {
-    min-width: 0;
-  }
-
-  button {
-    padding: 0 16px;
-  }
-}
+*{box-sizing:border-box;margin:0;padding:0;font-family:Arial,sans-serif}
+:root{--bg:#0b0f14;--panel:#111720;--panel2:#171d24;--border:#29313b;--text:#fff;--muted:#9aa4b2;--accent:#4d8cff;--user:#2563eb}
+body{background:var(--bg);color:var(--text);height:100vh}
+button,input,select{font:inherit}
+button{border:0;border-radius:12px;cursor:pointer}
+.app{max-width:900px;height:100vh;margin:auto;display:flex;flex-direction:column}
+header{padding:12px 14px;border-bottom:1px solid var(--border);display:flex;align-items:center;gap:10px;background:var(--bg);position:relative}
+.logo{width:42px;height:42px;border-radius:50%;background:#fff;color:#111;display:flex;align-items:center;justify-content:center;font-weight:bold;font-size:18px;flex:none}
+.title{flex:1}.title h1{font-size:20px}.title p{color:var(--muted);font-size:11px;margin-top:3px}
+.icon-btn{background:var(--panel2);color:#fff;padding:9px 11px;border:1px solid var(--border)}
+#chat{flex:1;overflow-y:auto;padding:18px}
+.welcome{margin-bottom:22px}.welcome h2{font-size:26px;margin-bottom:7px}.welcome p{color:var(--muted)}
+.message{max-width:88%;padding:13px 14px;border-radius:16px;margin-bottom:14px;line-height:1.55;white-space:pre-wrap;word-wrap:break-word}
+.ai{background:var(--panel2);border:1px solid var(--border);margin-right:auto}.user{background:var(--user);margin-left:auto}
+.msg-actions{display:flex;gap:6px;margin-top:9px;flex-wrap:wrap}
+.msg-actions button,.mini{background:#202833;color:#dce5f2;padding:6px 9px;font-size:12px}
+.meta{font-size:11px;color:var(--muted);margin-top:7px}
+.confidence{font-size:11px;color:var(--muted);margin-top:6px}
+.preview{max-width:220px;max-height:180px;border-radius:12px;margin-bottom:8px;display:block}
+.input-area{padding:10px;border-top:1px solid var(--border);background:var(--bg)}
+.toolbar{display:flex;gap:6px;overflow-x:auto;padding-bottom:8px}
+.toolbar button,.toolbar select{background:var(--panel2);color:#fff;border:1px solid var(--border);padding:8px 9px;border-radius:10px;white-space:nowrap}
+.composer{display:flex;gap:8px}.composer input{flex:1;min-width:0;padding:13px;border-radius:14px;border:1px solid #303944;background:#151a20;color:#fff;outline:none}
+.composer input:focus{border-color:var(--accent)}
+.send{background:#fff;color:#000;padding:0 17px;font-weight:bold}.send:disabled{opacity:.5}
+.thinking{display:flex;gap:5px;align-items:center}.dot{width:7px;height:7px;background:#9aa4b2;border-radius:50%;animation:blink 1.2s infinite}.dot:nth-child(2){animation-delay:.2s}.dot:nth-child(3){animation-delay:.4s}
+@keyframes blink{0%,80%,100%{opacity:.25}40%{opacity:1}}
+.panel{position:fixed;inset:0;background:rgba(0,0,0,.7);display:none;align-items:flex-end;justify-content:center;z-index:20}
+.panel.open{display:flex}.sheet{width:min(900px,100%);max-height:85vh;overflow:auto;background:#111720;border:1px solid var(--border);border-radius:20px 20px 0 0;padding:18px}
+.sheet h3{margin-bottom:12px}.sheet-row{display:flex;gap:8px;align-items:center;margin:10px 0;flex-wrap:wrap}.sheet button{background:#202833;color:#fff;padding:9px 12px}.sheet input,.sheet textarea,.sheet select{background:#151a20;color:#fff;border:1px solid var(--border);border-radius:10px;padding:9px;width:100%}
+#cameraVideo{width:100%;max-height:55vh;object-fit:cover;border-radius:14px;background:#000}.camera-preview{max-width:100%;border-radius:14px}
+.timer{font-size:42px;text-align:center;margin:12px}.flashcard{background:var(--panel2);border:1px solid var(--border);padding:20px;border-radius:16px;text-align:center;min-height:130px;display:flex;align-items:center;justify-content:center}
+.hidden{display:none!important}
+@media(max-width:600px){#chat{padding:14px}.message{max-width:94%}.welcome h2{font-size:23px}.toolbar button,.toolbar select{font-size:12px}.icon-btn{padding:8px}}
 </style>
 </head>
-
 <body>
-
 <div class="app">
+<header>
+  <div class="logo">N</div>
+  <div class="title"><h1>NiSa AI</h1><p>Your personal AI assistant</p></div>
+  <button class="icon-btn" onclick="openPanel('settingsPanel')">⚙️</button>
+  <button class="icon-btn" onclick="clearChat()">🗑️</button>
+</header>
 
-  <header>
-
-    <div class="logo">N</div>
-
-    <div class="title">
-      <h1>NiSa AI</h1>
-      <p>Your personal AI assistant</p>
-    </div>
-
-    <button class="clear-btn" onclick="clearChat()">
-      Clear
-    </button>
-
-  </header>
-
-
-  <div id="chat">
-
-    <div class="welcome">
-      <h2>👋 Hello! I'm NiSa AI</h2>
-      <p>Ask me anything and I'll try my best to help.</p>
-    </div>
-
-    <div class="message ai">
-      Hello! 👋 How can I help you today?
-    </div>
-
-  </div>
-
-
-  <div class="input-area">
-
-    <input
-      id="messageInput"
-      type="text"
-      placeholder="Message NiSa AI..."
-      autocomplete="off"
-      onkeydown="if(event.key==='Enter') sendMessage()"
-    >
-
-    <button onclick="sendMessage()" id="sendBtn">
-      Send
-    </button>
-
-  </div>
-
+<div id="chat">
+  <div class="welcome"><h2>👋 Hello! I'm NiSa AI</h2><p>Ask me anything, upload a photo, or use the camera.</p></div>
 </div>
 
+<div class="input-area">
+  <div class="toolbar">
+    <button onclick="openCamera()">📷 Camera</button>
+    <button onclick="document.getElementById('imageInput').click()">🖼️ Photo</button>
+    <button onclick="startVoice()">🎤 Voice</button>
+    <button onclick="toggleWeb()" id="webBtn">🌐 Web: OFF</button>
+    <button onclick="openPanel('studyPanel')">📚 Study</button>
+    <select id="mode"><option value="normal">Normal</option><option value="simple">Simple</option><option value="expert">Expert</option><option value="teacher">Teacher</option><option value="exam">Exam</option><option value="quiz">Quiz</option><option value="compare">Compare</option></select>
+  </div>
+  <div id="imagePreviewBox" class="hidden"></div>
+  <div class="composer">
+    <input id="messageInput" type="text" placeholder="Message NiSa AI..." autocomplete="off"
+      onkeydown="if(event.key==='Enter'&&!event.shiftKey){event.preventDefault();sendMessage()}">
+    <button class="send" id="sendBtn" onclick="sendMessage()">Send</button>
+  </div>
+  <input id="imageInput" type="file" accept="image/*" capture="environment" class="hidden" onchange="handleImage(this.files[0])">
+</div>
+</div>
+
+<!-- CAMERA -->
+<div id="cameraPanel" class="panel">
+ <div class="sheet">
+  <h3>📷 Camera</h3>
+  <video id="cameraVideo" autoplay playsinline></video>
+  <canvas id="cameraCanvas" class="hidden"></canvas>
+  <img id="cameraPreview" class="camera-preview hidden">
+  <div class="sheet-row">
+   <button onclick="capturePhoto()">📸 Capture</button>
+   <button onclick="retakePhoto()">🔄 Retake</button>
+   <button onclick="useCapturedPhoto()">✅ Use photo</button>
+   <button onclick="closeCamera()">✕ Close</button>
+  </div>
+ </div>
+</div>
+
+<!-- SETTINGS -->
+<div id="settingsPanel" class="panel">
+ <div class="sheet">
+  <h3>⚙️ Settings</h3>
+  <div class="sheet-row"><label>Theme</label><select id="themeSelect" onchange="setTheme(this.value)"><option value="dark">Dark</option><option value="light">Light</option></select></div>
+  <div class="sheet-row"><label>Language</label><select id="langSelect"><option value="auto">Auto</option><option value="en">English</option><option value="mr">मराठी</option><option value="hi">हिन्दी</option></select></div>
+  <div class="sheet-row"><button onclick="openPanel('memoryPanel');closePanel('settingsPanel')">🧠 Manage Memory</button><button onclick="exportChat()">📥 Export Chat</button></div>
+  <div class="sheet-row"><button onclick="closePanel('settingsPanel')">Close</button></div>
+ </div>
+</div>
+
+<!-- MEMORY -->
+<div id="memoryPanel" class="panel">
+ <div class="sheet">
+  <h3>🧠 User-controlled Memory</h3>
+  <p class="meta">Stored only in this browser. You can edit or clear it anytime.</p>
+  <textarea id="memoryText" rows="7" placeholder="Example: I prefer short answers..."></textarea>
+  <div class="sheet-row"><button onclick="saveMemory()">Save memory</button><button onclick="clearMemory()">Clear memory</button><button onclick="closePanel('memoryPanel')">Close</button></div>
+ </div>
+</div>
+
+<!-- STUDY -->
+<div id="studyPanel" class="panel">
+ <div class="sheet">
+  <h3>📚 Study tools</h3>
+  <div class="sheet-row">
+   <button onclick="studyPrompt('teacher')">🧑‍🏫 Teacher Mode</button>
+   <button onclick="studyPrompt('exam')">📝 Exam Mode</button>
+   <button onclick="studyPrompt('quiz')">🧩 Quiz Mode</button>
+   <button onclick="studyPrompt('flashcards')">🃏 Flashcards</button>
+  </div>
+  <div class="sheet-row"><button onclick="startTimer()">⏱️ Start 25-min timer</button><button onclick="resetTimer()">Reset timer</button></div>
+  <div id="timer" class="timer">25:00</div>
+  <div class="sheet-row"><button onclick="closePanel('studyPanel')">Close</button></div>
+ </div>
+</div>
 
 <script>
+const STORAGE_CHAT='nisa_chat_v2', STORAGE_MEMORY='nisa_memory_v2', STORAGE_THEME='nisa_theme_v2';
+let history=JSON.parse(localStorage.getItem(STORAGE_CHAT)||'[]');
+let memory=localStorage.getItem(STORAGE_MEMORY)||'';
+let selectedImage=null, webMode=false, stream=null, capturedData=null, timerSeconds=1500, timerId=null;
 
-async function sendMessage() {
+const chat=document.getElementById('chat');
+const input=document.getElementById('messageInput');
+const sendBtn=document.getElementById('sendBtn');
 
-  const input = document.getElementById("messageInput");
-  const chat = document.getElementById("chat");
-  const sendBtn = document.getElementById("sendBtn");
-
-  const text = input.value.trim();
-
-  if (!text) return;
-
-
-  // USER MESSAGE
-
-  const userMessage = document.createElement("div");
-
-  userMessage.className = "message user";
-
-  userMessage.textContent = text;
-
-  chat.appendChild(userMessage);
-
-  input.value = "";
-
-  chat.scrollTop = chat.scrollHeight;
-
-
-  // AI MESSAGE
-
-  const aiMessage = document.createElement("div");
-
-  aiMessage.className = "message ai";
-
-  aiMessage.innerHTML = `
-    <div class="thinking">
-      <span class="dot"></span>
-      <span class="dot"></span>
-      <span class="dot"></span>
-    </div>
-  `;
-
-  chat.appendChild(aiMessage);
-
-  chat.scrollTop = chat.scrollHeight;
-
-  sendBtn.disabled = true;
-
-
-  try {
-
-    const response = await fetch("/api/chat", {
-
-      method: "POST",
-
-      headers: {
-        "Content-Type": "application/json"
-      },
-
-      body: JSON.stringify({
-        message: text
-      })
-
-    });
-
-
-    const data = await response.json();
-
-
-    if (response.ok) {
-
-      aiMessage.textContent =
-        data.answer || "Sorry, I couldn't generate an answer.";
-
-    } else {
-
-      aiMessage.textContent =
-        "Error: " + (data.error || "Something went wrong.");
-
-    }
-
-  }
-
-  catch (error) {
-
-    aiMessage.textContent =
-      "Connection error. Please try again.";
-
-  }
-
-
-  sendBtn.disabled = false;
-
-  input.focus();
-
-  chat.scrollTop = chat.scrollHeight;
-
+function escapeHtml(s){return String(s).replace(/[&<>"']/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#039;'}[c]))}
+function formatAnswer(s){
+ s=escapeHtml(s);
+ s=s.replace(/```([\s\S]*?)```/g,'<pre style="white-space:pre-wrap;background:#0b0f14;padding:10px;border-radius:10px;overflow:auto">$1</pre>');
+ s=s.replace(/\*\*(.*?)\*\*/g,'<strong>$1</strong>');
+ s=s.replace(/`([^`]+)`/g,'<code>$1</code>');
+ return s;
 }
-
-
-function clearChat() {
-
-  const chat = document.getElementById("chat");
-
-  chat.innerHTML = `
-    <div class="welcome">
-      <h2>👋 Hello! I'm NiSa AI</h2>
-      <p>Ask me anything and I'll try my best to help.</p>
-    </div>
-
-    <div class="message ai">
-      Chat cleared. How can I help you?
-    </div>
-  `;
-
+function saveHistory(){localStorage.setItem(STORAGE_CHAT,JSON.stringify(history.slice(-80)))}
+function renderHistory(){
+ chat.innerHTML='<div class="welcome"><h2>👋 Hello! I\'m NiSa AI</h2><p>Ask me anything, upload a photo, or use the camera.</p></div>';
+ history.forEach((m,i)=>{
+   if(m.role==='user') addMessage('user',m.text,m.image,i,false);
+   else addMessage('ai',m.text,null,i,false);
+ });
+ chat.scrollTop=chat.scrollHeight;
 }
-
+function addMessage(role,text,image,index,save=true){
+ const el=document.createElement('div');el.className='message '+role;
+ if(image){const img=document.createElement('img');img.src=image;img.className='preview';el.appendChild(img)}
+ const body=document.createElement('div');
+ if(role==='ai') body.innerHTML=formatAnswer(text); else body.textContent=text;
+ el.appendChild(body);
+ if(role==='ai'){
+   const actions=document.createElement('div');actions.className='msg-actions';
+   actions.innerHTML=`<button onclick="copyText(this)">📋 Copy</button><button onclick="speakText(this)">🔊 Read</button><button onclick="regenerate(${index})">🔄 Regenerate</button>`;
+   el.appendChild(actions);
+   const c=document.createElement('div');c.className='confidence';c.textContent='AI answer • verify important facts';
+   el.appendChild(c);
+ } else {
+   const actions=document.createElement('div');actions.className='msg-actions';
+   actions.innerHTML=`<button onclick="editMessage(${index})">✏️ Edit</button>`;
+   el.appendChild(actions);
+ }
+ chat.appendChild(el);
+ if(save) chat.scrollTop=chat.scrollHeight;
+}
+function copyText(btn){
+ const box=btn.closest('.message');navigator.clipboard?.writeText(box.querySelector('div').innerText||'');btn.textContent='✅ Copied';setTimeout(()=>btn.textContent='📋 Copy',1000);
+}
+function speakText(btn){speechSynthesis.cancel();speechSynthesis.speak(new SpeechSynthesisUtterance(btn.closest('.message').querySelector('div').innerText))}
+function editMessage(index){
+ const m=history[index];if(!m||m.role!=='user')return;input.value=m.text;input.focus();
+}
+function regenerate(index){
+ if(index<0||!history[index]||history[index].role!=='assistant')return;
+ const prev=history[index-1];if(!prev)return;
+ input.value=prev.text;selectedImage=prev.image||null;sendMessage(true);
+}
+async function sendMessage(isRegenerate=false){
+ const text=input.value.trim();
+ if(!text&&!selectedImage)return;
+ const mode=document.getElementById('mode').value;
+ const image=selectedImage;
+ if(!isRegenerate){history.push({role:'user',text:text||'Please analyze this image.',image});saveHistory();addMessage('user',text||'Please analyze this image.',image,history.length-1);input.value='';}
+ else {input.value='';}
+ const aiIndex=history.length;
+ const ai=document.createElement('div');ai.className='message ai';ai.innerHTML='<div class="thinking"><span class="dot"></span><span class="dot"></span><span class="dot"></span></div>';chat.appendChild(ai);chat.scrollTop=chat.scrollHeight;sendBtn.disabled=true;
+ try{
+   const messages=history.slice(-20).map(x=>({role:x.role,content:x.text}));
+   const response=await fetch('/api/chat',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({message:text||'Analyze this image.',image,mode,language:document.getElementById('langSelect').value,memory,web:webMode,messages})});
+   const data=await response.json();
+   if(!response.ok)throw new Error(data.error||'Request failed');
+   const answer=data.answer||'Sorry, I could not generate an answer.';
+   ai.innerHTML=formatAnswer(answer)+`<div class="msg-actions"><button onclick="copyText(this)">📋 Copy</button><button onclick="speakText(this)">🔊 Read</button><button onclick="regenerate(${history.length})">🔄 Regenerate</button></div><div class="confidence">AI answer • verify important facts</div>`;
+   history.push({role:'assistant',text:answer});saveHistory();
+ }catch(e){ai.textContent='❌ '+e.message}
+ sendBtn.disabled=false;input.focus();selectedImage=null;clearPreview();chat.scrollTop=chat.scrollHeight;
+}
+function clearChat(){if(!confirm('Clear this conversation?'))return;history=[];saveHistory();renderHistory()}
+function handleImage(file){
+ if(!file)return;
+ const reader=new FileReader();reader.onload=()=>{selectedImage=reader.result;showPreview(selectedImage)};reader.readAsDataURL(file);
+}
+function showPreview(src){const b=document.getElementById('imagePreviewBox');b.classList.remove('hidden');b.innerHTML=`<img class="preview" src="${src}"><button class="mini" onclick="clearPreview()">✕ Remove photo</button>`}
+function clearPreview(){selectedImage=null;document.getElementById('imagePreviewBox').classList.add('hidden');document.getElementById('imagePreviewBox').innerHTML=''}
+async function openCamera(){
+ openPanel('cameraPanel');
+ try{stream=await navigator.mediaDevices.getUserMedia({video:{facingMode:'environment'},audio:false});document.getElementById('cameraVideo').srcObject=stream}catch(e){alert('Camera permission is unavailable. You can still use Photo upload.')}
+}
+function capturePhoto(){
+ const v=document.getElementById('cameraVideo'),c=document.getElementById('cameraCanvas'),p=document.getElementById('cameraPreview');
+ c.width=v.videoWidth||1280;c.height=v.videoHeight||720;c.getContext('2d').drawImage(v,0,0,c.width,c.height);capturedData=c.toDataURL('image/jpeg',.82);p.src=capturedData;p.classList.remove('hidden');v.classList.add('hidden');
+}
+function retakePhoto(){capturedData=null;document.getElementById('cameraPreview').classList.add('hidden');document.getElementById('cameraVideo').classList.remove('hidden')}
+function useCapturedPhoto(){if(!capturedData)return alert('Capture a photo first.');selectedImage=capturedData;showPreview(capturedData);closeCamera();input.focus()}
+function closeCamera(){if(stream){stream.getTracks().forEach(t=>t.stop());stream=null}closePanel('cameraPanel')}
+function startVoice(){
+ const SR=window.SpeechRecognition||window.webkitSpeechRecognition;if(!SR)return alert('Voice input is not supported in this browser.');
+ const r=new SR();r.lang=document.getElementById('langSelect').value==='mr'?'mr-IN':document.getElementById('langSelect').value==='hi'?'hi-IN':'en-IN';r.onresult=e=>input.value=e.results[0][0].transcript;r.start();
+}
+function toggleWeb(){webMode=!webMode;document.getElementById('webBtn').textContent='🌐 Web: '+(webMode?'ON':'OFF')}
+function openPanel(id){document.getElementById(id).classList.add('open');if(id==='memoryPanel')document.getElementById('memoryText').value=memory}
+function closePanel(id){document.getElementById(id).classList.remove('open')}
+document.querySelectorAll('.panel').forEach(p=>p.addEventListener('click',e=>{if(e.target===p)closePanel(p.id)}));
+function saveMemory(){memory=document.getElementById('memoryText').value.trim();localStorage.setItem(STORAGE_MEMORY,memory);alert('Memory saved on this device.')}
+function clearMemory(){memory='';localStorage.removeItem(STORAGE_MEMORY);document.getElementById('memoryText').value='';alert('Memory cleared.')}
+function setTheme(v){document.documentElement.style.setProperty('--bg',v==='light'?'#f6f7f9':'#0b0f14');document.documentElement.style.setProperty('--panel',v==='light'?'#fff':'#111720');document.documentElement.style.setProperty('--panel2',v==='light'?'#eef1f5':'#171d24');document.documentElement.style.setProperty('--border',v==='light'?'#d5dbe3':'#29313b');document.documentElement.style.setProperty('--text',v==='light'?'#111':'#fff');localStorage.setItem(STORAGE_THEME,v)}
+function exportChat(){const text=history.map(m=>(m.role==='user'?'You: ':'NiSa AI: ')+m.text).join('\\n\\n');const blob=new Blob([text],{type:'text/plain'}),a=document.createElement('a');a.href=URL.createObjectURL(blob);a.download='nisa-chat.txt';a.click();URL.revokeObjectURL(a.href)}
+function studyPrompt(type){
+ closePanel('studyPanel');const prompts={teacher:'Teach me this topic step by step like a teacher. Ask me small questions and explain mistakes.',exam:'Exam mode: give important points, likely questions, short answers and a quick revision checklist.',quiz:'Quiz mode: ask me one question at a time, wait for my answer, then score and explain.',flashcards:'Create 10 study flashcards from the topic I give you. Use Question → Answer format.'};input.value=prompts[type]||prompts.teacher;input.focus()
+}
+function startTimer(){if(timerId)return;timerId=setInterval(()=>{timerSeconds--;updateTimer();if(timerSeconds<=0){clearInterval(timerId);timerId=null;alert('Study timer finished!')}} ,1000)}
+function resetTimer(){clearInterval(timerId);timerId=null;timerSeconds=1500;updateTimer()}
+function updateTimer(){document.getElementById('timer').textContent=String(Math.floor(timerSeconds/60)).padStart(2,'0')+':'+String(timerSeconds%60).padStart(2,'0')}
+const savedTheme=localStorage.getItem(STORAGE_THEME)||'dark';document.getElementById('themeSelect').value=savedTheme;setTheme(savedTheme);renderHistory();updateTimer();
 </script>
-
 </body>
 </html>

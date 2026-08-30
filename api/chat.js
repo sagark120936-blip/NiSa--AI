@@ -1,131 +1,83 @@
 export default async function handler(req, res) {
   if (req.method !== "POST") {
-    return res.status(405).json({
-      error: "Method not allowed"
-    });
+    return res.status(405).json({ error: "Method not allowed" });
   }
 
   try {
-    const {
-      message,
-      image,
-      mode,
-      language,
-      memory,
-      messages
-    } = req.body || {};
+    const { message, image, mode, messages } = req.body || {};
 
-    if (!message && !image) {
-      return res.status(400).json({
-        error: "Message or image is required"
-      });
+    if ((!message || !message.trim()) && !image) {
+      return res.status(400).json({ error: "Message or image is required." });
     }
 
-    const systemPrompt = `
-You are NiSa AI, a friendly personal AI assistant.
-
-Answer clearly, helpfully and appropriately for students.
-
-Mode: ${mode || "normal"}
-Language: ${language || "auto"}
-
-${memory ? `User memory:\n${memory}` : ""}
-
-If an image is provided:
-- Carefully analyze the image.
-- Read visible text when possible.
-- Answer the user's question about the image.
-- Do not say that you cannot see images.
-`;
-
-    const userContent = [];
-
-    userContent.push({
-      type: "text",
-      text: message || "Please analyze this image carefully."
-    });
-
-    // IMAGE SUPPORT
-    if (image) {
-      userContent.push({
-        type: "image_url",
-        image_url: {
-          url: image
-        }
-      });
+    const apiKey = process.env.GROQ_API_KEY;
+    if (!apiKey) {
+      return res.status(500).json({ error: "GROQ_API_KEY is not configured in Vercel." });
     }
 
-    const previousMessages = Array.isArray(messages)
-      ? messages.slice(-10)
-      : [];
+    const system = `You are NiSa AI, a friendly personal AI assistant for a student.
+Answer clearly and accurately. Do not reveal hidden reasoning or internal analysis.
+If an image is provided, directly analyze what is visible. For school questions, give the answer first and a short explanation.
+Mode: ${mode || "Normal"}.`;
 
-    const groqMessages = [
-      {
-        role: "system",
-        content: systemPrompt
-      },
-      ...previousMessages.map((m) => ({
-        role: m.role,
-        content: m.content
-      })),
-      {
-        role: "user",
-        content: userContent
-      }
+    const content = [
+      { type: "text", text: message || "Please analyze this image carefully." }
     ];
 
-    const response = await fetch(
-      "https://api.groq.com/openai/v1/chat/completions",
-      {
-        method: "POST",
-
-        headers: {
-          "Content-Type": "application/json",
-          "Authorization": `Bearer ${process.env.GROQ_API_KEY}`
-        },
-
-        body: JSON.stringify({
-          model: "qwen/qwen3.6-27b",
-          messages: groqMessages,
-          temperature: 0.7,
-          max_completion_tokens: 2048
-        })
+    if (image) {
+      if (typeof image !== "string" || !image.startsWith("data:image/")) {
+        return res.status(400).json({ error: "Invalid image format." });
       }
-    );
+      if (image.length > 20 * 1024 * 1024) {
+        return res.status(413).json({ error: "Image is too large. Please choose a smaller photo." });
+      }
+      content.push({
+        type: "image_url",
+        image_url: { url: image }
+      });
+    }
+
+    const previous = Array.isArray(messages)
+      ? messages.slice(-12).filter(m => m && (m.role === "user" || m.role === "assistant") && typeof m.content === "string")
+      : [];
+
+    const finalMessages = [
+      { role: "system", content: system },
+      ...previous,
+      { role: "user", content }
+    ];
+
+    const response = await fetch("https://api.groq.com/openai/v1/chat/completions", {
+      method: "POST",
+      headers: {
+        "Content-Type": "application/json",
+        "Authorization": `Bearer ${apiKey}`
+      },
+      body: JSON.stringify({
+        model: "qwen/qwen3.6-27b",
+        messages: finalMessages,
+        temperature: 0.7,
+        max_completion_tokens: 2048
+      })
+    });
 
     const data = await response.json();
 
     if (!response.ok) {
       return res.status(response.status).json({
-        error:
-          data?.error?.message ||
-          "Groq API error"
+        error: data?.error?.message || "Groq API error."
       });
     }
 
-    let answer =
-  data?.choices?.[0]?.message?.content ||
-  "Sorry, I couldn't generate an answer.";
+    const answer = data?.choices?.[0]?.message?.content;
+    if (!answer) {
+      return res.status(502).json({ error: "Groq returned no answer." });
+    }
 
-// Hide model reasoning / thinking
-answer = answer
-  .replace(/<think>[\s\S]*?<\/think>/gi, "")
-  .replace(/<thinking>[\s\S]*?<\/thinking>/gi, "")
-  .trim();
-
-if (!answer) {
-  answer = "Sorry, I couldn't generate an answer.";
-}
-
-    return res.status(200).json({
-      answer
-    });
-
+    return res.status(200).json({ answer });
   } catch (error) {
-    console.error("NiSa AI error:", error);
-
     return res.status(500).json({
-      error: "Server error. Please try again."
+      error: error?.message || "Server error. Please try again."
     });
   }
 }

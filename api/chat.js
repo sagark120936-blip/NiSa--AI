@@ -6,19 +6,73 @@ export default async function handler(req, res) {
   }
 
   try {
-    const { message } = req.body || {};
+    const {
+      message,
+      image,
+      mode,
+      language,
+      memory,
+      messages
+    } = req.body || {};
 
-    if (!message || !message.trim()) {
+    if (!message && !image) {
       return res.status(400).json({
-        error: "Message is required"
+        error: "Message or image is required"
       });
     }
 
-    if (!process.env.GROQ_API_KEY) {
-      return res.status(500).json({
-        error: "GROQ_API_KEY is not configured"
+    const systemPrompt = `
+You are NiSa AI, a friendly personal AI assistant.
+
+Answer clearly, helpfully and appropriately for students.
+
+Mode: ${mode || "normal"}
+Language: ${language || "auto"}
+
+${memory ? `User memory:\n${memory}` : ""}
+
+If an image is provided:
+- Carefully analyze the image.
+- Read visible text when possible.
+- Answer the user's question about the image.
+- Do not say that you cannot see images.
+`;
+
+    const userContent = [];
+
+    userContent.push({
+      type: "text",
+      text: message || "Please analyze this image carefully."
+    });
+
+    // IMAGE SUPPORT
+    if (image) {
+      userContent.push({
+        type: "image_url",
+        image_url: {
+          url: image
+        }
       });
     }
+
+    const previousMessages = Array.isArray(messages)
+      ? messages.slice(-10)
+      : [];
+
+    const groqMessages = [
+      {
+        role: "system",
+        content: systemPrompt
+      },
+      ...previousMessages.map((m) => ({
+        role: m.role,
+        content: m.content
+      })),
+      {
+        role: "user",
+        content: userContent
+      }
+    ];
 
     const response = await fetch(
       "https://api.groq.com/openai/v1/chat/completions",
@@ -31,20 +85,9 @@ export default async function handler(req, res) {
         },
 
         body: JSON.stringify({
-          model: "openai/gpt-oss-20b",
-
-          messages: [
-            {
-              role: "system",
-              content:
-                "You are NiSa AI, a friendly personal AI assistant. Answer clearly, helpfully, and appropriately for students."
-            },
-            {
-              role: "user",
-              content: message
-            }
-          ],
-
+          model: "qwen/qwen3.6-27b",
+          messages: groqMessages,
+          temperature: 0.7,
           max_completion_tokens: 2048
         })
       }
@@ -61,25 +104,18 @@ export default async function handler(req, res) {
     }
 
     const answer =
-      data?.choices?.[0]?.message?.content;
-
-    if (!answer) {
-      return res.status(502).json({
-        error: "No answer received from Groq"
-      });
-    }
+      data?.choices?.[0]?.message?.content ||
+      "Sorry, I couldn't generate an answer.";
 
     return res.status(200).json({
-      answer: answer
+      answer
     });
 
   } catch (error) {
-
     console.error("NiSa AI error:", error);
 
     return res.status(500).json({
-      error: error?.message ||
-        "Server error. Please try again."
+      error: "Server error. Please try again."
     });
   }
 }

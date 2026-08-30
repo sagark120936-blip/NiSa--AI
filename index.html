@@ -137,7 +137,44 @@ const input=document.getElementById('messageInput');
 const sendBtn=document.getElementById('sendBtn');
 
 function escapeHtml(s){return String(s).replace(/[&<>"']/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#039;'}[c]))}
-function formatAnswer(s){
+function formatAnswer(s) {
+  s = String(s || "");
+
+  // Remove model thinking/reasoning
+  s = s.replace(/<think>[\s\S]*?<\/think>/gi, "");
+  s = s.replace(/<thinking>[\s\S]*?<\/thinking>/gi, "");
+
+  // Escape HTML safely
+  s = escapeHtml(s);
+
+  // Code blocks
+  s = s.replace(
+    /```([\s\S]*?)```/g,
+    '<pre style="white-space:pre-wrap;background:#0b0f14;padding:12px;border-radius:10px;overflow:auto">$1</pre>'
+  );
+
+  // Inline code
+  s = s.replace(/`([^`]+)`/g, "<code>$1</code>");
+
+  // Headings
+  s = s.replace(/^### (.*)$/gm, "<h4>$1</h4>");
+  s = s.replace(/^## (.*)$/gm, "<h3>$1</h3>");
+  s = s.replace(/^# (.*)$/gm, "<h2>$1</h2>");
+
+  // Bold
+  s = s.replace(/\*\*(.*?)\*\*/g, "<strong>$1</strong>");
+
+  // Italic
+  s = s.replace(/\*(.*?)\*/g, "<em>$1</em>");
+
+  // Bullet points
+  s = s.replace(/^[•*-] (.*)$/gm, "• $1");
+
+  // Line breaks
+  s = s.replace(/\n/g, "<br>");
+
+  return s;
+}
  s=escapeHtml(s);
  s=s.replace(/```([\s\S]*?)```/g,'<pre style="white-space:pre-wrap;background:#0b0f14;padding:10px;border-radius:10px;overflow:auto">$1</pre>');
  s=s.replace(/\*\*(.*?)\*\*/g,'<strong>$1</strong>');

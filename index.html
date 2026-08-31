@@ -17,7 +17,7 @@ header{height:68px;display:flex;align-items:center;gap:11px;padding:10px 14px;bo
 .icon{border:1px solid #2a3440;background:#171d24;color:#fff;border-radius:11px;padding:9px 11px}
 #chat{flex:1;overflow:auto;padding:20px 16px 12px;scroll-behavior:smooth}
 .welcome{padding:10px 2px 22px}.welcome h2{font-size:27px;margin:0 0 7px}.welcome p{margin:0;color:#9aa4b2}
-.message{max-width:88%;margin:0 0 14px;padding:13px 14px;border-radius:17px;line-height:1.55;word-break:break-word;white-space:pre-wrap}
+.message{max-width:92%;margin:0 0 14px;padding:13px 14px;border-radius:17px;line-height:1.55;word-break:break-word;white-space:pre-wrap}
 .message.user{margin-left:auto;background:#2563eb}.message.ai{margin-right:auto;background:#171d24;border:1px solid #29313b}
 .preview{display:block;max-width:260px;max-height:220px;border-radius:13px;margin-bottom:9px;object-fit:cover}
 .actions{display:flex;gap:6px;flex-wrap:wrap;margin-top:10px}
@@ -106,6 +106,9 @@ code{background:#0b0f14;padding:2px 5px;border-radius:5px}
   </div>
 </div>
 
+<style>
+.formula{display:block;margin:10px 0;padding:9px 11px;background:#0b0f14;border:1px solid #29313b;border-radius:10px;overflow-x:auto;font-family:Georgia,serif;font-size:16px}.frac{display:inline-flex;flex-direction:column;vertical-align:middle;text-align:center;line-height:1.05;margin:0 3px}.frac .top{border-bottom:1px solid currentColor;padding:0 3px}.frac .bottom{padding:1px 3px 0}.mathsup{font-size:.72em;vertical-align:super}.mathsub{font-size:.72em;vertical-align:sub}
+</style>
 <script>
 const KEY='nisa_history_v4', MEM='nisa_memory_v4';
 let history=JSON.parse(localStorage.getItem(KEY)||'[]');
@@ -114,9 +117,21 @@ let selectedImage=null, cameraStream=null, captured=null, timer=1500, timerId=nu
 const chat=document.getElementById('chat'), input=document.getElementById('input'), send=document.getElementById('send');
 
 function esc(s){return String(s??'').replace(/[&<>"']/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#039;'}[c]))}
-function format(s){
+function mathToHtml(s){
   let x=esc(s);
+  x=x.replace(/\$\$([\s\S]*?)\$\$/g,'<span class=\"formula\">$1</span>');
+  x=x.replace(/\$([^$\n]+)\$/g,'<span class=\"formula\">$1</span>');
+  x=x.replace(/\\frac\{([^{}]+)\}\{([^{}]+)\}/g,'<span class=\"frac\"><span class=\"top\">$1</span><span class=\"bottom\">$2</span></span>');
+  x=x.replace(/\\Omega/g,'Ω').replace(/\\times/g,'×').replace(/\\cdot/g,'·').replace(/\\leq/g,'≤').replace(/\\geq/g,'≥').replace(/\\rightarrow/g,'→').replace(/\\pi/g,'π').replace(/\\Delta/g,'Δ');
+  x=x.replace(/\^\{([^{}]+)\}/g,'<sup>$1</sup>').replace(/\^([A-Za-z0-9])/g,'<sup>$1</sup>');
+  x=x.replace(/_\{([^{}]+)\}/g,'<sub>$1</sub>').replace(/_([A-Za-z0-9])/g,'<sub>$1</sub>');
+  return x;
+}
+function format(s){
+  let x=mathToHtml(s);
   x=x.replace(/```([\s\S]*?)```/g,'<pre>$1</pre>');
+  x=x.replace(/^###\s*(.+)$/gm,'<h3>$1</h3>');
+  x=x.replace(/^##\s*(.+)$/gm,'<h3>$1</h3>');
   x=x.replace(/\*\*(.*?)\*\*/g,'<strong>$1</strong>');
   x=x.replace(/`([^`]+)`/g,'<code>$1</code>');
   return x;

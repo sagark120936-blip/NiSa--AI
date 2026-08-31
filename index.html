@@ -37,6 +37,22 @@ header{height:68px;display:flex;align-items:center;gap:11px;padding:10px 14px;bo
 pre{white-space:pre-wrap;overflow:auto;background:#0b0f14;padding:10px;border-radius:10px}
 code{background:#0b0f14;padding:2px 5px;border-radius:5px}
 @media(max-width:600px){#chat{padding:14px}.message{max-width:94%}.welcome h2{font-size:23px}.brand h1{font-size:18px}}
+
+/* NEXT-GEN UI */
+:root{--accent:#8b5cf6;--accent2:#4f46e5;--glow:rgba(139,92,246,.28)}
+body{background:radial-gradient(circle at 50% -10%,#17102d 0,#0b0f14 34%,#07090d 100%)}
+.app{background:transparent;max-width:1100px}
+header{height:72px;background:rgba(7,9,15,.82);backdrop-filter:blur(18px);border-bottom:1px solid #252b3a}
+.brand h1{font-size:20px;letter-spacing:-.3px}.brand h1:after{content:' PRO';font-size:9px;padding:3px 6px;margin-left:5px;border-radius:99px;background:linear-gradient(135deg,#8b5cf6,#2563eb);vertical-align:middle}
+.icon{background:linear-gradient(180deg,#171d29,#111722);box-shadow:0 8px 25px rgba(0,0,0,.2)}
+.welcome{padding:22px 4px 24px}.welcome h2{font-size:clamp(28px,5vw,42px);letter-spacing:-1.4px}.welcome h2{background:linear-gradient(90deg,#fff,#b9a3ff,#7dd3fc);-webkit-background-clip:text;color:transparent}.welcome p{font-size:14px}
+.quick-actions{display:grid;grid-template-columns:repeat(5,1fr);gap:8px;margin:16px 0 25px}.quick-actions button{background:linear-gradient(180deg,#131a27,#0e141e);border:1px solid #293246;color:#eef2f7;border-radius:14px;padding:11px 9px;text-align:left;min-height:62px}.quick-actions b{display:block;font-size:11px}.quick-actions span{display:block;font-size:9px;color:#8f99aa;margin-top:4px}
+.message{border-radius:20px;box-shadow:0 8px 28px rgba(0,0,0,.12)}.message.ai{background:linear-gradient(180deg,#121925,#0e141e);border-color:#293246}.message.user{background:linear-gradient(135deg,#315fe8,#4f46e5)}
+.composer{background:rgba(7,10,16,.9);backdrop-filter:blur(18px);border-top-color:#252b3a;padding-top:10px}.tools button,.tools select{background:#151c29;border-color:#2a3446}.tools button.active{background:#281746;border-color:#8b5cf6}
+.row input{background:#101620;border-color:#2a3446}.send{background:linear-gradient(135deg,#8b5cf6,#4f46e5);color:#fff;box-shadow:0 8px 22px var(--glow)}
+.camera .sheet{width:min(520px,100%);border-radius:24px;background:#0d131e}.cam-stage{position:relative;background:#000;border-radius:18px;overflow:hidden;aspect-ratio:3/4}.cam-stage video{width:100%;height:100%;object-fit:cover}.scan-frame{position:absolute;width:78%;height:54%;border:2px solid #b18cff;border-radius:18px;box-shadow:0 0 0 999px rgba(0,0,0,.16),0 0 28px rgba(139,92,246,.3)}.scan-frame:after{content:'ALIGN PAGE';position:absolute;top:-27px;left:0;font-size:9px;letter-spacing:1.4px;color:#d9ccff}.scan-line{position:absolute;left:5%;right:5%;height:2px;top:50%;background:#b18cff;box-shadow:0 0 16px #b18cff;animation:scanline 2s ease-in-out infinite}@keyframes scanline{0%{transform:translateY(-120px);opacity:.2}50%{opacity:1}100%{transform:translateY(120px);opacity:.2}}
+.cam-modes{display:flex;gap:6px;margin-top:10px;overflow:auto}.cam-modes button{flex:1;min-width:72px;background:#151c29;color:#fff;border:1px solid #2a3446;border-radius:10px;padding:9px 7px;font-size:11px}.cam-modes button.on{background:#6d28d9;border-color:#a78bfa}.capture-btn{width:66px;height:66px;border-radius:50%;border:5px solid #fff;background:linear-gradient(135deg,#8b5cf6,#4f46e5);display:block;margin:13px auto 4px;box-shadow:0 0 28px rgba(139,92,246,.35)}
+@media(max-width:700px){.quick-actions{grid-template-columns:repeat(2,1fr)}.quick-actions button:last-child{grid-column:span 2}}
 </style>
 </head>
 <body>
@@ -49,7 +65,7 @@ code{background:#0b0f14;padding:2px 5px;border-radius:5px}
 </header>
 
 <main id="chat">
-  <div class="welcome"><h2>👋 Hello! I'm NiSa AI</h2><p>Ask me anything, upload a photo, or use the camera.</p></div>
+  <div class="welcome"><h2>👋 Hello! I'm NiSa AI</h2><p>Ask me anything, upload a photo, or use the camera.</p></div><div class="quick-actions"><button onclick="quickPrompt('Explain this topic simply and give an example.')"><b>✨ Explain</b><span>Learn step-by-step</span></button><button onclick="quickPrompt('Solve this problem step by step and show the final answer clearly.')"><b>∑ Solve</b><span>Math & Physics</span></button><button onclick="quickPrompt('Summarize this in short, useful points.')"><b>▤ Summarize</b><span>Fast revision</span></button><button onclick="quickPrompt('Quiz me on this topic one question at a time.')"><b>🧩 Quiz</b><span>Practice</span></button><button onclick="quickPrompt('Help me write or debug this code professionally.')"><b>&lt;/&gt; Code</b><span>Build & debug</span></button></div>
 </main>
 
 <section class="composer">
@@ -69,17 +85,15 @@ code{background:#0b0f14;padding:2px 5px;border-radius:5px}
 </section>
 </div>
 
-<div id="camera" class="panel">
+<div id="camera" class="panel camera">
   <div class="sheet">
-    <h3>📷 Camera</h3>
-    <video id="video" autoplay playsinline style="width:100%;max-height:55vh;background:#000;border-radius:14px"></video>
-    <canvas id="canvas" class="hidden"></canvas>
-    <img id="shot" class="preview hidden">
-    <div class="line">
-      <button onclick="capture()">📸 Capture</button>
-      <button onclick="useShot()">✅ Use</button>
-      <button onclick="closeCamera()">Close</button>
-    </div>
+    <h3>📷 AI Camera</h3>
+    <div style="font-size:11px;color:#8994a3;margin-bottom:12px">Scan a question, textbook page, diagram or board. Capture only when it is inside the frame.</div>
+    <div class="cam-stage"><video id="video" autoplay playsinline></video><canvas id="canvas" class="hidden"></canvas><div class="scan-frame"><div class="scan-line"></div></div></div>
+    <div class="cam-modes"><button class="on" onclick="setCamMode('scan',this)">Scan</button><button onclick="setCamMode('solve',this)">Solve</button><button onclick="setCamMode('read',this)">Read</button><button onclick="setCamMode('diagram',this)">Diagram</button></div>
+    <div id="camHint" style="text-align:center;color:#8994a3;font-size:10px;margin-top:9px">Auto-guided document capture</div>
+    <button class="capture-btn" onclick="capture()"></button>
+    <div class="line" style="text-align:center"><button onclick="useShot()">✓ Use capture</button> <button onclick="closeCamera()">Close</button></div>
   </div>
 </div>
 
@@ -112,7 +126,7 @@ code{background:#0b0f14;padding:2px 5px;border-radius:5px}
 <script>
 const KEY='nisa_history_v4', MEM='nisa_memory_v4';
 let history=JSON.parse(localStorage.getItem(KEY)||'[]');
-let selectedImage=null, cameraStream=null, captured=null, timer=1500, timerId=null;
+let selectedImage=null, cameraStream=null, captured=null, timer=1500, timerId=null, webMode=false, camMode='scan';
 
 const chat=document.getElementById('chat'), input=document.getElementById('input'), send=document.getElementById('send');
 
@@ -186,7 +200,7 @@ async function sendMessage(){
   const ai=document.createElement('div');ai.className='message ai';ai.innerHTML='<div class="thinking"><span class="dot"></span><span class="dot"></span><span class="dot"></span></div>';chat.appendChild(ai);chat.scrollTop=chat.scrollHeight;send.disabled=true;
   try{
     const messages=history.slice(-16).map(m=>({role:m.role,content:m.text}));
-    const res=await fetch('/api/chat',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({message:text,image,mode,language,memory,messages})});
+    const res=await fetch('/api/chat',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({message:text,image,mode,language,memory,web:webMode,messages})});
     const data=await res.json().catch(()=>({error:'Server returned invalid JSON'}));
     if(!res.ok)throw new Error(data.error||('Server error '+res.status));
     const answer=data.answer||'No answer received.';
@@ -209,7 +223,7 @@ async function openCamera(){
   catch(e){alert('Camera permission is unavailable. Use Photo instead.')}
 }
 function capture(){const v=document.getElementById('video'),c=document.getElementById('canvas'),im=document.getElementById('shot');c.width=v.videoWidth||1280;c.height=v.videoHeight||720;c.getContext('2d').drawImage(v,0,0,c.width,c.height);captured=c.toDataURL('image/jpeg',.78);im.src=captured;im.classList.remove('hidden')}
-function useShot(){if(!captured)return alert('Capture a photo first.');selectedImage=captured;showPreview();closeCamera()}
+function useShot(){if(!captured)return alert('Capture a photo first.');selectedImage=captured;showPreview();closeCamera();input.value={scan:'Analyze this image carefully and extract the useful information.',solve:'Solve the problem shown in this image step by step.',read:'Read and transcribe the visible text accurately.',diagram:'Explain the diagram, labels and working clearly.'}[camMode]||'Analyze this image.'}
 function closeCamera(){if(cameraStream){cameraStream.getTracks().forEach(t=>t.stop());cameraStream=null}closePanel('camera')}
 function voiceInput(){
   const SR=window.SpeechRecognition||window.webkitSpeechRecognition;if(!SR)return alert('Voice input is not supported here.');
@@ -221,9 +235,4 @@ document.querySelectorAll('.panel').forEach(p=>p.onclick=e=>{if(e.target===p)clo
 function saveSettings(){localStorage.setItem(MEM,document.getElementById('memory').value.trim());closePanel('settings')}
 function study(type){closePanel('study');const p={teacher:'Teach me this topic step by step like a teacher.',exam:'Exam mode: give important questions, short answers and revision points.',quiz:'Quiz mode: ask one question at a time and wait for my answer.'};input.value=p[type];input.focus()}
 function updateTimer(){document.getElementById('timer').textContent=String(Math.floor(timer/60)).padStart(2,'0')+':'+String(timer%60).padStart(2,'0')}
-function startTimer(){if(timerId)return;timerId=setInterval(()=>{timer--;updateTimer();if(timer<=0){clearInterval(timerId);timerId=null;alert('Study timer finished!')}},1000)}
-function resetTimer(){clearInterval(timerId);timerId=null;timer=1500;updateTimer()}
-render();updateTimer();
-</script>
-</body>
-</html>
+function startTimer(){if(timerId)return;timerId=setInterval(()=>{timer--;updateTimer();if(timer<=0){clearInterval(timerId);timerId=nul

@@ -1,23 +1,21 @@
-NiSa AI — NEXT GENERATION BUILD
-
-Replace your existing project files with the files in this folder:
-  index.html
-  api/chat.js
-
-Vercel setup:
-1. Keep api/chat.js under /api/chat.js
-2. Vercel → Project → Settings → Environment Variables
-3. Add GROQ_API_KEY = your Groq API key
+NiSa AI – FIXED NextGen
+1. Replace your Vercel project's index.html with this index.html.
+2. Replace/create api/chat.js with the included api/chat.js.
+3. In Vercel → Settings → Environment Variables, add GROQ_API_KEY.
 4. Redeploy.
+5. Test GET /api/chat. It should show apiKeyConfigured:true.
+6. If the browser still shows an old version, hard refresh / clear site data once.
 
-New UI/features:
-- Modern glass/neon AI interface
-- AI Camera with guided scan frame and Scan/Solve/Read/Diagram modes
-- Photo upload with client-side compression
+Fixes included:
+- Send button + Enter key robust handling
+- All panels use direct event listeners
+- AI Camera capture preview fixed
+- Camera close/retake/use fixed
+- Photo upload/compression fixed
 - Voice input
-- Professional response style + hidden reasoning output
-- Quick actions: Explain / Solve / Summarize / Quiz / Code
-- Study modes, memory, language selector, export and dark UI
-- Qwen 3.6 27B vision model by default
-
-Important: the Web toggle is a UI preference only in this build. It does not falsely claim to browse the live web.
+- Study tools + timer
+- Settings + memory
+- Web toggle UI
+- Quick actions
+- Hidden reasoning cleanup
+- Better image/text prompt behavior

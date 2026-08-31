@@ -25,7 +25,8 @@ export default async function handler(req, res) {
     const image = body.image || null;
     const mode = String(body.mode || "normal");
     const language = String(body.language || "auto");
-    const memory = String(body.memory || "");
+    const memory = String(body.memory || "").slice(0,3000);
+    const web = Boolean(body.web);
     const oldMessages = Array.isArray(body.messages) ? body.messages : [];
 
     if (!message && !image) {
@@ -48,13 +49,13 @@ export default async function handler(req, res) {
     }[mode] || "Be helpful, clear and concise.";
 
     const system =
-      "You are NiSa AI, a friendly personal AI assistant. " +
-      "Never reveal private chain-of-thought or internal reasoning. " +
+      "You are NiSa AI, a polished next-generation AI assistant. " +
+      "Never reveal private chain-of-thought, hidden reasoning, tool traces, or <think> blocks. Return only the useful final answer. " +
       "Give only the useful final answer. " +
-      "If an image is supplied, actually inspect it and answer from what is visible. " +
-      "Do not invent unreadable text; say when something is unclear. " +
+      "If an image is supplied, inspect it carefully. Distinguish clear observations from uncertainty and never invent unreadable text. " +
+      "Use clean headings, bullets, numbered steps and tables when useful. For maths/physics show necessary calculations. Match Marathi/Hinglish naturally when the user does. " +
       languageRule + " " + modeRule +
-      (memory ? " User preferences: " + memory : "");
+      (memory ? " User preferences: " + memory : "") + (web ? " Web mode is enabled, but do not claim live browsing unless external web results are actually provided. Clearly say when live web access is unavailable." : "");
 
     const history = oldMessages
       .filter(m => m && (m.role === "user" || m.role === "assistant"))
@@ -129,4 +130,4 @@ export default async function handler(req, res) {
       error: err?.message || "Server error. Please try again."
     });
   }
-} 
+}

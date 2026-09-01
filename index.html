@@ -1,787 +1,462 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
+<meta name="theme-color" content="#0b0f14">
+<title>NiSa AI</title>
+<style>
+*{box-sizing:border-box}html,body{margin:0;height:100%;font-family:Arial,sans-serif}
+:root{--bg:#0b0f14;--panel:#121821;--panel2:#171e27;--border:#2a3440;--text:#fff;--muted:#9aa4b2;--accent:#7c5cff;--user:#2563eb}
+body{background:var(--bg);color:var(--text)}
+button,input,select,textarea{font:inherit}button{cursor:pointer}
+.app{height:100dvh;max-width:950px;margin:auto;display:flex;flex-direction:column}
+header{display:flex;align-items:center;gap:10px;padding:12px 14px;border-bottom:1px solid var(--border);background:var(--bg);flex:none}
+.logo{width:42px;height:42px;border-radius:50%;display:grid;place-items:center;background:#fff;color:#111;font-weight:800;flex:none}
+.title{flex:1;min-width:0}.title h1{margin:0;font-size:20px}.title p{margin:3px 0 0;color:var(--muted);font-size:11px}
+.icon-btn{background:var(--panel2);color:#fff;border:1px solid var(--border);border-radius:12px;padding:9px 11px}
+#chat{flex:1;overflow-y:auto;padding:18px 14px 12px}
+.welcome{margin-bottom:20px}.welcome h2{margin:0 0 7px;font-size:clamp(26px,6vw,40px)}
+.welcome h2 span{background:linear-gradient(90deg,#fff,#bda8ff,#7dd3fc);-webkit-background-clip:text;color:transparent}
+.welcome p{color:var(--muted);margin:0}
+.quick{display:grid;grid-template-columns:repeat(5,1fr);gap:8px;margin-top:16px}
+.quick button{min-height:64px;text-align:left;border:1px solid var(--border);border-radius:13px;background:linear-gradient(180deg,#131a25,#10161f);color:#fff;padding:10px}
+.quick b{display:block;font-size:11px}.quick small{display:block;color:var(--muted);font-size:9px;margin-top:4px}
+.message{max-width:90%;padding:14px;border-radius:17px;margin-bottom:14px;line-height:1.55;word-break:break-word}
+.message.user{margin-left:auto;background:linear-gradient(135deg,#315fe8,#2455d5)}
+.message.ai{margin-right:auto;background:var(--panel2);border:1px solid var(--border)}
+.message-body{white-space:pre-wrap}
+.message-body strong{font-weight:800}.message-body code{background:#0c1118;padding:2px 5px;border-radius:5px}
+.message-body pre{white-space:pre-wrap;background:#0c1118;padding:11px;border-radius:10px;overflow:auto}
+.preview{display:block;max-width:280px;max-height:220px;border-radius:12px;margin-bottom:8px}
+.msg-actions{display:flex;gap:6px;flex-wrap:wrap;margin-top:10px}
+.msg-actions button,.mini{border:0;background:#222b36;color:#e5ebf3;border-radius:9px;padding:6px 9px;font-size:12px}
+.confidence{font-size:10px;color:#788392;margin-top:7px}
+.thinking{display:flex;align-items:center;gap:5px;color:#aab3bf}.dot{width:7px;height:7px;border-radius:50%;background:#aab3bf;animation:blink 1.1s infinite}.dot:nth-child(2){animation-delay:.18s}.dot:nth-child(3){animation-delay:.36s}
+@keyframes blink{0%,80%,100%{opacity:.2}40%{opacity:1}}
+.composer{border-top:1px solid var(--border);padding:9px 10px calc(9px + env(safe-area-inset-bottom));background:rgba(11,15,20,.97);backdrop-filter:blur(15px)}
+.toolbar{display:flex;gap:6px;overflow-x:auto;padding-bottom:8px}
+.tool{white-space:nowrap;background:var(--panel2);color:#fff;border:1px solid var(--border);border-radius:10px;padding:8px 10px}
+.tool.active{border-color:var(--accent);background:#251a45}
+.compose-row{display:flex;gap:8px}
+#input{flex:1;min-width:0;background:#151a20;color:#fff;border:1px solid #303944;border-radius:14px;padding:13px;outline:0}
+#input:focus{border-color:var(--accent)}
+#send{border:0;border-radius:14px;min-width:72px;background:linear-gradient(135deg,#8b5cf6,#4f46e5);color:#fff;font-weight:800}
+#send:disabled{opacity:.5}
+.hidden{display:none!important}
+.panel{position:fixed;inset:0;background:rgba(0,0,0,.72);display:none;align-items:flex-end;justify-content:center;z-index:20}
+.panel.open{display:flex}
+.sheet{width:min(950px,100%);max-height:88dvh;overflow:auto;background:#111720;border:1px solid var(--border);border-radius:20px 20px 0 0;padding:18px}
+.sheet h3{margin:0 0 12px}.sheet p{color:var(--muted);font-size:12px}.sheet-row{display:flex;gap:8px;flex-wrap:wrap;margin:10px 0}
+.sheet button{border:0;background:#202833;color:#fff;border-radius:10px;padding:9px 12px}
+.sheet input,.sheet select,.sheet textarea{width:100%;background:#151a20;color:#fff;border:1px solid var(--border);border-radius:10px;padding:10px}
+#video{width:100%;max-height:55vh;object-fit:cover;border-radius:14px;background:#000}
+#shot{width:100%;max-height:50vh;object-fit:contain;border-radius:14px;background:#000}
+.camera-hint{font-size:11px;color:var(--muted);margin:8px 0;text-align:center}
+.timer{font-size:42px;text-align:center;margin:14px}
+@media(max-width:700px){.quick{grid-template-columns:repeat(2,1fr)}.quick button:last-child{grid-column:span 2}.message{max-width:95%}.icon-btn{padding:8px}}
+</style>
+</head>
+<body>
+<div class="app">
+<header>
+  <div class="logo">N</div>
+  <div class="title"><h1>NiSa AI</h1><p>Your personal AI assistant</p></div>
+  <button class="icon-btn" id="settingsBtn" type="button">⚙️</button>
+  <button class="icon-btn" id="clearBtn" type="button">🗑️</button>
+</header>
+
+<main id="chat">
+  <div class="welcome">
+    <h2>👋 Hello! I'm <span>NiSa AI</span></h2>
+    <p>Ask me anything, upload a photo, or use the camera.</p>
+    <div class="quick">
+      <button type="button" data-prompt="Explain this topic simply with an example."><b>✨ Explain</b><small>Step-by-step</small></button>
+      <button type="button" data-prompt="Solve this problem step by step and show the final answer clearly."><b>∑ Solve</b><small>Math & Physics</small></button>
+      <button type="button" data-prompt="Summarize this into short useful revision points."><b>▤ Summarize</b><small>Fast revision</small></button>
+      <button type="button" data-prompt="Quiz me one question at a time and wait for my answer."><b>🧩 Quiz</b><small>Practice</small></button>
+      <button type="button" data-prompt="Help me write or debug this code professionally."><b>&lt;/&gt; Code</b><small>Build & debug</small></button>
+    </div>
+  </div>
+</main>
+
+<section class="composer">
+  <div class="toolbar">
+    <button class="tool" id="photoBtn" type="button">🖼️ Photo</button>
+    <button class="tool" id="cameraBtn" type="button">📷 Camera</button>
+    <button class="tool" id="voiceBtn" type="button">🎤 Voice</button>
+    <button class="tool" id="webBtn" type="button">🌐 Web: OFF</button>
+    <button class="tool" id="studyBtn" type="button">📚 Study</button>
+    <select class="tool" id="mode">
+      <option value="normal">Normal</option>
+      <option value="simple">Simple</option>
+      <option value="expert">Expert</option>
+      <option value="teacher">Teacher</option>
+      <option value="exam">Exam</option>
+      <option value="quiz">Quiz</option>
+      <option value="compare">Compare</option>
+    </select>
+  </div>
+  <div id="previewBox" class="hidden"></div>
+  <div class="compose-row">
+    <input id="input" type="text" placeholder="Message NiSa AI..." autocomplete="off">
+    <button id="send" type="button">Send</button>
+  </div>
+  <input id="file" class="hidden" type="file" accept="image/*">
+</section>
+</div>
+
+<div id="cameraPanel" class="panel">
+  <div class="sheet">
+    <h3>📷 Camera</h3>
+    <p>Allow camera access, capture a photo, then use it in chat.</p>
+    <video id="video" autoplay playsinline></video>
+    <canvas id="canvas" class="hidden"></canvas>
+    <img id="shot" class="hidden" alt="Captured photo">
+    <div class="camera-hint" id="cameraHint">Camera ready when permission is granted.</div>
+    <div class="sheet-row">
+      <button id="captureBtn" type="button">📸 Capture</button>
+      <button id="retakeBtn" type="button">🔄 Retake</button>
+      <button id="useShotBtn" type="button">✅ Use photo</button>
+      <button id="closeCameraBtn" type="button">✕ Close</button>
+    </div>
+  </div>
+</div>
+
+<div id="settingsPanel" class="panel">
+  <div class="sheet">
+    <h3>⚙️ Settings</h3>
+    <div class="sheet-row"><label>Theme</label><select id="theme"><option value="dark">Dark</option><option value="light">Light</option></select></div>
+    <div class="sheet-row"><label>Language</label><select id="language"><option value="auto">Auto</option><option value="en">English</option><option value="mr">मराठी</option><option value="hi">हिन्दी</option></select></div>
+    <div class="sheet-row"><label>Memory</label><textarea id="memory" rows="5" placeholder="Optional preferences..."></textarea></div>
+    <div class="sheet-row"><button id="saveSettings" type="button">Save</button><button id="exportBtn" type="button">📥 Export chat</button><button id="closeSettings" type="button">Close</button></div>
+  </div>
+</div>
+
+<div id="studyPanel" class="panel">
+  <div class="sheet">
+    <h3>📚 Study Tools</h3>
+    <div class="sheet-row">
+      <button type="button" data-study="teacher">🧑‍🏫 Teacher</button>
+      <button type="button" data-study="exam">📝 Exam</button>
+      <button type="button" data-study="quiz">🧩 Quiz</button>
+      <button type="button" data-study="flashcards">🃏 Flashcards</button>
+    </div>
+    <div id="timer" class="timer">25:00</div>
+    <div class="sheet-row"><button id="startTimer" type="button">▶ Start</button><button id="resetTimer" type="button">↻ Reset</button><button id="closeStudy" type="button">Close</button></div>
+  </div>
+</div>
+
 <script>
-const STORAGE_CHAT = 'nisa_chat_v3';
-const STORAGE_MEMORY = 'nisa_memory_v3';
+document.addEventListener('DOMContentLoaded', () => {
+  'use strict';
 
-let history = [];
-try {
-  history = JSON.parse(localStorage.getItem(STORAGE_CHAT) || '[]');
-  if (!Array.isArray(history)) history = [];
-} catch {
-  history = [];
-}
+  const KEY = 'nisa_stable_chat';
+  const MEM = 'nisa_stable_memory';
+  const THEME = 'nisa_stable_theme';
+  const LANG = 'nisa_stable_lang';
 
-let memory = localStorage.getItem(STORAGE_MEMORY) || '';
-let selectedImage = null;
-let webMode = false;
-let stream = null;
-let capturedData = null;
-let timerSeconds = 1500;
-let timerId = null;
-let abortController = null;
+  const $ = id => document.getElementById(id);
+  const chat = $('chat');
+  const input = $('input');
+  const sendBtn = $('send');
+  const file = $('file');
+  const previewBox = $('previewBox');
 
-const chat = document.getElementById('chat');
-const input = document.getElementById('input');
-const sendBtn = document.getElementById('send');
-const fileInput = document.getElementById('file');
-const previewBox = document.getElementById('previewBox');
-
-function escapeHtml(value) {
-  return String(value ?? '').replace(/[&<>"']/g, c => ({
-    '&': '&amp;',
-    '<': '&lt;',
-    '>': '&gt;',
-    '"': '&quot;',
-    "'": '&#039;'
-  }[c]));
-}
-
-function formatAnswer(value) {
-  let s = escapeHtml(value);
-
-  s = s.replace(
-    /```([\s\S]*?)```/g,
-    '<pre>$1</pre>'
-  );
-
-  s = s.replace(/\*\*(.*?)\*\*/g, '<strong>$1</strong>');
-  s = s.replace(/`([^`]+)`/g, '<code>$1</code>');
-
-  return s.replace(/\n/g, '<br>');
-}
-
-function saveHistory() {
+  let history = [];
   try {
-    localStorage.setItem(
-      STORAGE_CHAT,
-      JSON.stringify(history.slice(-80))
-    );
-  } catch {}
-}
+    history = JSON.parse(localStorage.getItem(KEY) || '[]');
+    if (!Array.isArray(history)) history = [];
+  } catch (_) { history = []; }
 
-function addMessage(role, text, image, index) {
-  const el = document.createElement('div');
-  el.className = 'message ' + role;
+  let selectedImage = null;
+  let webMode = false;
+  let stream = null;
+  let captured = null;
+  let timerSeconds = 1500;
+  let timerId = null;
+  let controller = null;
 
-  if (image) {
+  const memoryBox = $('memory');
+  memoryBox.value = localStorage.getItem(MEM) || '';
+  $('language').value = localStorage.getItem(LANG) || 'auto';
+  $('theme').value = localStorage.getItem(THEME) || 'dark';
+
+  function esc(s) {
+    return String(s ?? '').replace(/[&<>"']/g, c => ({
+      '&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#039;'
+    }[c]));
+  }
+
+  function renderAnswer(s) {
+    let x = esc(s);
+    x = x.replace(/```([\s\S]*?)```/g, '<pre>$1</pre>');
+    x = x.replace(/\*\*(.*?)\*\*/g, '<strong>$1</strong>');
+    x = x.replace(/`([^`]+)`/g, '<code>$1</code>');
+    return x.replace(/\n/g, '<br>');
+  }
+
+  function saveHistory() {
+    try { localStorage.setItem(KEY, JSON.stringify(history.slice(-80))); } catch (_) {}
+  }
+
+  function addMessage(role, text, image, index) {
+    const el = document.createElement('div');
+    el.className = 'message ' + role;
+
+    if (image) {
+      const img = document.createElement('img');
+      img.className = 'preview';
+      img.src = image;
+      el.appendChild(img);
+    }
+
+    const body = document.createElement('div');
+    body.className = 'message-body';
+    body.innerHTML = role === 'ai' ? renderAnswer(text) : esc(text);
+    el.appendChild(body);
+
+    const actions = document.createElement('div');
+    actions.className = 'msg-actions';
+
+    if (role === 'ai') {
+      const copy = document.createElement('button');
+      copy.type = 'button'; copy.textContent = '📋 Copy';
+      copy.onclick = () => {
+        const done = () => { copy.textContent = '✅ Copied'; setTimeout(() => copy.textContent = '📋 Copy', 900); };
+        if (navigator.clipboard) navigator.clipboard.writeText(body.innerText).then(done).catch(() => fallbackCopy(body.innerText, done));
+        else fallbackCopy(body.innerText, done);
+      };
+
+      const read = document.createElement('button');
+      read.type = 'button'; read.textContent = '🔊 Read';
+      read.onclick = () => {
+        if (!('speechSynthesis' in window)) return alert('Read-aloud is not supported here.');
+        speechSynthesis.cancel();
+        speechSynthesis.speak(new SpeechSynthesisUtterance(body.innerText));
+      };
+
+      actions.append(copy, read);
+    } else {
+      const edit = document.createElement('button');
+      edit.type = 'button'; edit.textContent = '✏️ Edit';
+      edit.onclick = () => { input.value = text || ''; if (image) { selectedImage = image; showPreview(image); } input.focus(); };
+      actions.appendChild(edit);
+    }
+
+    el.appendChild(actions);
+
+    if (role === 'ai') {
+      const c = document.createElement('div');
+      c.className = 'confidence';
+      c.textContent = 'AI answer • verify important facts';
+      el.appendChild(c);
+    }
+    chat.appendChild(el);
+  }
+
+  function fallbackCopy(text, done) {
+    try {
+      const ta = document.createElement('textarea');
+      ta.value = text;
+      document.body.appendChild(ta);
+      ta.select();
+      document.execCommand('copy');
+      ta.remove();
+      done();
+    } catch (_) {}
+  }
+
+  function renderHistory() {
+    const welcome = chat.querySelector('.welcome');
+    chat.innerHTML = '';
+    if (welcome) chat.appendChild(welcome);
+    history.forEach((m, i) => addMessage(m.role === 'assistant' ? 'ai' : 'user', m.text || '', m.image || null, i));
+    chat.scrollTop = chat.scrollHeight;
+  }
+
+  function showThinking() {
+    const el = document.createElement('div');
+    el.className = 'message ai';
+    el.dataset.thinking = '1';
+    el.innerHTML = '<div class="thinking">NiSa is thinking <span class="dot"></span><span class="dot"></span><span class="dot"></span></div>';
+    chat.appendChild(el);
+    chat.scrollTop = chat.scrollHeight;
+    return el;
+  }
+
+  function clearPreview() {
+    selectedImage = null;
+    previewBox.classList.add('hidden');
+    previewBox.innerHTML = '';
+    file.value = '';
+  }
+
+  function showPreview(src) {
+    previewBox.classList.remove('hidden');
+    previewBox.innerHTML = '';
     const img = document.createElement('img');
-    img.src = image;
-    img.className = 'preview';
-    el.appendChild(img);
+    img.src = src; img.className = 'preview'; img.alt = 'Selected photo';
+    const btn = document.createElement('button');
+    btn.type = 'button'; btn.className = 'mini'; btn.textContent = '✕ Remove photo';
+    btn.onclick = clearPreview;
+    previewBox.append(img, btn);
   }
 
-  const body = document.createElement('div');
-  body.className = 'message-body';
-
-  if (role === 'ai') {
-    body.innerHTML = formatAnswer(text);
-  } else {
-    body.textContent = text;
+  function setBusy(busy) {
+    sendBtn.disabled = false;
+    sendBtn.textContent = busy ? 'Stop' : 'Send';
+    sendBtn.onclick = busy ? stopGeneration : sendMessage;
   }
 
-  el.appendChild(body);
-
-  const actions = document.createElement('div');
-  actions.className = 'actions';
-
-  if (role === 'ai') {
-    actions.innerHTML = `
-      <button type="button" onclick="copyText(this)">📋 Copy</button>
-      <button type="button" onclick="speakText(this)">🔊 Read</button>
-    `;
-  } else {
-    actions.innerHTML = `
-      <button type="button" onclick="editMessage(${index})">
-        ✏️ Edit
-      </button>
-    `;
+  function stopGeneration() {
+    if (controller) controller.abort();
   }
 
-  el.appendChild(actions);
+  async function sendMessage() {
+    if (sendBtn.textContent === 'Stop') return;
 
-  if (role === 'ai') {
-    const c = document.createElement('div');
-    c.className = 'conf';
-    c.textContent = 'AI answer • verify important facts';
-    el.appendChild(c);
-  }
+    const text = input.value.trim();
+    if (!text && !selectedImage) return;
 
-  chat.appendChild(el);
-}
+    const image = selectedImage;
+    const mode = $('mode').value;
+    const language = $('language').value;
+    const memory = localStorage.getItem(MEM) || '';
 
-function renderHistory() {
-  chat.innerHTML = `
-    <div class="welcome">
-      <h2>👋 Hello! I'm NiSa AI</h2>
-      <p>Ask me anything, upload a photo, or use the camera.</p>
-    </div>
-  `;
+    history.push({ role:'user', text:text || 'Please analyze this image.', image:image || null });
+    saveHistory();
+    addMessage('user', text || 'Please analyze this image.', image, history.length - 1);
 
-  history.forEach((m, i) => {
-    addMessage(
-      m.role === 'assistant' ? 'ai' : 'user',
-      m.text || '',
-      m.image || null,
-      i
-    );
-  });
+    input.value = '';
+    clearPreview();
 
-  chat.scrollTop = chat.scrollHeight;
-}
+    const aiEl = showThinking();
+    setBusy(true);
+    controller = new AbortController();
 
-function copyText(btn) {
-  const msg = btn.closest('.message');
-  const body = msg?.querySelector('.message-body');
-  const text = body?.innerText || '';
-
-  if (navigator.clipboard) {
-    navigator.clipboard.writeText(text).then(() => {
-      const old = btn.textContent;
-      btn.textContent = '✅ Copied';
-
-      setTimeout(() => {
-        btn.textContent = old;
-      }, 1000);
-    }).catch(() => fallbackCopy(text));
-  } else {
-    fallbackCopy(text);
-  }
-}
-
-function fallbackCopy(text) {
-  const ta = document.createElement('textarea');
-  ta.value = text;
-  document.body.appendChild(ta);
-  ta.select();
-  document.execCommand('copy');
-  ta.remove();
-}
-
-function speakText(btn) {
-  const body = btn.closest('.message')?.querySelector('.message-body');
-
-  if (!body || !('speechSynthesis' in window)) {
-    alert('Read-aloud is not supported here.');
-    return;
-  }
-
-  speechSynthesis.cancel();
-
-  const speech = new SpeechSynthesisUtterance(body.innerText);
-  speech.lang = getLanguage();
-
-  speechSynthesis.speak(speech);
-}
-
-function getLanguage() {
-  const language = document.getElementById('language')?.value || 'auto';
-
-  if (language === 'mr') return 'mr-IN';
-  if (language === 'hi') return 'hi-IN';
-
-  return 'en-IN';
-}
-
-function editMessage(index) {
-  const m = history[index];
-
-  if (!m || m.role !== 'user') return;
-
-  input.value = m.text || '';
-
-  if (m.image) {
-    selectedImage = m.image;
-    showPreview(m.image);
-  }
-
-  input.focus();
-}
-
-function clearChat() {
-  if (!confirm('Clear this conversation?')) return;
-
-  history = [];
-  saveHistory();
-  renderHistory();
-}
-
-function setBusy(busy) {
-  sendBtn.disabled = false;
-  sendBtn.textContent = busy ? 'Stop' : 'Send';
-
-  if (busy) {
-    sendBtn.onclick = stopGeneration;
-  } else {
-    sendBtn.onclick = sendMessage;
-  }
-}
-
-function stopGeneration() {
-  if (abortController) {
-    abortController.abort();
-  }
-}
-
-function showThinking() {
-  const ai = document.createElement('div');
-
-  ai.className = 'message ai';
-  ai.id = 'activeAIMessage';
-
-  ai.innerHTML = `
-    <div class="thinking">
-      <span class="dot"></span>
-      <span class="dot"></span>
-      <span class="dot"></span>
-    </div>
-  `;
-
-  chat.appendChild(ai);
-  chat.scrollTop = chat.scrollHeight;
-
-  return ai;
-}
-
-async function sendMessage() {
-  if (sendBtn.textContent === 'Stop') return;
-
-  const text = input.value.trim();
-
-  if (!text && !selectedImage) return;
-
-  const mode =
-    document.getElementById('mode')?.value || 'normal';
-
-  const language =
-    document.getElementById('language')?.value || 'auto';
-
-  const image = selectedImage;
-
-  history.push({
-    role: 'user',
-    text: text || 'Please analyze this image.',
-    image: image || null
-  });
-
-  saveHistory();
-
-  addMessage(
-    'user',
-    text || 'Please analyze this image.',
-    image,
-    history.length - 1
-  );
-
-  input.value = '';
-  clearPreview();
-
-  const aiEl = showThinking();
-
-  sendBtn.textContent = 'Stop';
-  sendBtn.onclick = stopGeneration;
-
-  abortController = new AbortController();
-
-  try {
-    const messages = history
-      .slice(-14)
-      .map(m => ({
+    try {
+      const context = history.slice(-16).map(m => ({
         role: m.role,
         content: String(m.text || '')
       }));
 
-    const payload = {
-      message: text || 'Analyze this image.',
-      image: image || null,
-      mode,
-      language,
-      memory,
-      web: webMode,
-      messages
-    };
-
-    const response = await fetch('/api/chat', {
-      method: 'POST',
-      headers: {
-        'Content-Type': 'application/json',
-        'Accept': 'application/json'
-      },
-      body: JSON.stringify(payload),
-      signal: abortController.signal
-    });
-
-    const raw = await response.text();
-
-    let data = {};
-
-    try {
-      data = raw ? JSON.parse(raw) : {};
-    } catch {
-      throw new Error('Server returned an invalid response.');
-    }
-
-    if (!response.ok) {
-      throw new Error(
-        data.error || ('Server error ' + response.status)
-      );
-    }
-
-    const answer = String(
-      data.answer ||
-      data.message ||
-      data.output ||
-      ''
-    ).trim();
-
-    if (!answer) {
-      throw new Error('AI returned an empty answer.');
-    }
-
-    aiEl.innerHTML = `
-      <div class="message-body">
-        ${formatAnswer(answer)}
-      </div>
-
-      <div class="actions">
-        <button type="button" onclick="copyText(this)">
-          📋 Copy
-        </button>
-
-        <button type="button" onclick="speakText(this)">
-          🔊 Read
-        </button>
-      </div>
-
-      <div class="conf">
-        AI answer • verify important facts
-      </div>
-    `;
-
-    history.push({
-      role: 'assistant',
-      text: answer
-    });
-
-    saveHistory();
-
-  } catch (err) {
-
-    if (err.name === 'AbortError') {
-      aiEl.innerHTML = `
-        <div class="message-body">
-          ⏹️ Generation stopped.
-        </div>
-      `;
-    } else {
-      aiEl.innerHTML = `
-        <div class="message-body">
-          ❌ ${escapeHtml(
-            err.message || 'Something went wrong.'
-          )}
-        </div>
-        <div class="conf">
-          Check the API deployment and try again.
-        </div>
-      `;
-    }
-
-  } finally {
-    abortController = null;
-    sendBtn.disabled = false;
-    sendBtn.textContent = 'Send';
-    sendBtn.onclick = sendMessage;
-
-    input.focus();
-    chat.scrollTop = chat.scrollHeight;
-  }
-}
-
-function handleImage(file) {
-  if (!file) return;
-
-  if (!file.type.startsWith('image/')) {
-    alert('Please select an image.');
-    return;
-  }
-
-  const reader = new FileReader();
-
-  reader.onload = () => {
-    selectedImage = reader.result;
-    showPreview(selectedImage);
-  };
-
-  reader.onerror = () => {
-    alert('Could not read this image.');
-  };
-
-  reader.readAsDataURL(file);
-}
-
-function showPreview(src) {
-  previewBox.classList.remove('hidden');
-
-  previewBox.innerHTML = `
-    <img
-      class="preview"
-      src="${escapeHtml(src)}"
-      alt="Selected photo"
-    >
-
-    <button
-      type="button"
-      class="mini"
-      onclick="clearPreview()"
-    >
-      ✕ Remove photo
-    </button>
-  `;
-}
-
-function clearPreview() {
-  selectedImage = null;
-
-  previewBox.classList.add('hidden');
-  previewBox.innerHTML = '';
-
-  fileInput.value = '';
-}
-
-async function openCamera() {
-  openPanel('cameraPanel');
-
-  const video = document.getElementById('video');
-
-  try {
-    if (!navigator.mediaDevices?.getUserMedia) {
-      throw new Error('Camera not supported');
-    }
-
-    stream = await navigator.mediaDevices.getUserMedia({
-      video: {
-        facingMode: {
-          ideal: 'environment'
-        }
-      },
-      audio: false
-    });
-
-    video.srcObject = stream;
-
-    await video.play().catch(() => {});
-
-    video.classList.remove('hidden');
-
-  } catch {
-    alert(
-      'Camera permission is unavailable. You can still use Photo upload.'
-    );
-  }
-}
-
-function capturePhoto() {
-  const video = document.getElementById('video');
-  const canvas = document.getElementById('canvas');
-  const shot = document.getElementById('shot');
-
-  if (!video?.videoWidth) {
-    alert('Camera is not ready yet.');
-    return;
-  }
-
-  canvas.width = video.videoWidth;
-  canvas.height = video.videoHeight;
-
-  const ctx = canvas.getContext('2d');
-
-  ctx.drawImage(
-    video,
-    0,
-    0,
-    canvas.width,
-    canvas.height
-  );
-
-  capturedData = canvas.toDataURL(
-    'image/jpeg',
-    0.85
-  );
-
-  shot.src = capturedData;
-  shot.classList.remove('hidden');
-
-  video.classList.add('hidden');
-}
-
-function retakePhoto() {
-  capturedData = null;
-
-  document.getElementById('shot')?.classList.add('hidden');
-  document.getElementById('video')?.classList.remove('hidden');
-}
-
-function useCapturedPhoto() {
-  if (!capturedData) {
-    alert('Capture a photo first.');
-    return;
-  }
-
-  selectedImage = capturedData;
-
-  showPreview(capturedData);
-  closeCamera();
-
-  input.focus();
-}
-
-function closeCamera() {
-  if (stream) {
-    stream.getTracks().forEach(track => track.stop());
-    stream = null;
-  }
-
-  closePanel('cameraPanel');
-}
-
-function startVoice() {
-  const SR =
-    window.SpeechRecognition ||
-    window.webkitSpeechRecognition;
-
-  if (!SR) {
-    alert('Voice input is not supported in this browser.');
-    return;
-  }
-
-  const r = new SR();
-
-  const language =
-    document.getElementById('language')?.value || 'auto';
-
-  r.lang =
-    language === 'mr'
-      ? 'mr-IN'
-      : language === 'hi'
-      ? 'hi-IN'
-      : 'en-IN';
-
-  r.interimResults = false;
-  r.maxAlternatives = 1;
-
-  r.onresult = e => {
-    input.value =
-      e.results[0][0].transcript;
-
-    input.focus();
-  };
-
-  r.onerror = e => {
-    alert(
-      'Voice input error: ' +
-      (e.error || 'unknown')
-    );
-  };
-
-  r.start();
-}
-
-function toggleWeb() {
-  webMode = !webMode;
-
-  const btn =
-    document.getElementById('webBtn');
-
-  btn.textContent =
-    '🌐 Web: ' +
-    (webMode ? 'ON' : 'OFF');
-
-  btn.classList.toggle(
-    'active',
-    webMode
-  );
-}
-
-function openPanel(id) {
-  document
-    .getElementById(id)
-    ?.classList.add('open');
-}
-
-function closePanel(id) {
-  document
-    .getElementById(id)
-    ?.classList.remove('open');
-}
-
-function saveSettings() {
-  memory =
-    document.getElementById('memory')?.value || '';
-
-  localStorage.setItem(
-    STORAGE_MEMORY,
-    memory
-  );
-
-  closePanel('settingsPanel');
-}
-
-function setStudyMode(mode) {
-  const modeSelect =
-    document.getElementById('mode');
-
-  if (modeSelect) {
-    if (
-      mode === 'teacher' ||
-      mode === 'exam' ||
-      mode === 'quiz'
-    ) {
-      modeSelect.value = mode;
-    }
-  }
-
-  closePanel('studyPanel');
-}
-
-function updateTimer() {
-  const timer =
-    document.getElementById('timer');
-
-  if (!timer) return;
-
-  const min =
-    String(Math.floor(timerSeconds / 60))
-      .padStart(2, '0');
-
-  const sec =
-    String(timerSeconds % 60)
-      .padStart(2, '0');
-
-  timer.textContent =
-    min + ':' + sec;
-}
-
-function startTimer() {
-  if (timerId) return;
-
-  timerId = setInterval(() => {
-    if (timerSeconds <= 0) {
-      clearInterval(timerId);
-      timerId = null;
-      alert('⏰ Study timer finished!');
-      return;
-    }
-
-    timerSeconds--;
-    updateTimer();
-  }, 1000);
-}
-
-function resetTimer() {
-  clearInterval(timerId);
-  timerId = null;
-  timerSeconds = 1500;
-  updateTimer();
-}
-
-/* Buttons */
-
-<script>
-<script>
-document.addEventListener('DOMContentLoaded', () => {
-
-  const safe = (id, event, handler) => {
-    const el = document.getElementById(id);
-
-    if (!el) {
-      console.warn(`NiSa AI: #${id} not found`);
-      return;
-    }
-
-    el.addEventListener(event, handler);
-  };
-
-  safe('send', 'click', sendMessage);
-
-  safe('input', 'keydown', e => {
-    if (e.key === 'Enter') {
-      e.preventDefault();
-      sendMessage();
-    }
-  });
-
-  safe('photoBtn', 'click', () => {
-    if (fileInput) fileInput.click();
-  });
-
-  safe('file', 'change', e => {
-    handleImage(e.target?.files?.[0]);
-  });
-
-  safe('cameraBtn', 'click', openCamera);
-  safe('captureBtn', 'click', capturePhoto);
-  safe('retakeBtn', 'click', retakePhoto);
-  safe('useShotBtn', 'click', useCapturedPhoto);
-  safe('closeCameraBtn', 'click', closeCamera);
-
-  safe('voiceBtn', 'click', startVoice);
-  safe('webBtn', 'click', toggleWeb);
-
-  safe('settingsBtn', 'click', () => {
-    const memoryBox = document.getElementById('memory');
-
-    if (memoryBox) {
-      memoryBox.value = memory;
-    }
-
-    openPanel('settingsPanel');
-  });
-
-  safe('saveSettings', 'click', saveSettings);
-
-  safe('closeSettings', 'click', () => {
-    closePanel('settingsPanel');
-  });
-
-  safe('clearBtn', 'click', clearChat);
-
-  safe('studyBtn', 'click', () => {
-    openPanel('studyPanel');
-  });
-
-  safe('closeStudy', 'click', () => {
-    closePanel('studyPanel');
-  });
-
-  safe('startTimer', 'click', startTimer);
-  safe('resetTimer', 'click', resetTimer);
-
-  document.querySelectorAll('.panel').forEach(panel => {
-    panel.addEventListener('click', e => {
-      if (e.target === panel) {
-        closePanel(panel.id);
-      }
-    });
-  });
-
-  document.querySelectorAll('.quick button').forEach(btn => {
-    btn.addEventListener('click', () => {
-      input.value = btn.dataset.prompt || '';
+      const response = await fetch('/api/chat', {
+        method:'POST',
+        headers:{'Content-Type':'application/json','Accept':'application/json'},
+        body:JSON.stringify({
+          message:text || 'Analyze this image.',
+          image,
+          mode,
+          language,
+          memory,
+          web:webMode,
+          messages:context
+        }),
+        signal:controller.signal
+      });
+
+      const raw = await response.text();
+      let data = {};
+      try { data = raw ? JSON.parse(raw) : {}; }
+      catch (_) { throw new Error('Server returned an invalid response.'); }
+
+      if (!response.ok) throw new Error(data.error || ('Server error ' + response.status));
+
+      const answer = String(data.answer || '').trim();
+      if (!answer) throw new Error('AI returned an empty answer.');
+
+      aiEl.innerHTML =
+        '<div class="message-body">' + renderAnswer(answer) + '</div>' +
+        '<div class="msg-actions">' +
+        '<button type="button" class="copy-now">📋 Copy</button>' +
+        '<button type="button" class="read-now">🔊 Read</button>' +
+        '</div>' +
+        '<div class="confidence">AI answer • verify important facts</div>';
+
+      aiEl.querySelector('.copy-now').onclick = () => navigator.clipboard?.writeText(answer);
+      aiEl.querySelector('.read-now').onclick = () => {
+        if ('speechSynthesis' in window) { speechSynthesis.cancel(); speechSynthesis.speak(new SpeechSynthesisUtterance(answer)); }
+      };
+
+      history.push({ role:'assistant', text:answer });
+      saveHistory();
+    } catch (err) {
+      aiEl.innerHTML = '<div class="message-body">❌ ' + esc(err.name === 'AbortError' ? 'Generation stopped.' : (err.message || 'Something went wrong.')) + '</div>';
+    } finally {
+      controller = null;
+      setBusy(false);
       input.focus();
-    });
-  });
+      chat.scrollTop = chat.scrollHeight;
+    }
+  }
 
-  document.querySelectorAll('[data-study]').forEach(btn => {
-    btn.addEventListener('click', () => {
-      setStudyMode(btn.dataset.study);
-    });
-  });
+  function openPanel(id) { const p = $(id); if (p) p.classList.add('open'); }
+  function closePanel(id) { const p = $(id); if (p) p.classList.remove('open'); }
 
-  updateTimer();
-  renderHistory();
+  async function openCamera() {
+    openPanel('cameraPanel');
+    const video = $('video');
+    try {
+      if (!navigator.mediaDevices?.getUserMedia) throw new Error('Camera unsupported');
+      stream = await navigator.mediaDevices.getUserMedia({ video:{facingMode:{ideal:'environment'}}, audio:false });
+      video.srcObject = stream;
+      $('cameraHint').textContent = 'Camera is ready. Capture when ready.';
+    } catch (_) {
+      $('cameraHint').textContent = 'Camera permission unavailable. You can still use Photo.';
+      alert('Camera permission is unavailable. Please allow camera access or use Photo.');
+    }
+  }
 
-  if (input) {
+  function capturePhoto() {
+    const video = $('video'), canvas = $('canvas'), shot = $('shot');
+    if (!video.videoWidth) return alert('Camera is not ready yet.');
+    canvas.width = video.videoWidth; canvas.height = video.videoHeight;
+    canvas.getContext('2d').drawImage(video, 0, 0, canvas.width, canvas.height);
+    captured = canvas.toDataURL('image/jpeg', 0.78);
+    shot.src = captured; shot.classList.remove('hidden');
+    video.classList.add('hidden');
+    $('cameraHint').textContent = 'Captured. Tap “Use photo”.';
+  }
+
+  function retakePhoto() {
+    captured = null;
+    $('shot').classList.add('hidden');
+    $('video').classList.remove('hidden');
+    $('cameraHint').textContent = 'Camera is ready. Capture when ready.';
+  }
+
+  function useCapturedPhoto() {
+    if (!captured) return alert('Capture a photo first.');
+    selectedImage = captured;
+    showPreview(captured);
+    closeCamera();
     input.focus();
   }
 
-});
-</script>
-</script>
+  function closeCamera() {
+    if (stream) { stream.getTracks().forEach(t => t.stop()); stream = null; }
+    closePanel('cameraPanel');
+  }
+
+  function startVoice() {
+    const SR = window.SpeechRecognition || window.webkitSpeechRecognition;
+    if (!SR) return alert('Voice input is not supported in this browser.');
+    const r = new SR();
+    const l = $('language').value;
+    r.lang = l === 'mr' ? 'mr-IN' : l === 'hi' ? 'hi-IN' : 'en-IN';
+    r.interimResults = false;
+    r.maxAlternatives = 1;
+    r.onresult = e => { input.value = e.results[0][0].transcript; input.focus(); };
+    r.onerror = e => alert('Voice input error: ' + (e.error || 'unknown'));
+    r.start();
+  }
+
+  function toggleWeb() {
+    webMode = !webMode;
+    $('webBtn').textContent = '🌐 Web: ' + (webMode ? 'ON' : 'OFF');
+    $('webBtn').classList.toggle('active', webMode);
+  }
+
+  function setTheme(v) {
+    const light = v === 'l

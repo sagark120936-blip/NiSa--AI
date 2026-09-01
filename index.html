@@ -684,7 +684,8 @@ function resetTimer() {
 
 /* Buttons */
 
-l<script>
+<script>
+<script>
 document.addEventListener('DOMContentLoaded', () => {
 
   const safe = (id, event, handler) => {
@@ -708,11 +709,11 @@ document.addEventListener('DOMContentLoaded', () => {
   });
 
   safe('photoBtn', 'click', () => {
-    fileInput?.click();
+    if (fileInput) fileInput.click();
   });
 
   safe('file', 'change', e => {
-    handleImage(e.target.files?.[0]);
+    handleImage(e.target?.files?.[0]);
   });
 
   safe('cameraBtn', 'click', openCamera);
@@ -782,4 +783,5 @@ document.addEventListener('DOMContentLoaded', () => {
   }
 
 });
+</script>
 </script>

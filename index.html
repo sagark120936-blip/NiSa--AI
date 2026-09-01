@@ -94,116 +94,303 @@ pre{white-space:pre-wrap;background:#0b0f14;padding:10px;border-radius:10px;over
 </div></div>
 
 <script>
-(() => {
-'use strict';
-const KEY='nisa_history_v5', MEM='nisa_memory_v5', LANG='nisa_lang_v5';
-let history=[],selectedImage=null,cameraStream=null,captured=null,camMode='scan',webMode=false,timerSeconds=1500,timerId=null;
-const $=id=>document.getElementById(id);
-const chat=$('chat'),input=$('input'),send=$('send');
+const STORAGE_CHAT='nisa_chat_v3';
+const STORAGE_MEMORY='nisa_memory_v3';
+const STORAGE_THEME='nisa_theme_v3';
 
-try{history=JSON.parse(localStorage.getItem(KEY)||'[]');if(!Array.isArray(history))history=[]}catch{history=[]}
+let history=[];
+try { history=JSON.parse(localStorage.getItem(STORAGE_CHAT)||'[]'); if(!Array.isArray(history)) history=[]; } catch(e){ history=[]; }
 
-function esc(s){return String(s??'').replace(/[&<>"']/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#039;'}[c]))}
-function format(s){
- let x=esc(s);
- x=x.replace(/```([\s\S]*?)```/g,'<pre>$1</pre>');
- x=x.replace(/\$\$([\s\S]*?)\$\$/g,'<div class="formula">$1</div>');
- x=x.replace(/\$([^$\n]+)\$/g,'<span class="formula">$1</span>');
- x=x.replace(/\\frac\{([^{}]+)\}\{([^{}]+)\}/g,'<span class="frac"><span class="top">$1</span><span class="bottom">$2</span></span>');
- x=x.replace(/\\(Omega|times|cdot|leq|geq|rightarrow|pi|Delta)/g,(_,m)=>({Omega:'Ω',times:'×',cdot:'·',leq:'≤',geq:'≥',rightarrow:'→',pi:'π',Delta:'Δ'}[m]));
- x=x.replace(/\^\{([^{}]+)\}/g,'<sup>$1</sup>').replace(/\^([A-Za-z0-9])/g,'<sup>$1</sup>');
- x=x.replace(/_\{([^{}]+)\}/g,'<sub>$1</sub>').replace(/_([A-Za-z0-9])/g,'<sub>$1</sub>');
- x=x.replace(/^###\s*(.+)$/gm,'<h3>$1</h3>').replace(/^##\s*(.+)$/gm,'<h3>$1</h3>');
- x=x.replace(/\*\*(.*?)\*\*/g,'<strong>$1</strong>').replace(/`([^`]+)`/g,'<code>$1</code>');
- return x;
+let memory=localStorage.getItem(STORAGE_MEMORY)||'';
+let selectedImage=null;
+let webMode=false;
+let stream=null;
+let capturedData=null;
+let timerSeconds=1500;
+let timerId=null;
+let abortController=null;
+
+const chat=document.getElementById('chat');
+const input=document.getElementById('messageInput');
+const sendBtn=document.getElementById('sendBtn');
+
+function escapeHtml(value){
+  return String(value??'').replace(/[&<>"']/g,c=>({
+    '&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#039;'
+  }[c]));
 }
-function save(){try{localStorage.setItem(KEY,JSON.stringify(history.slice(-80)))}catch{}}
-function add(role,text,image){
- const el=document.createElement('div');el.className='message '+role;
- if(image){const im=document.createElement('img');im.src=image;im.className='preview';el.appendChild(im)}
- const body=document.createElement('div');body.innerHTML=role==='ai'?format(text):esc(text);el.appendChild(body);
- const actions=document.createElement('div');actions.className='actions';
- if(role==='ai'){
-  const cp=document.createElement('button');cp.textContent='📋 Copy';cp.onclick=()=>navigator.clipboard?.writeText(body.innerText);
-  const rd=document.createElement('button');rd.textContent='🔊 Read';rd.onclick=()=>{speechSynthesis.cancel();speechSynthesis.speak(new SpeechSynthesisUtterance(body.innerText))};
-  actions.append(cp,rd);
- }else{
-  const ed=document.createElement('button');ed.textContent='✏️ Edit';ed.onclick=()=>{input.value=text;input.focus()};
-  actions.append(ed);
- }
- el.appendChild(actions);
- if(role==='ai'){const c=document.createElement('div');c.className='conf';c.textContent='AI answer • verify important facts';el.appendChild(c)}
- chat.appendChild(el);chat.scrollTop=chat.scrollHeight;
+
+function formatAnswer(value){
+  let s=escapeHtml(value);
+  s=s.replace(/<think>[\s\S]*?<\/think>/gi,'');
+  s=s.replace(/```([\s\S]*?)```/g,
+    '<pre style="white-space:pre-wrap;background:#0b0f14;padding:10px;border-radius:10px;overflow:auto">$1</pre>');
+  s=s.replace(/\*\*(.*?)\*\*/g,'<strong>$1</strong>');
+  s=s.replace(/`([^`]+)`/g,'<code>$1</code>');
+  return s.replace(/\n/g,'<br>');
 }
-function render(){chat.innerHTML='<div class="welcome"><h2>👋 Hello! I\'m NiSa AI</h2><p>Ask anything, scan a question, or talk naturally.</p></div>';history.forEach(m=>add(m.role,m.text,m.image||null))}
-function clearChat(){if(confirm('Clear this conversation?')){history=[];save();render()}}
-function openPanel(id){$(id).classList.add('open')}
-function closePanel(id){$(id).classList.remove('open')}
-function showPreview(){
- const b=$('previewBox');b.classList.remove('hidden');b.innerHTML='';
- const im=document.createElement('img');im.src=selectedImage;im.className='preview';b.appendChild(im);
- const rm=document.createElement('button');rm.className='mini';rm.textContent='✕ Remove photo';rm.onclick=()=>{selectedImage=null;b.classList.add('hidden');b.innerHTML=''};b.appendChild(rm);
+
+function saveHistory(){
+  try { localStorage.setItem(STORAGE_CHAT,JSON.stringify(history.slice(-80))); } catch(e){}
 }
-function compress(file){
- const r=new FileReader();r.onload=()=>{const im=new Image();im.onload=()=>{const max=1600,scale=Math.min(1,max/Math.max(im.width,im.height)),c=document.createElement('canvas');c.width=Math.max(1,Math.round(im.width*scale));c.height=Math.max(1,Math.round(im.height*scale));c.getContext('2d').drawImage(im,0,0,c.width,c.height);selectedImage=c.toDataURL('image/jpeg',.78);showPreview()};im.src=r.result};r.readAsDataURL(file);
+
+function addMessage(role,text,image,index){
+  const el=document.createElement('div');
+  el.className='message '+role;
+
+  if(image){
+    const img=document.createElement('img');
+    img.src=image; img.className='preview'; el.appendChild(img);
+  }
+
+  const body=document.createElement('div');
+  body.className='message-body';
+  if(role==='ai') body.innerHTML=formatAnswer(text);
+  else body.textContent=text;
+  el.appendChild(body);
+
+  const actions=document.createElement('div');
+  actions.className='msg-actions';
+
+  if(role==='ai'){
+    actions.innerHTML=
+      '<button type="button" onclick="copyText(this)">📋 Copy</button>'+
+      '<button type="button" onclick="speakText(this)">🔊 Read</button>';
+  } else {
+    actions.innerHTML=
+      '<button type="button" onclick="editMessage('+index+')">✏️ Edit</button>';
+  }
+  el.appendChild(actions);
+
+  if(role==='ai'){
+    const c=document.createElement('div');
+    c.className='confidence';
+    c.textContent='AI answer • verify important facts';
+    el.appendChild(c);
+  }
+  chat.appendChild(el);
+}
+
+function renderHistory(){
+  chat.innerHTML='<div class="welcome"><h2>👋 Hello! I\'m NiSa AI</h2><p>Ask me anything, upload a photo, or use the camera.</p></div>';
+  history.forEach((m,i)=>addMessage(m.role==='assistant'?'ai':'user',m.text||'',m.image||null,i));
+  chat.scrollTop=chat.scrollHeight;
+}
+
+function copyText(btn){
+  const msg=btn.closest('.message');
+  const body=msg?.querySelector('.message-body');
+  const text=body?.innerText||'';
+  if(navigator.clipboard){
+    navigator.clipboard.writeText(text).then(()=>{
+      const old=btn.textContent; btn.textContent='✅ Copied';
+      setTimeout(()=>btn.textContent=old,1000);
+    }).catch(()=>fallbackCopy(text));
+  } else fallbackCopy(text);
+}
+function fallbackCopy(text){
+  const ta=document.createElement('textarea');ta.value=text;
+  document.body.appendChild(ta);ta.select();document.execCommand('copy');ta.remove();
+}
+function speakText(btn){
+  const body=btn.closest('.message')?.querySelector('.message-body');
+  if(!body || !('speechSynthesis' in window)) return alert('Read-aloud is not supported here.');
+  speechSynthesis.cancel();
+  speechSynthesis.speak(new SpeechSynthesisUtterance(body.innerText));
+}
+function editMessage(index){
+  const m=history[index];
+  if(!m || m.role!=='user') return;
+  input.value=m.text||'';
+  selectedImage=m.image||null;
+  if(selectedImage) showPreview(selectedImage);
+  input.focus();
+}
+function clearChat(){
+  if(!confirm('Clear this conversation?')) return;
+  history=[]; saveHistory(); renderHistory();
+}
+function setBusy(busy){
+  sendBtn.disabled=busy;
+  sendBtn.textContent=busy?'Stop':'Send';
+  if(busy) sendBtn.onclick=stopGeneration;
+  else sendBtn.onclick=sendMessage;
+}
+function stopGeneration(){
+  if(abortController) abortController.abort();
+}
+function showThinking(){
+  const ai=document.createElement('div');
+  ai.className='message ai';
+  ai.id='activeAIMessage';
+  ai.innerHTML='<div class="thinking"><span class="dot"></span><span class="dot"></span><span class="dot"></span></div>';
+  chat.appendChild(ai);
+  chat.scrollTop=chat.scrollHeight;
+  return ai;
 }
 async function sendMessage(){
- if(send.disabled)return;
- const text=input.value.trim(),image=selectedImage;
- if(!text&&!image)return;
- const mode=$('mode').value,language=$('language').value,memory=localStorage.getItem(MEM)||'';
- history.push({role:'user',text:text||'Analyze this image.',image:image||null});save();add('user',text||'Analyze this image.',image);
- input.value='';selectedImage=null;$('previewBox').classList.add('hidden');$('previewBox').innerHTML='';
- const ai=document.createElement('div');ai.className='message ai';ai.innerHTML='<div class="thinking"><span class="dot"></span><span class="dot"></span><span class="dot"></span></div>';chat.appendChild(ai);chat.scrollTop=chat.scrollHeight;send.disabled=true;
- try{
-  const messages=history.slice(-18).map(m=>({role:m.role,content:m.text}));
-  const controller=new AbortController();const timeout=setTimeout(()=>controller.abort(),45000);
-  const res=await fetch('/api/chat',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({message:text,image,mode,language,memory,web:webMode,messages}),signal:controller.signal});clearTimeout(timeout);
-  const raw=await res.text();let data;try{data=JSON.parse(raw)}catch{throw new Error('Server returned an invalid response. Check Vercel logs.')}
-  if(!res.ok)throw new Error(data.error||('Server error '+res.status));
-  const answer=String(data.answer||'No answer received.');
-  ai.innerHTML=format(answer);
-  const actions=document.createElement('div');actions.className='actions';
-  const cp=document.createElement('button');cp.textContent='📋 Copy';cp.onclick=()=>navigator.clipboard?.writeText(answer);
-  const rd=document.createElement('button');rd.textContent='🔊 Read';rd.onclick=()=>{speechSynthesis.cancel();speechSynthesis.speak(new SpeechSynthesisUtterance(answer))};
-  actions.append(cp,rd);ai.appendChild(actions);const c=document.createElement('div');c.className='conf';c.textContent='AI answer • verify important facts';ai.appendChild(c);
-  history.push({role:'assistant',text:answer});save();
- }catch(e){ai.innerHTML='<strong>❌ Unable to reply</strong><br>'+esc(e.name==='AbortError'?'Request timed out. Please try again.':e.message)}
- send.disabled=false;input.focus();chat.scrollTop=chat.scrollHeight;
-}
-function voiceInput(){
- const SR=window.SpeechRecognition||window.webkitSpeechRecognition;if(!SR)return alert('Voice input is not supported in this browser.');
- const r=new SR(),l=$('language').value;r.lang=l==='mr'?'mr-IN':l==='hi'?'hi-IN':'en-IN';r.onresult=e=>{input.value=e.results[0][0].transcript;input.focus()};r.onerror=()=>{};r.start();
-}
-async function openCamera(){
- openPanel('cameraPanel');
- try{cameraStream=await navigator.mediaDevices.getUserMedia({video:{facingMode:{ideal:'environment'},width:{ideal:1280},height:{ideal:720}},audio:false});$('video').srcObject=cameraStream}
- catch(e){alert('Camera permission unavailable. Please allow camera access or use Photo.')}
-}
-function capture(){
- const v=$('video'),c=$('canvas'),im=$('shot');if(!v.videoWidth)return alert('Camera is not ready yet.');
- c.width=v.videoWidth;c.height=v.videoHeight;c.getContext('2d').drawImage(v,0,0,c.width,c.height);captured=c.toDataURL('image/jpeg',.78);im.src=captured;im.classList.remove('hidden');
-}
-function retake(){captured=null;$('shot').src='';$('shot').classList.add('hidden')}
-function useCapture(){
- if(!captured)return alert('Capture a photo first.');
- selectedImage=captured;showPreview();closeCamera();
- input.value={scan:'Analyze this image carefully and extract the useful information.',solve:'Solve the problem shown in this image step by step.',read:'Read and transcribe the visible text accurately. Mark unclear words instead of guessing.',diagram:'Explain the diagram, labels, principle and working clearly.'}[camMode]||'Analyze this image.';
- input.focus();
-}
-function closeCamera(){if(cameraStream){cameraStream.getTracks().forEach(t=>t.stop());cameraStream=null}$('video').srcObject=null;closePanel('cameraPanel')}
-function setCamMode(m,btn){camMode=m;document.querySelectorAll('[data-cam]').forEach(x=>x.classList.remove('on'));btn.classList.add('on');$('camHint').textContent={scan:'Scan and extract useful information',solve:'Capture a question and solve it step by step',read:'Capture text and cleanly transcribe it',diagram:'Explain labels, structure and working'}[m]}
-function setWeb(){webMode=!webMode;$('webBtn').textContent='🌐 Web: '+(webMode?'ON':'OFF');$('webBtn').classList.toggle('active',webMode)}
-function studyPrompt(type){
- closePanel('studyPanel');const p={teacher:'Teach me this topic step by step like a patient teacher. Check my understanding.',exam:'Exam mode: give important points, likely questions, short answers and a revision checklist.',quiz:'Quiz mode: ask one question at a time, wait for my answer, then explain and score it.',flashcards:'Create 10 useful study flashcards from the topic I provide.'};input.value=p[type];input.focus();
-}
-function updateTimer(){$('timer').textContent=String(Math.floor(timerSeconds/60)).padStart(2,'0')+':'+String(timerSeconds%60).padStart(2,'0')}
-function startTimer(){if(timerId)return;timerId=setInterval(()=>{timerSeconds--;updateTimer();if(timerSeconds<=0){clearInterval(timerId);timerId=null;alert('Study timer finished!')}},1000)}
-function resetTimer(){clearInterval(timerId);timerId=null;timerSeconds=1500;updateTimer()}
+  if(sendBtn.disabled) return;
 
-$('send').onclick=sendMessage;$('input').addEventListener('keydown',e=>{if(e.key==='Enter'){e.preventDefault();sendMessage()}});
-$('photoBtn').onclick=()=>$('file').click();$('file').onchange=e=>{if(e.target.files[0])compress(e.target.files[0]);e.target.value=''};
-$('cameraBtn').onclick=openCamera;$('voiceBtn').onclick=voiceInput;$('webBtn').onclick=setWeb;$('studyBtn').onclick=()=>openPanel('studyPanel');$('settingsBtn').onclick=()=>{$('memory').value=localStorage.getItem(MEM)||'';openPanel('settingsPanel')};$('clearBtn').onclick=clearChat;
-$('captureBtn').onclick=capture;$('useShotBtn').onclick=useCapture;$('retakeBtn').onclick=retake;$('closeCameraBtn').onclick=closeCamera;
-document.querySelectorAll('[data-cam]').forEach(b=>b.onclick=()=>setCamMode(b.dataset.cam,b));
-$('saveSettings').onclick=()=>{localStorage.setItem(MEM,$('memory').value.trim());localStorage.setItem(LANG,$('language').value);closePanel('settingsPanel')};
+  const text=input.value.trim();
+  if(!text && !selectedImage) return;
+
+  const mode=document.getElementById('mode')?.value||'normal';
+  const language=document.getElementById('langSelect')?.value||'auto';
+  const image=selectedImage;
+
+  history.push({role:'user',text:text||'Please analyze this image.',image:image||null});
+  saveHistory();
+  addMessage('user',text||'Please analyze this image.',image,history.length-1);
+
+  input.value='';
+  clearPreview();
+
+  const aiEl=showThinking();
+  setBusy(true);
+
+  abortController=new AbortController();
+
+  try{
+    const messages=history.slice(-20).map(m=>({
+      role:m.role,
+      content:String(m.text||'')
+    }));
+
+    const payload={
+      message:text||'Analyze this image.',
+      image:image||null,
+      mode,
+      language,
+      memory,
+      web:webMode,
+      messages
+    };
+
+    const response=await fetch('/api/chat',{
+      method:'POST',
+      headers:{'Content-Type':'application/json','Accept':'application/json'},
+      body:JSON.stringify(payload),
+      signal:abortController.signal
+    });
+
+    const raw=await response.text();
+    let data={};
+    try { data=raw?JSON.parse(raw):{}; }
+    catch(e){ throw new Error('Server returned an invalid response.'); }
+
+    if(!response.ok) throw new Error(data.error||('Server error '+response.status));
+
+    const answer=String(data.answer||data.message||data.output||'').trim();
+    if(!answer) throw new Error('AI returned an empty answer.');
+
+    aiEl.innerHTML=
+      '<div class="message-body">'+formatAnswer(answer)+'</div>'+
+      '<div class="msg-actions">'+
+      '<button type="button" onclick="copyText(this)">📋 Copy</button>'+
+      '<button type="button" onclick="speakText(this)">🔊 Read</button>'+
+      '</div>'+
+      '<div class="confidence">AI answer • verify important facts</div>';
+
+    history.push({role:'assistant',text:answer});
+    saveHistory();
+  }catch(err){
+    if(err.name==='AbortError'){
+      aiEl.innerHTML='<div class="message-body">⏹️ Generation stopped.</div>';
+    }else{
+      aiEl.innerHTML='<div class="message-body">❌ '+escapeHtml(err.message||'Something went wrong.')+'</div>'+
+        '<div class="meta">Check the API deployment and try again.</div>';
+    }
+  }finally{
+    abortController=null;
+    setBusy(false);
+    input.focus();
+    chat.scrollTop=chat.scrollHeight;
+  }
+}
+
+function handleImage(file){
+  if(!file) return;
+  if(!file.type.startsWith('image/')) return alert('Please select an image.');
+  const reader=new FileReader();
+  reader.onload=()=>{selectedImage=reader.result;showPreview(selectedImage);};
+  reader.onerror=()=>alert('Could not read this image.');
+  reader.readAsDataURL(file);
+}
+function showPreview(src){
+  const b=document.getElementById('imagePreviewBox');
+  if(!b)return;
+  b.classList.remove('hidden');
+  b.innerHTML='<img class="preview" src="'+escapeHtml(src)+'"><button type="button" class="mini" onclick="clearPreview()">✕ Remove photo</button>';
+}
+function clearPreview(){
+  selectedImage=null;
+  const b=document.getElementById('imagePreviewBox');
+  if(b){b.classList.add('hidden');b.innerHTML='';}
+  const file=document.getElementById('imageInput'); if(file) file.value='';
+}
+
+async function openCamera(){
+  openPanel('cameraPanel');
+  const v=document.getElementById('cameraVideo');
+  try{
+    if(!navigator.mediaDevices?.getUserMedia) throw new Error('Camera is not supported by this browser.');
+    stream=await navigator.mediaDevices.getUserMedia({video:{facingMode:{ideal:'environment'}},audio:false});
+    v.srcObject=stream;
+    await v.play().catch(()=>{});
+    v.classList.remove('hidden');
+  }catch(e){
+    alert('Camera permission is unavailable. You can still use Photo upload.');
+  }
+}
+function capturePhoto(){
+  const v=document.getElementById('cameraVideo');
+  const c=document.getElementById('cameraCanvas');
+  const p=document.getElementById('cameraPreview');
+  if(!v?.videoWidth) return alert('Camera is not ready yet.');
+  c.width=v.videoWidth;c.height=v.videoHeight;
+  c.getContext('2d').drawImage(v,0,0,c.width,c.height);
+  capturedData=c.toDataURL('image/jpeg',0.85);
+  p.src=capturedData;p.classList.remove('hidden');v.classList.add('hidden');
+}
+function retakePhoto(){
+  capturedData=null;
+  document.getElementById('cameraPreview')?.classList.add('hidden');
+  document.getElementById('cameraVideo')?.classList.remove('hidden');
+}
+function useCapturedPhoto(){
+  if(!capturedData)return alert('Capture a photo first.');
+  selectedImage=capturedData;
+  showPreview(capturedData);
+  closeCamera();
+  input.focus();
+}
+function closeCamera(){
+  if(stream){stream.getTracks().forEach(t=>t.stop());stream=null;}
+  closePanel('cameraPanel');
+}
+function startVoice(){
+  const SR=window.SpeechRecognition||window.webkitSpeechRecognition;
+  if(!SR)return alert('Voice input is not supported in this browser.');
+  const r=new SR();
+  const lang=document.getElementById('langSelect')?.value||'auto';
+  r.lang=lang==='mr'?'mr-IN':lang==='hi'?'hi-IN':'en-IN';
+  r.interimResults=false;r.maxAlternatives=1;
+  r.onresult=e=>{input.value=e.results[0][0].transcript;input.focus();};
+  r.onerror=e=>alert('Voice input error: '+(e.error||'unknown'));
+  r.start();
+}
+function toggleWeb(){
+  webMode=!webMode;
+  const b=document.getElementById('webBtn');
+  if(b)b.textContent='🌐 Web: '+(webMode?'ON':'OFF');
+}
+function openPanel(id){
+  const el=document.getElementById(id);if(!el)return;
+  el.classList.add('open');
+  if(id==='memoryPanel')document.getElementById('memoryText').value=memory;
+}
+function closePanel(id){document.getElementById(id)?.classList.remove('open');}
+document.querySelectorAll('.panel').forEach(p=>p.addEventListener('click',e=>{if(e.target===p)closePanel(p.id);}));
+
+function saveMemory(){
+  memory=document.getElem

@@ -1,4 +1,1 @@
-NiSa AI - STABLE FIXED
-
-This version keeps the same features and adds safer button/touch handling.
-Replace index.html and api/chat.js in your project, then redeploy.
+Replace index.html and api/chat.js. Keep GROQ_API_KEY in Vercel Environment Variables. Redeploy.

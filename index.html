@@ -684,118 +684,102 @@ function resetTimer() {
 
 /* Buttons */
 
-sendBtn.addEventListener('click', sendMessage);
+l<script>
+document.addEventListener('DOMContentLoaded', () => {
 
-input.addEventListener('keydown', e => {
-  if (e.key === 'Enter') {
-    e.preventDefault();
-    sendMessage();
-  }
-});
+  const safe = (id, event, handler) => {
+    const el = document.getElementById(id);
 
-document
-  .getElementById('photoBtn')
-  .addEventListener('click', () => {
-    fileInput.click();
+    if (!el) {
+      console.warn(`NiSa AI: #${id} not found`);
+      return;
+    }
+
+    el.addEventListener(event, handler);
+  };
+
+  safe('send', 'click', sendMessage);
+
+  safe('input', 'keydown', e => {
+    if (e.key === 'Enter') {
+      e.preventDefault();
+      sendMessage();
+    }
   });
 
-fileInput.addEventListener('change', e => {
-  handleImage(e.target.files[0]);
-});
+  safe('photoBtn', 'click', () => {
+    fileInput?.click();
+  });
 
-document
-  .getElementById('cameraBtn')
-  .addEventListener('click', openCamera);
+  safe('file', 'change', e => {
+    handleImage(e.target.files?.[0]);
+  });
 
-document
-  .getElementById('captureBtn')
-  .addEventListener('click', capturePhoto);
+  safe('cameraBtn', 'click', openCamera);
+  safe('captureBtn', 'click', capturePhoto);
+  safe('retakeBtn', 'click', retakePhoto);
+  safe('useShotBtn', 'click', useCapturedPhoto);
+  safe('closeCameraBtn', 'click', closeCamera);
 
-document
-  .getElementById('retakeBtn')
-  .addEventListener('click', retakePhoto);
+  safe('voiceBtn', 'click', startVoice);
+  safe('webBtn', 'click', toggleWeb);
 
-document
-  .getElementById('useShotBtn')
-  .addEventListener('click', useCapturedPhoto);
+  safe('settingsBtn', 'click', () => {
+    const memoryBox = document.getElementById('memory');
 
-document
-  .getElementById('closeCameraBtn')
-  .addEventListener('click', closeCamera);
+    if (memoryBox) {
+      memoryBox.value = memory;
+    }
 
-document
-  .getElementById('voiceBtn')
-  .addEventListener('click', startVoice);
-
-document
-  .getElementById('webBtn')
-  .addEventListener('click', toggleWeb);
-
-document
-  .getElementById('settingsBtn')
-  .addEventListener('click', () => {
-    document.getElementById('memory').value = memory;
     openPanel('settingsPanel');
   });
 
-document
-  .getElementById('saveSettings')
-  .addEventListener('click', saveSettings);
+  safe('saveSettings', 'click', saveSettings);
 
-document
-  .getElementById('closeSettings')
-  .addEventListener(
-    'click',
-    () => closePanel('settingsPanel')
-  );
+  safe('closeSettings', 'click', () => {
+    closePanel('settingsPanel');
+  });
 
-document
-  .getElementById('clearBtn')
-  .addEventListener('click', clearChat);
+  safe('clearBtn', 'click', clearChat);
 
-document
-  .getElementById('studyBtn')
-  .addEventListener('click', () => {
+  safe('studyBtn', 'click', () => {
     openPanel('studyPanel');
   });
 
-document
-  .getElementById('closeStudy')
-  .addEventListener(
-    'click',
-    () => closePanel('studyPanel')
-  );
-
-document
-  .getElementById('startTimer')
-  .addEventListener('click', startTimer);
-
-document
-  .getElementById('resetTimer')
-  .addEventListener('click', resetTimer);
-
-document.querySelectorAll('.panel').forEach(panel => {
-  panel.addEventListener('click', e => {
-    if (e.target === panel) {
-      closePanel(panel.id);
-    }
+  safe('closeStudy', 'click', () => {
+    closePanel('studyPanel');
   });
-});
 
-document.querySelectorAll('.quick button').forEach(btn => {
-  btn.addEventListener('click', () => {
-    input.value = btn.dataset.prompt || '';
+  safe('startTimer', 'click', startTimer);
+  safe('resetTimer', 'click', resetTimer);
+
+  document.querySelectorAll('.panel').forEach(panel => {
+    panel.addEventListener('click', e => {
+      if (e.target === panel) {
+        closePanel(panel.id);
+      }
+    });
+  });
+
+  document.querySelectorAll('.quick button').forEach(btn => {
+    btn.addEventListener('click', () => {
+      input.value = btn.dataset.prompt || '';
+      input.focus();
+    });
+  });
+
+  document.querySelectorAll('[data-study]').forEach(btn => {
+    btn.addEventListener('click', () => {
+      setStudyMode(btn.dataset.study);
+    });
+  });
+
+  updateTimer();
+  renderHistory();
+
+  if (input) {
     input.focus();
-  });
-});
+  }
 
-document.querySelectorAll('[data-study]').forEach(btn => {
-  btn.addEventListener('click', () => {
-    setStudyMode(btn.dataset.study);
-  });
 });
-
-updateTimer();
-renderHistory();
-input.focus();
 </script>

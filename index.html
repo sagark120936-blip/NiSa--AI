@@ -1,396 +1,801 @@
-<!doctype html>
-<html lang="en">
-<head>
-<meta charset="utf-8">
-<meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
-<meta name="theme-color" content="#090c12">
-<title>NiSa AI</title>
-<style>
-*{box-sizing:border-box}html,body{margin:0;height:100%;font-family:Inter,system-ui,Arial,sans-serif}
-body{background:#080b11;color:#fff}button,input,select,textarea{font:inherit}button{cursor:pointer}
-.app{height:100dvh;max-width:1100px;margin:auto;display:flex;flex-direction:column}
-header{height:70px;display:flex;align-items:center;gap:11px;padding:10px 14px;border-bottom:1px solid #242b36;background:rgba(8,11,17,.94);backdrop-filter:blur(18px);flex:none}
-.logo{width:42px;height:42px;border-radius:50%;display:grid;place-items:center;background:#fff;color:#111;font-weight:900}.brand{flex:1}
-.brand h1{margin:0;font-size:20px}.brand h1 span{font-size:9px;background:#7147ff;padding:3px 6px;border-radius:99px;vertical-align:middle}.brand p{margin:3px 0 0;color:#8d98a8;font-size:11px}
-.icon{border:1px solid #2b3543;background:#151b25;color:#fff;border-radius:12px;padding:9px 11px}
-#chat{flex:1;overflow:auto;padding:18px 15px 14px;scroll-behavior:smooth}.welcome{padding:12px 3px 18px}
-.welcome h2{font-size:clamp(28px,6vw,42px);margin:0 0 6px;background:linear-gradient(90deg,#fff,#bca9ff,#7dd3fc);-webkit-background-clip:text;color:transparent}
-.welcome p{color:#98a2b2;margin:0}.quick{display:grid;grid-template-columns:repeat(5,1fr);gap:8px;margin:14px 0 22px}
-.quick button{min-height:62px;text-align:left;border:1px solid #293246;border-radius:14px;background:#111722;color:#fff;padding:10px}.quick b{display:block;font-size:11px}.quick small{display:block;color:#8b96a8;font-size:9px;margin-top:4px}
-.message{max-width:92%;padding:13px 14px;margin:0 0 14px;border-radius:19px;line-height:1.55;word-break:break-word;white-space:pre-wrap;box-shadow:0 8px 25px rgba(0,0,0,.12)}
-.message.user{margin-left:auto;background:linear-gradient(135deg,#315fe8,#4f46e5)}.message.ai{margin-right:auto;background:linear-gradient(180deg,#131a25,#0f151e);border:1px solid #293246}
-.preview{display:block;max-width:280px;max-height:230px;border-radius:13px;object-fit:cover;margin-bottom:9px}
-.actions{display:flex;gap:6px;flex-wrap:wrap;margin-top:10px}.actions button,.mini{border:0;background:#232c37;color:#e7edf5;border-radius:9px;padding:6px 9px;font-size:12px}.conf{font-size:10px;color:#7f8997;margin-top:7px}
-.thinking{display:flex;gap:5px}.dot{width:7px;height:7px;border-radius:50%;background:#aab3c0;animation:b 1.1s infinite}.dot:nth-child(2){animation-delay:.18s}.dot:nth-child(3){animation-delay:.36s}
-@keyframes b{0%,80%,100%{opacity:.2}40%{opacity:1}}
-.composer{border-top:1px solid #242b36;background:rgba(7,10,16,.96);backdrop-filter:blur(18px);padding:9px 10px calc(9px + env(safe-area-inset-bottom))}
-.tools{display:flex;gap:6px;overflow-x:auto;padding-bottom:8px}.tools button,.tools select{white-space:nowrap;border:1px solid #293246;background:#151c29;color:#fff;border-radius:10px;padding:8px 10px}.tools .active{border-color:#8b5cf6;background:#281746}
-.row{display:flex;gap:8px}.row input{flex:1;min-width:0;background:#101620;color:#fff;border:1px solid #2a3446;border-radius:14px;padding:13px 14px;outline:none}.row input:focus{border-color:#8b5cf6}
-.send{border:0;border-radius:14px;padding:0 18px;background:linear-gradient(135deg,#8b5cf6,#4f46e5);color:#fff;font-weight:800}.send:disabled{opacity:.45}
-.hidden{display:none!important}
-.panel{position:fixed;inset:0;display:none;align-items:flex-end;justify-content:center;background:rgba(0,0,0,.72);z-index:50}.panel.open{display:flex}
-.sheet{width:min(920px,100%);max-height:88dvh;overflow:auto;background:#111720;border:1px solid #293246;border-radius:22px 22px 0 0;padding:18px}.sheet h3{margin:0 0 13px}.sheet .line{margin:10px 0}.sheet button{border:0;background:#202a37;color:#fff;border-radius:10px;padding:9px 12px}.sheet select,.sheet textarea{width:100%;background:#151a22;color:#fff;border:1px solid #303a49;border-radius:10px;padding:10px}
-.cam-stage{position:relative;background:#000;border-radius:18px;overflow:hidden;aspect-ratio:3/4;max-height:58dvh}.cam-stage video{width:100%;height:100%;object-fit:cover}.scan-frame{position:absolute;left:11%;top:20%;width:78%;height:56%;border:2px solid #b99cff;border-radius:18px;box-shadow:0 0 0 999px rgba(0,0,0,.16)}.scan-line{position:absolute;left:4%;right:4%;top:50%;height:2px;background:#b99cff;box-shadow:0 0 15px #b99cff;animation:scan 2s infinite ease-in-out}@keyframes scan{0%{transform:translateY(-100px);opacity:.2}50%{opacity:1}100%{transform:translateY(100px);opacity:.2}}
-.cam-modes{display:flex;gap:6px;margin-top:10px;overflow:auto}.cam-modes button{flex:1;min-width:75px;font-size:11px}.cam-modes .on{background:#6d28d9;border-color:#a78bfa}.capture{display:block;width:66px;height:66px;border-radius:50%;border:5px solid #fff;background:linear-gradient(135deg,#8b5cf6,#4f46e5);margin:13px auto}
-#shot{width:100%;max-height:55dvh;object-fit:contain;border-radius:15px;background:#000;margin-top:10px}.timer{text-align:center;font-size:42px;margin:12px}
-.formula{display:block;background:#0b0f14;border:1px solid #293246;border-radius:10px;padding:9px;margin:9px 0;overflow:auto}.frac{display:inline-flex;flex-direction:column;text-align:center;vertical-align:middle;line-height:1.05}.frac .top{border-bottom:1px solid currentColor;padding:0 4px}.frac .bottom{padding:2px 4px 0}
-pre{white-space:pre-wrap;background:#0b0f14;padding:10px;border-radius:10px;overflow:auto}code{background:#0b0f14;padding:2px 5px;border-radius:5px}
-@media(max-width:700px){.quick{grid-template-columns:repeat(2,1fr)}.quick button:last-child{grid-column:span 2}.message{max-width:95%}}
-</style>
-</head>
-<body>
-<div class="app">
-<header>
-  <div class="logo">N</div><div class="brand"><h1>NiSa AI <span>PRO</span></h1><p>Your personal AI assistant</p></div>
-  <button class="icon" id="settingsBtn">⚙️</button><button class="icon" id="clearBtn">🗑️</button>
-</header>
-
-<main id="chat">
-  <div class="welcome"><h2>👋 Hello! I'm NiSa AI</h2><p>Ask anything, scan a question, or talk naturally.</p></div>
-  <div class="quick">
-    <button data-prompt="Explain this topic simply with an example."><b>✨ Explain</b><small>Step-by-step learning</small></button>
-    <button data-prompt="Solve this problem step by step and show the final answer clearly."><b>∑ Solve</b><small>Math & Physics</small></button>
-    <button data-prompt="Summarize this into short useful revision points."><b>▤ Summarize</b><small>Fast revision</small></button>
-    <button data-prompt="Quiz me one question at a time and wait for my answer."><b>🧩 Quiz</b><small>Practice</small></button>
-    <button data-prompt="Help me write or debug this code professionally."><b>&lt;/&gt; Code</b><small>Build & debug</small></button>
-  </div>
-</main>
-
-<section class="composer">
-  <div class="tools">
-    <button id="photoBtn">🖼️ Photo</button><button id="cameraBtn">📷 AI Camera</button><button id="voiceBtn">🎤 Voice</button>
-    <button id="webBtn">🌐 Web: OFF</button><button id="studyBtn">📚 Study</button>
-    <select id="mode"><option value="normal">Normal</option><option value="simple">Simple</option><option value="teacher">Teacher</option><option value="exam">Exam</option><option value="quiz">Quiz</option><option value="expert">Expert</option></select>
-  </div>
-  <div id="previewBox" class="hidden"></div>
-  <div class="row"><input id="input" placeholder="Message NiSa AI..." autocomplete="off"><button class="send" id="send">Send</button></div>
-  <input id="file" class="hidden" type="file" accept="image/*">
-</section>
-</div>
-
-<div id="cameraPanel" class="panel">
- <div class="sheet">
-  <h3>📷 AI Camera</h3><div style="font-size:11px;color:#8d98a8;margin-bottom:10px">Place the page inside the frame, then capture.</div>
-  <div class="cam-stage"><video id="video" autoplay playsinline></video><canvas id="canvas" class="hidden"></canvas><div class="scan-frame"><div class="scan-line"></div></div></div>
-  <img id="shot" class="hidden" alt="Captured preview">
-  <div class="cam-modes"><button class="on" data-cam="scan">Scan</button><button data-cam="solve">Solve</button><button data-cam="read">Read</button><button data-cam="diagram">Diagram</button></div>
-  <div id="camHint" style="text-align:center;color:#8d98a8;font-size:10px;margin-top:8px">Scan and extract useful information</div>
-  <button class="capture" id="captureBtn" aria-label="Capture"></button>
-  <div class="line" style="text-align:center"><button id="useShotBtn">✓ Use capture</button> <button id="retakeBtn">↻ Retake</button> <button id="closeCameraBtn">Close</button></div>
- </div>
-</div>
-
-<div id="settingsPanel" class="panel"><div class="sheet">
- <h3>⚙️ Settings</h3>
- <div class="line"><label>Language</label><select id="language"><option value="auto">Auto</option><option value="en">English</option><option value="mr">मराठी</option><option value="hi">हिन्दी</option></select></div>
- <div class="line"><label>Memory</label><textarea id="memory" rows="5" placeholder="Optional preferences for NiSa AI"></textarea></div>
- <div class="line"><button id="saveSettings">Save</button> <button id="closeSettings">Close</button></div>
-</div></div>
-
-<div id="studyPanel" class="panel"><div class="sheet">
- <h3>📚 Study Tools</h3><div class="line"><button data-study="teacher">🧑‍🏫 Teacher</button> <button data-study="exam">📝 Exam</button> <button data-study="quiz">🧩 Quiz</button> <button data-study="flashcards">🃏 Flashcards</button></div>
- <div id="timer" class="timer">25:00</div><div class="line"><button id="startTimer">▶ Start</button> <button id="resetTimer">↻ Reset</button></div>
- <div class="line"><button id="closeStudy">Close</button></div>
-</div></div>
-
 <script>
-const STORAGE_CHAT='nisa_chat_v3';
-const STORAGE_MEMORY='nisa_memory_v3';
-const STORAGE_THEME='nisa_theme_v3';
+const STORAGE_CHAT = 'nisa_chat_v3';
+const STORAGE_MEMORY = 'nisa_memory_v3';
 
-let history=[];
-try { history=JSON.parse(localStorage.getItem(STORAGE_CHAT)||'[]'); if(!Array.isArray(history)) history=[]; } catch(e){ history=[]; }
+let history = [];
+try {
+  history = JSON.parse(localStorage.getItem(STORAGE_CHAT) || '[]');
+  if (!Array.isArray(history)) history = [];
+} catch {
+  history = [];
+}
 
-let memory=localStorage.getItem(STORAGE_MEMORY)||'';
-let selectedImage=null;
-let webMode=false;
-let stream=null;
-let capturedData=null;
-let timerSeconds=1500;
-let timerId=null;
-let abortController=null;
+let memory = localStorage.getItem(STORAGE_MEMORY) || '';
+let selectedImage = null;
+let webMode = false;
+let stream = null;
+let capturedData = null;
+let timerSeconds = 1500;
+let timerId = null;
+let abortController = null;
 
-const chat=document.getElementById('chat');
-const input=document.getElementById('messageInput');
-const sendBtn=document.getElementById('sendBtn');
+const chat = document.getElementById('chat');
+const input = document.getElementById('input');
+const sendBtn = document.getElementById('send');
+const fileInput = document.getElementById('file');
+const previewBox = document.getElementById('previewBox');
 
-function escapeHtml(value){
-  return String(value??'').replace(/[&<>"']/g,c=>({
-    '&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#039;'
+function escapeHtml(value) {
+  return String(value ?? '').replace(/[&<>"']/g, c => ({
+    '&': '&amp;',
+    '<': '&lt;',
+    '>': '&gt;',
+    '"': '&quot;',
+    "'": '&#039;'
   }[c]));
 }
 
-function formatAnswer(value){
-  let s=escapeHtml(value);
-  s=s.replace(/<think>[\s\S]*?<\/think>/gi,'');
-  s=s.replace(/```([\s\S]*?)```/g,
-    '<pre style="white-space:pre-wrap;background:#0b0f14;padding:10px;border-radius:10px;overflow:auto">$1</pre>');
-  s=s.replace(/\*\*(.*?)\*\*/g,'<strong>$1</strong>');
-  s=s.replace(/`([^`]+)`/g,'<code>$1</code>');
-  return s.replace(/\n/g,'<br>');
+function formatAnswer(value) {
+  let s = escapeHtml(value);
+
+  s = s.replace(
+    /```([\s\S]*?)```/g,
+    '<pre>$1</pre>'
+  );
+
+  s = s.replace(/\*\*(.*?)\*\*/g, '<strong>$1</strong>');
+  s = s.replace(/`([^`]+)`/g, '<code>$1</code>');
+
+  return s.replace(/\n/g, '<br>');
 }
 
-function saveHistory(){
-  try { localStorage.setItem(STORAGE_CHAT,JSON.stringify(history.slice(-80))); } catch(e){}
+function saveHistory() {
+  try {
+    localStorage.setItem(
+      STORAGE_CHAT,
+      JSON.stringify(history.slice(-80))
+    );
+  } catch {}
 }
 
-function addMessage(role,text,image,index){
-  const el=document.createElement('div');
-  el.className='message '+role;
+function addMessage(role, text, image, index) {
+  const el = document.createElement('div');
+  el.className = 'message ' + role;
 
-  if(image){
-    const img=document.createElement('img');
-    img.src=image; img.className='preview'; el.appendChild(img);
+  if (image) {
+    const img = document.createElement('img');
+    img.src = image;
+    img.className = 'preview';
+    el.appendChild(img);
   }
 
-  const body=document.createElement('div');
-  body.className='message-body';
-  if(role==='ai') body.innerHTML=formatAnswer(text);
-  else body.textContent=text;
+  const body = document.createElement('div');
+  body.className = 'message-body';
+
+  if (role === 'ai') {
+    body.innerHTML = formatAnswer(text);
+  } else {
+    body.textContent = text;
+  }
+
   el.appendChild(body);
 
-  const actions=document.createElement('div');
-  actions.className='msg-actions';
+  const actions = document.createElement('div');
+  actions.className = 'actions';
 
-  if(role==='ai'){
-    actions.innerHTML=
-      '<button type="button" onclick="copyText(this)">📋 Copy</button>'+
-      '<button type="button" onclick="speakText(this)">🔊 Read</button>';
+  if (role === 'ai') {
+    actions.innerHTML = `
+      <button type="button" onclick="copyText(this)">📋 Copy</button>
+      <button type="button" onclick="speakText(this)">🔊 Read</button>
+    `;
   } else {
-    actions.innerHTML=
-      '<button type="button" onclick="editMessage('+index+')">✏️ Edit</button>';
+    actions.innerHTML = `
+      <button type="button" onclick="editMessage(${index})">
+        ✏️ Edit
+      </button>
+    `;
   }
+
   el.appendChild(actions);
 
-  if(role==='ai'){
-    const c=document.createElement('div');
-    c.className='confidence';
-    c.textContent='AI answer • verify important facts';
+  if (role === 'ai') {
+    const c = document.createElement('div');
+    c.className = 'conf';
+    c.textContent = 'AI answer • verify important facts';
     el.appendChild(c);
   }
+
   chat.appendChild(el);
 }
 
-function renderHistory(){
-  chat.innerHTML='<div class="welcome"><h2>👋 Hello! I\'m NiSa AI</h2><p>Ask me anything, upload a photo, or use the camera.</p></div>';
-  history.forEach((m,i)=>addMessage(m.role==='assistant'?'ai':'user',m.text||'',m.image||null,i));
-  chat.scrollTop=chat.scrollHeight;
+function renderHistory() {
+  chat.innerHTML = `
+    <div class="welcome">
+      <h2>👋 Hello! I'm NiSa AI</h2>
+      <p>Ask me anything, upload a photo, or use the camera.</p>
+    </div>
+  `;
+
+  history.forEach((m, i) => {
+    addMessage(
+      m.role === 'assistant' ? 'ai' : 'user',
+      m.text || '',
+      m.image || null,
+      i
+    );
+  });
+
+  chat.scrollTop = chat.scrollHeight;
 }
 
-function copyText(btn){
-  const msg=btn.closest('.message');
-  const body=msg?.querySelector('.message-body');
-  const text=body?.innerText||'';
-  if(navigator.clipboard){
-    navigator.clipboard.writeText(text).then(()=>{
-      const old=btn.textContent; btn.textContent='✅ Copied';
-      setTimeout(()=>btn.textContent=old,1000);
-    }).catch(()=>fallbackCopy(text));
-  } else fallbackCopy(text);
+function copyText(btn) {
+  const msg = btn.closest('.message');
+  const body = msg?.querySelector('.message-body');
+  const text = body?.innerText || '';
+
+  if (navigator.clipboard) {
+    navigator.clipboard.writeText(text).then(() => {
+      const old = btn.textContent;
+      btn.textContent = '✅ Copied';
+
+      setTimeout(() => {
+        btn.textContent = old;
+      }, 1000);
+    }).catch(() => fallbackCopy(text));
+  } else {
+    fallbackCopy(text);
+  }
 }
-function fallbackCopy(text){
-  const ta=document.createElement('textarea');ta.value=text;
-  document.body.appendChild(ta);ta.select();document.execCommand('copy');ta.remove();
+
+function fallbackCopy(text) {
+  const ta = document.createElement('textarea');
+  ta.value = text;
+  document.body.appendChild(ta);
+  ta.select();
+  document.execCommand('copy');
+  ta.remove();
 }
-function speakText(btn){
-  const body=btn.closest('.message')?.querySelector('.message-body');
-  if(!body || !('speechSynthesis' in window)) return alert('Read-aloud is not supported here.');
+
+function speakText(btn) {
+  const body = btn.closest('.message')?.querySelector('.message-body');
+
+  if (!body || !('speechSynthesis' in window)) {
+    alert('Read-aloud is not supported here.');
+    return;
+  }
+
   speechSynthesis.cancel();
-  speechSynthesis.speak(new SpeechSynthesisUtterance(body.innerText));
+
+  const speech = new SpeechSynthesisUtterance(body.innerText);
+  speech.lang = getLanguage();
+
+  speechSynthesis.speak(speech);
 }
-function editMessage(index){
-  const m=history[index];
-  if(!m || m.role!=='user') return;
-  input.value=m.text||'';
-  selectedImage=m.image||null;
-  if(selectedImage) showPreview(selectedImage);
+
+function getLanguage() {
+  const language = document.getElementById('language')?.value || 'auto';
+
+  if (language === 'mr') return 'mr-IN';
+  if (language === 'hi') return 'hi-IN';
+
+  return 'en-IN';
+}
+
+function editMessage(index) {
+  const m = history[index];
+
+  if (!m || m.role !== 'user') return;
+
+  input.value = m.text || '';
+
+  if (m.image) {
+    selectedImage = m.image;
+    showPreview(m.image);
+  }
+
   input.focus();
 }
-function clearChat(){
-  if(!confirm('Clear this conversation?')) return;
-  history=[]; saveHistory(); renderHistory();
+
+function clearChat() {
+  if (!confirm('Clear this conversation?')) return;
+
+  history = [];
+  saveHistory();
+  renderHistory();
 }
-function setBusy(busy){
-  sendBtn.disabled=busy;
-  sendBtn.textContent=busy?'Stop':'Send';
-  if(busy) sendBtn.onclick=stopGeneration;
-  else sendBtn.onclick=sendMessage;
+
+function setBusy(busy) {
+  sendBtn.disabled = false;
+  sendBtn.textContent = busy ? 'Stop' : 'Send';
+
+  if (busy) {
+    sendBtn.onclick = stopGeneration;
+  } else {
+    sendBtn.onclick = sendMessage;
+  }
 }
-function stopGeneration(){
-  if(abortController) abortController.abort();
+
+function stopGeneration() {
+  if (abortController) {
+    abortController.abort();
+  }
 }
-function showThinking(){
-  const ai=document.createElement('div');
-  ai.className='message ai';
-  ai.id='activeAIMessage';
-  ai.innerHTML='<div class="thinking"><span class="dot"></span><span class="dot"></span><span class="dot"></span></div>';
+
+function showThinking() {
+  const ai = document.createElement('div');
+
+  ai.className = 'message ai';
+  ai.id = 'activeAIMessage';
+
+  ai.innerHTML = `
+    <div class="thinking">
+      <span class="dot"></span>
+      <span class="dot"></span>
+      <span class="dot"></span>
+    </div>
+  `;
+
   chat.appendChild(ai);
-  chat.scrollTop=chat.scrollHeight;
+  chat.scrollTop = chat.scrollHeight;
+
   return ai;
 }
-async function sendMessage(){
-  if(sendBtn.disabled) return;
 
-  const text=input.value.trim();
-  if(!text && !selectedImage) return;
+async function sendMessage() {
+  if (sendBtn.textContent === 'Stop') return;
 
-  const mode=document.getElementById('mode')?.value||'normal';
-  const language=document.getElementById('langSelect')?.value||'auto';
-  const image=selectedImage;
+  const text = input.value.trim();
 
-  history.push({role:'user',text:text||'Please analyze this image.',image:image||null});
+  if (!text && !selectedImage) return;
+
+  const mode =
+    document.getElementById('mode')?.value || 'normal';
+
+  const language =
+    document.getElementById('language')?.value || 'auto';
+
+  const image = selectedImage;
+
+  history.push({
+    role: 'user',
+    text: text || 'Please analyze this image.',
+    image: image || null
+  });
+
   saveHistory();
-  addMessage('user',text||'Please analyze this image.',image,history.length-1);
 
-  input.value='';
+  addMessage(
+    'user',
+    text || 'Please analyze this image.',
+    image,
+    history.length - 1
+  );
+
+  input.value = '';
   clearPreview();
 
-  const aiEl=showThinking();
-  setBusy(true);
+  const aiEl = showThinking();
 
-  abortController=new AbortController();
+  sendBtn.textContent = 'Stop';
+  sendBtn.onclick = stopGeneration;
 
-  try{
-    const messages=history.slice(-20).map(m=>({
-      role:m.role,
-      content:String(m.text||'')
-    }));
+  abortController = new AbortController();
 
-    const payload={
-      message:text||'Analyze this image.',
-      image:image||null,
+  try {
+    const messages = history
+      .slice(-14)
+      .map(m => ({
+        role: m.role,
+        content: String(m.text || '')
+      }));
+
+    const payload = {
+      message: text || 'Analyze this image.',
+      image: image || null,
       mode,
       language,
       memory,
-      web:webMode,
+      web: webMode,
       messages
     };
 
-    const response=await fetch('/api/chat',{
-      method:'POST',
-      headers:{'Content-Type':'application/json','Accept':'application/json'},
-      body:JSON.stringify(payload),
-      signal:abortController.signal
+    const response = await fetch('/api/chat', {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json',
+        'Accept': 'application/json'
+      },
+      body: JSON.stringify(payload),
+      signal: abortController.signal
     });
 
-    const raw=await response.text();
-    let data={};
-    try { data=raw?JSON.parse(raw):{}; }
-    catch(e){ throw new Error('Server returned an invalid response.'); }
+    const raw = await response.text();
 
-    if(!response.ok) throw new Error(data.error||('Server error '+response.status));
+    let data = {};
 
-    const answer=String(data.answer||data.message||data.output||'').trim();
-    if(!answer) throw new Error('AI returned an empty answer.');
-
-    aiEl.innerHTML=
-      '<div class="message-body">'+formatAnswer(answer)+'</div>'+
-      '<div class="msg-actions">'+
-      '<button type="button" onclick="copyText(this)">📋 Copy</button>'+
-      '<button type="button" onclick="speakText(this)">🔊 Read</button>'+
-      '</div>'+
-      '<div class="confidence">AI answer • verify important facts</div>';
-
-    history.push({role:'assistant',text:answer});
-    saveHistory();
-  }catch(err){
-    if(err.name==='AbortError'){
-      aiEl.innerHTML='<div class="message-body">⏹️ Generation stopped.</div>';
-    }else{
-      aiEl.innerHTML='<div class="message-body">❌ '+escapeHtml(err.message||'Something went wrong.')+'</div>'+
-        '<div class="meta">Check the API deployment and try again.</div>';
+    try {
+      data = raw ? JSON.parse(raw) : {};
+    } catch {
+      throw new Error('Server returned an invalid response.');
     }
-  }finally{
-    abortController=null;
-    setBusy(false);
+
+    if (!response.ok) {
+      throw new Error(
+        data.error || ('Server error ' + response.status)
+      );
+    }
+
+    const answer = String(
+      data.answer ||
+      data.message ||
+      data.output ||
+      ''
+    ).trim();
+
+    if (!answer) {
+      throw new Error('AI returned an empty answer.');
+    }
+
+    aiEl.innerHTML = `
+      <div class="message-body">
+        ${formatAnswer(answer)}
+      </div>
+
+      <div class="actions">
+        <button type="button" onclick="copyText(this)">
+          📋 Copy
+        </button>
+
+        <button type="button" onclick="speakText(this)">
+          🔊 Read
+        </button>
+      </div>
+
+      <div class="conf">
+        AI answer • verify important facts
+      </div>
+    `;
+
+    history.push({
+      role: 'assistant',
+      text: answer
+    });
+
+    saveHistory();
+
+  } catch (err) {
+
+    if (err.name === 'AbortError') {
+      aiEl.innerHTML = `
+        <div class="message-body">
+          ⏹️ Generation stopped.
+        </div>
+      `;
+    } else {
+      aiEl.innerHTML = `
+        <div class="message-body">
+          ❌ ${escapeHtml(
+            err.message || 'Something went wrong.'
+          )}
+        </div>
+        <div class="conf">
+          Check the API deployment and try again.
+        </div>
+      `;
+    }
+
+  } finally {
+    abortController = null;
+    sendBtn.disabled = false;
+    sendBtn.textContent = 'Send';
+    sendBtn.onclick = sendMessage;
+
     input.focus();
-    chat.scrollTop=chat.scrollHeight;
+    chat.scrollTop = chat.scrollHeight;
   }
 }
 
-function handleImage(file){
-  if(!file) return;
-  if(!file.type.startsWith('image/')) return alert('Please select an image.');
-  const reader=new FileReader();
-  reader.onload=()=>{selectedImage=reader.result;showPreview(selectedImage);};
-  reader.onerror=()=>alert('Could not read this image.');
+function handleImage(file) {
+  if (!file) return;
+
+  if (!file.type.startsWith('image/')) {
+    alert('Please select an image.');
+    return;
+  }
+
+  const reader = new FileReader();
+
+  reader.onload = () => {
+    selectedImage = reader.result;
+    showPreview(selectedImage);
+  };
+
+  reader.onerror = () => {
+    alert('Could not read this image.');
+  };
+
   reader.readAsDataURL(file);
 }
-function showPreview(src){
-  const b=document.getElementById('imagePreviewBox');
-  if(!b)return;
-  b.classList.remove('hidden');
-  b.innerHTML='<img class="preview" src="'+escapeHtml(src)+'"><button type="button" class="mini" onclick="clearPreview()">✕ Remove photo</button>';
-}
-function clearPreview(){
-  selectedImage=null;
-  const b=document.getElementById('imagePreviewBox');
-  if(b){b.classList.add('hidden');b.innerHTML='';}
-  const file=document.getElementById('imageInput'); if(file) file.value='';
+
+function showPreview(src) {
+  previewBox.classList.remove('hidden');
+
+  previewBox.innerHTML = `
+    <img
+      class="preview"
+      src="${escapeHtml(src)}"
+      alt="Selected photo"
+    >
+
+    <button
+      type="button"
+      class="mini"
+      onclick="clearPreview()"
+    >
+      ✕ Remove photo
+    </button>
+  `;
 }
 
-async function openCamera(){
+function clearPreview() {
+  selectedImage = null;
+
+  previewBox.classList.add('hidden');
+  previewBox.innerHTML = '';
+
+  fileInput.value = '';
+}
+
+async function openCamera() {
   openPanel('cameraPanel');
-  const v=document.getElementById('cameraVideo');
-  try{
-    if(!navigator.mediaDevices?.getUserMedia) throw new Error('Camera is not supported by this browser.');
-    stream=await navigator.mediaDevices.getUserMedia({video:{facingMode:{ideal:'environment'}},audio:false});
-    v.srcObject=stream;
-    await v.play().catch(()=>{});
-    v.classList.remove('hidden');
-  }catch(e){
-    alert('Camera permission is unavailable. You can still use Photo upload.');
+
+  const video = document.getElementById('video');
+
+  try {
+    if (!navigator.mediaDevices?.getUserMedia) {
+      throw new Error('Camera not supported');
+    }
+
+    stream = await navigator.mediaDevices.getUserMedia({
+      video: {
+        facingMode: {
+          ideal: 'environment'
+        }
+      },
+      audio: false
+    });
+
+    video.srcObject = stream;
+
+    await video.play().catch(() => {});
+
+    video.classList.remove('hidden');
+
+  } catch {
+    alert(
+      'Camera permission is unavailable. You can still use Photo upload.'
+    );
   }
 }
-function capturePhoto(){
-  const v=document.getElementById('cameraVideo');
-  const c=document.getElementById('cameraCanvas');
-  const p=document.getElementById('cameraPreview');
-  if(!v?.videoWidth) return alert('Camera is not ready yet.');
-  c.width=v.videoWidth;c.height=v.videoHeight;
-  c.getContext('2d').drawImage(v,0,0,c.width,c.height);
-  capturedData=c.toDataURL('image/jpeg',0.85);
-  p.src=capturedData;p.classList.remove('hidden');v.classList.add('hidden');
+
+function capturePhoto() {
+  const video = document.getElementById('video');
+  const canvas = document.getElementById('canvas');
+  const shot = document.getElementById('shot');
+
+  if (!video?.videoWidth) {
+    alert('Camera is not ready yet.');
+    return;
+  }
+
+  canvas.width = video.videoWidth;
+  canvas.height = video.videoHeight;
+
+  const ctx = canvas.getContext('2d');
+
+  ctx.drawImage(
+    video,
+    0,
+    0,
+    canvas.width,
+    canvas.height
+  );
+
+  capturedData = canvas.toDataURL(
+    'image/jpeg',
+    0.85
+  );
+
+  shot.src = capturedData;
+  shot.classList.remove('hidden');
+
+  video.classList.add('hidden');
 }
-function retakePhoto(){
-  capturedData=null;
-  document.getElementById('cameraPreview')?.classList.add('hidden');
-  document.getElementById('cameraVideo')?.classList.remove('hidden');
+
+function retakePhoto() {
+  capturedData = null;
+
+  document.getElementById('shot')?.classList.add('hidden');
+  document.getElementById('video')?.classList.remove('hidden');
 }
-function useCapturedPhoto(){
-  if(!capturedData)return alert('Capture a photo first.');
-  selectedImage=capturedData;
+
+function useCapturedPhoto() {
+  if (!capturedData) {
+    alert('Capture a photo first.');
+    return;
+  }
+
+  selectedImage = capturedData;
+
   showPreview(capturedData);
   closeCamera();
+
   input.focus();
 }
-function closeCamera(){
-  if(stream){stream.getTracks().forEach(t=>t.stop());stream=null;}
+
+function closeCamera() {
+  if (stream) {
+    stream.getTracks().forEach(track => track.stop());
+    stream = null;
+  }
+
   closePanel('cameraPanel');
 }
-function startVoice(){
-  const SR=window.SpeechRecognition||window.webkitSpeechRecognition;
-  if(!SR)return alert('Voice input is not supported in this browser.');
-  const r=new SR();
-  const lang=document.getElementById('langSelect')?.value||'auto';
-  r.lang=lang==='mr'?'mr-IN':lang==='hi'?'hi-IN':'en-IN';
-  r.interimResults=false;r.maxAlternatives=1;
-  r.onresult=e=>{input.value=e.results[0][0].transcript;input.focus();};
-  r.onerror=e=>alert('Voice input error: '+(e.error||'unknown'));
+
+function startVoice() {
+  const SR =
+    window.SpeechRecognition ||
+    window.webkitSpeechRecognition;
+
+  if (!SR) {
+    alert('Voice input is not supported in this browser.');
+    return;
+  }
+
+  const r = new SR();
+
+  const language =
+    document.getElementById('language')?.value || 'auto';
+
+  r.lang =
+    language === 'mr'
+      ? 'mr-IN'
+      : language === 'hi'
+      ? 'hi-IN'
+      : 'en-IN';
+
+  r.interimResults = false;
+  r.maxAlternatives = 1;
+
+  r.onresult = e => {
+    input.value =
+      e.results[0][0].transcript;
+
+    input.focus();
+  };
+
+  r.onerror = e => {
+    alert(
+      'Voice input error: ' +
+      (e.error || 'unknown')
+    );
+  };
+
   r.start();
 }
-function toggleWeb(){
-  webMode=!webMode;
-  const b=document.getElementById('webBtn');
-  if(b)b.textContent='🌐 Web: '+(webMode?'ON':'OFF');
-}
-function openPanel(id){
-  const el=document.getElementById(id);if(!el)return;
-  el.classList.add('open');
-  if(id==='memoryPanel')document.getElementById('memoryText').value=memory;
-}
-function closePanel(id){document.getElementById(id)?.classList.remove('open');}
-document.querySelectorAll('.panel').forEach(p=>p.addEventListener('click',e=>{if(e.target===p)closePanel(p.id);}));
 
-function saveMemory(){
-  memory=document.getElem
+function toggleWeb() {
+  webMode = !webMode;
+
+  const btn =
+    document.getElementById('webBtn');
+
+  btn.textContent =
+    '🌐 Web: ' +
+    (webMode ? 'ON' : 'OFF');
+
+  btn.classList.toggle(
+    'active',
+    webMode
+  );
+}
+
+function openPanel(id) {
+  document
+    .getElementById(id)
+    ?.classList.add('open');
+}
+
+function closePanel(id) {
+  document
+    .getElementById(id)
+    ?.classList.remove('open');
+}
+
+function saveSettings() {
+  memory =
+    document.getElementById('memory')?.value || '';
+
+  localStorage.setItem(
+    STORAGE_MEMORY,
+    memory
+  );
+
+  closePanel('settingsPanel');
+}
+
+function setStudyMode(mode) {
+  const modeSelect =
+    document.getElementById('mode');
+
+  if (modeSelect) {
+    if (
+      mode === 'teacher' ||
+      mode === 'exam' ||
+      mode === 'quiz'
+    ) {
+      modeSelect.value = mode;
+    }
+  }
+
+  closePanel('studyPanel');
+}
+
+function updateTimer() {
+  const timer =
+    document.getElementById('timer');
+
+  if (!timer) return;
+
+  const min =
+    String(Math.floor(timerSeconds / 60))
+      .padStart(2, '0');
+
+  const sec =
+    String(timerSeconds % 60)
+      .padStart(2, '0');
+
+  timer.textContent =
+    min + ':' + sec;
+}
+
+function startTimer() {
+  if (timerId) return;
+
+  timerId = setInterval(() => {
+    if (timerSeconds <= 0) {
+      clearInterval(timerId);
+      timerId = null;
+      alert('⏰ Study timer finished!');
+      return;
+    }
+
+    timerSeconds--;
+    updateTimer();
+  }, 1000);
+}
+
+function resetTimer() {
+  clearInterval(timerId);
+  timerId = null;
+  timerSeconds = 1500;
+  updateTimer();
+}
+
+/* Buttons */
+
+sendBtn.addEventListener('click', sendMessage);
+
+input.addEventListener('keydown', e => {
+  if (e.key === 'Enter') {
+    e.preventDefault();
+    sendMessage();
+  }
+});
+
+document
+  .getElementById('photoBtn')
+  .addEventListener('click', () => {
+    fileInput.click();
+  });
+
+fileInput.addEventListener('change', e => {
+  handleImage(e.target.files[0]);
+});
+
+document
+  .getElementById('cameraBtn')
+  .addEventListener('click', openCamera);
+
+document
+  .getElementById('captureBtn')
+  .addEventListener('click', capturePhoto);
+
+document
+  .getElementById('retakeBtn')
+  .addEventListener('click', retakePhoto);
+
+document
+  .getElementById('useShotBtn')
+  .addEventListener('click', useCapturedPhoto);
+
+document
+  .getElementById('closeCameraBtn')
+  .addEventListener('click', closeCamera);
+
+document
+  .getElementById('voiceBtn')
+  .addEventListener('click', startVoice);
+
+document
+  .getElementById('webBtn')
+  .addEventListener('click', toggleWeb);
+
+document
+  .getElementById('settingsBtn')
+  .addEventListener('click', () => {
+    document.getElementById('memory').value = memory;
+    openPanel('settingsPanel');
+  });
+
+document
+  .getElementById('saveSettings')
+  .addEventListener('click', saveSettings);
+
+document
+  .getElementById('closeSettings')
+  .addEventListener(
+    'click',
+    () => closePanel('settingsPanel')
+  );
+
+document
+  .getElementById('clearBtn')
+  .addEventListener('click', clearChat);
+
+document
+  .getElementById('studyBtn')
+  .addEventListener('click', () => {
+    openPanel('studyPanel');
+  });
+
+document
+  .getElementById('closeStudy')
+  .addEventListener(
+    'click',
+    () => closePanel('studyPanel')
+  );
+
+document
+  .getElementById('startTimer')
+  .addEventListener('click', startTimer);
+
+document
+  .getElementById('resetTimer')
+  .addEventListener('click', resetTimer);
+
+document.querySelectorAll('.panel').forEach(panel => {
+  panel.addEventListener('click', e => {
+    if (e.target === panel) {
+      closePanel(panel.id);
+    }
+  });
+});
+
+document.querySelectorAll('.quick button').forEach(btn => {
+  btn.addEventListener('click', () => {
+    input.value = btn.dataset.prompt || '';
+    input.focus();
+  });
+});
+
+document.querySelectorAll('[data-study]').forEach(btn => {
+  btn.addEventListener('click', () => {
+    setStudyMode(btn.dataset.study);
+  });
+});
+
+updateTimer();
+renderHistory();
+input.focus();
+</script>

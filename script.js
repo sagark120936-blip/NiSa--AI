@@ -3,26 +3,22 @@ document.addEventListener("DOMContentLoaded", () => {
     const userInput = document.getElementById("userInput");
     const chatBox = document.getElementById("chatBox");
 
-    //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
-    const OPENAI_API_KEY = "YOUR_OPENAI_API_KEY_HERE"; 
+    //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
+    const OPENAI_API_KEY = "तुमची_नवीन_API_KEY_इथे_टाका"; 
 
-    // मेसेज स्क्रीनवर दाखवण्याचे फंक्शन
     function appendMessage(text, sender) {
         const messageDiv = document.createElement("div");
         messageDiv.classList.add("message", sender === "user" ? "user-message" : "ai-message");
         messageDiv.innerText = text;
         chatBox.appendChild(messageDiv);
-        chatBox.scrollTop = chatBox.scrollHeight; // ऑटो स्क्रोल खाली जाण्यासाठी
+        chatBox.scrollTop = chatBox.scrollHeight;
     }
 
-    // ChatGPT कडून उत्तर मागवणारे मुख्य फंक्शन
     async function getAIResponse(userMessage) {
         const url = "https://openai.com";
 
-        // तात्पुरता "Typing..." मेसेज दाखवा
         const loadingDiv = document.createElement("div");
-        loadingDiv.classList.add("message", "ai-message");
-        loadingDiv.innerText = "विचार करत आहे...";
+        loadingDiv.innerText = "AI विचार करत आहे...";
         chatBox.appendChild(loadingDiv);
 
         try {
@@ -33,52 +29,38 @@ document.addEventListener("DOMContentLoaded", () => {
                     "Authorization": `Bearer ${OPENAI_API_KEY}`
                 },
                 body: JSON.stringify({
-                    model: "gpt-3.5-turbo", // तुम्ही gpt-4o किंवा नवीन मॉडेल देखील वापरू शकता
-                    messages: [
-                        { role: "system", content: "You are a helpful AI assistant." },
-                        { role: "user", content: userMessage }
-                    ]
+                    model: "gpt-3.5-turbo", 
+                    messages: [{ role: "user", content: userMessage }]
                 })
             });
 
-            const data = await response.json();
-            
-            // "Typing..." मेसेज काढून टाका
+            // "AI विचार करत आहे..." काढून टाका
             chatBox.removeChild(loadingDiv);
 
             if (response.ok) {
+                const data = await response.json();
                 const aiReply = data.choices[0].message.content;
                 appendMessage(aiReply, "ai");
             } else {
-                console.error("API Error:", data);
-                appendMessage("क्षमस्व, काहीतरी गडबड झाली आहे. कृपया API Key तपासा.", "ai");
+                // इथे आपल्याला नेमका एरर कोड समजेल (उदा. 401 म्हणजे की चुकीची आहे)
+                appendMessage(`सर्वर एरर आलं! कोड: ${response.status}. तुमची नवीन API Key तपासा किंवा बॅलन्स चेक करा.`, "ai");
             }
 
         } catch (error) {
-            console.error("Network Error:", error);
             chatBox.removeChild(loadingDiv);
-            appendMessage("नेटवर्क कनेक्शन एरर! इंटरनेट तपासा.", "ai");
+            // जर ब्राउझरने रिक्वेस्ट ब्लॉक केली तर:
+            appendMessage("कनेक्शन ब्लॉक झाले! कृपया नवीन API Key वापरा किंवा ब्राउझरचे Ad-blocker बंद करा.", "ai");
         }
     }
 
-    // सेंड प्रोसेस मॅनेज करणे
     function handleSend() {
         const message = userInput.value.trim();
         if (message === "") return;
-
-        // १. युझरचा मेसेज दाखवा
         appendMessage(message, "user");
-        userInput.value = ""; // इनपुट बॉक्स रिकामा करा
-
-        // २. खरी API रिक्वेस्ट पाठवा
+        userInput.value = "";
         getAIResponse(message);
     }
 
-    // बटन क्लिक आणि एंटर की इव्हेंट्स
     sendBtn.addEventListener("click", handleSend);
-    userInput.addEventListener("keypress", (e) => {
-        if (e.key === "Enter") {
-            handleSend();
-        }
-    });
+    userInput.addEventListener("keypress", (e) => { if (e.key === "Enter") handleSend(); });
 });

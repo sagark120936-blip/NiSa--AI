@@ -1,0 +1,116 @@
+/* पूर्ण पेजचे बॅकग्राउंड डिझाईन */
+body {
+    font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
+    background-color: #121212; /* डार्क थीम */
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    height: 100vh;
+    margin: 0;
+    padding: 10px;
+    box-sizing: border-box;
+}
+
+/* चॅट बॉक्सचे मुख्य कंटेनर */
+.chat-container {
+    width: 100%;
+    max-width: 450px;
+    height: 90vh;
+    background: #1e1e1e;
+    box-shadow: 0px 8px 24px rgba(0,0,0,0.5);
+    border-radius: 16px;
+    display: flex;
+    flex-direction: column;
+    overflow: hidden;
+    border: 1px solid #2d2d2d;
+}
+
+/* वरची पट्टी (Header) */
+.chat-header {
+    background: #007bff;
+    color: white;
+    padding: 16px;
+    text-align: center;
+    font-weight: bold;
+    font-size: 1.2rem;
+    box-shadow: 0 2px 4px rgba(0,0,0,0.2);
+}
+
+/* चॅट मेसेजेस दिसण्याची जागा */
+.chat-box {
+    flex: 1;
+    padding: 16px;
+    overflow-y: auto;
+    display: flex;
+    flex-direction: column;
+    gap: 14px;
+    background: #181818;
+}
+
+/* मेसेजचा कॉमन बेस */
+.message {
+    padding: 12px 16px;
+    border-radius: 16px;
+    max-width: 75%;
+    font-size: 1rem;
+    line-height: 1.4;
+    word-wrap: break-word;
+}
+
+/* AI चे उत्तर (डाव्या बाजूला) */
+.ai-message { 
+    background: #2d2d2d; 
+    color: #eeeeee;
+    align-self: flex-start; 
+    border-bottom-left-radius: 4px;
+}
+
+/* युझरचा मेसेज (उजव्या बाजूला) */
+.user-message { 
+    background: #007bff; 
+    color: white; 
+    align-self: flex-end; 
+    border-bottom-right-radius: 4px;
+}
+
+/* मेसेज टाईप करण्याची खालची पट्टी */
+.input-area { 
+    display: flex; 
+    padding: 14px; 
+    border-top: 1px solid #2d2d2d; 
+    background: #1e1e1e;
+    gap: 8px;
+}
+
+/* इनपुट बॉक्स (इथे मेसेज टाईप करा) */
+#userInput { 
+    flex: 1; 
+    padding: 12px 16px; 
+    border: 1px solid #3d3d3d; 
+    background: #2a2a2a;
+    color: white;
+    border-radius: 24px; 
+    outline: none; 
+    font-size: 1rem;
+}
+
+#userInput::placeholder {
+    color: #777777;
+}
+
+/* सेंड बटन */
+#sendBtn { 
+    background: #007bff; 
+    color: white; 
+    border: none; 
+    padding: 0 22px; 
+    border-radius: 24px; 
+    cursor: pointer; 
+    font-weight: bold;
+    font-size: 1rem;
+    transition: background 0.2s ease;
+}
+
+#sendBtn:hover { 
+    background: #0056b3; 
+}

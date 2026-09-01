@@ -6,447 +6,69 @@
 <meta name="theme-color" content="#0b0f14">
 <title>NiSa AI</title>
 <style>
-*{box-sizing:border-box}html,body{margin:0;height:100%;font-family:Arial,sans-serif}
-:root{--bg:#0b0f14;--panel:#121821;--panel2:#171e27;--border:#2a3440;--text:#fff;--muted:#9aa4b2;--accent:#7c5cff;--user:#2563eb}
-body{background:var(--bg);color:var(--text)}
-button,input,select,textarea{font:inherit}button{cursor:pointer}
-.app{height:100dvh;max-width:950px;margin:auto;display:flex;flex-direction:column}
-header{display:flex;align-items:center;gap:10px;padding:12px 14px;border-bottom:1px solid var(--border);background:var(--bg);flex:none}
-.logo{width:42px;height:42px;border-radius:50%;display:grid;place-items:center;background:#fff;color:#111;font-weight:800;flex:none}
-.title{flex:1;min-width:0}.title h1{margin:0;font-size:20px}.title p{margin:3px 0 0;color:var(--muted);font-size:11px}
-.icon-btn{position:relative;z-index:2;touch-action:manipulation;pointer-events:auto;background:var(--panel2);color:#fff;border:1px solid var(--border);border-radius:12px;padding:9px 11px}
-#chat{flex:1;overflow-y:auto;padding:18px 14px 12px}
-.welcome{margin-bottom:20px}.welcome h2{margin:0 0 7px;font-size:clamp(26px,6vw,40px)}
-.welcome h2 span{background:linear-gradient(90deg,#fff,#bda8ff,#7dd3fc);-webkit-background-clip:text;color:transparent}
-.welcome p{color:var(--muted);margin:0}
-.quick{display:grid;grid-template-columns:repeat(5,1fr);gap:8px;margin-top:16px}
-.quick button{min-height:64px;text-align:left;border:1px solid var(--border);border-radius:13px;background:linear-gradient(180deg,#131a25,#10161f);color:#fff;padding:10px}
-.quick b{display:block;font-size:11px}.quick small{display:block;color:var(--muted);font-size:9px;margin-top:4px}
-.message{max-width:90%;padding:14px;border-radius:17px;margin-bottom:14px;line-height:1.55;word-break:break-word}
-.message.user{margin-left:auto;background:linear-gradient(135deg,#315fe8,#2455d5)}
-.message.ai{margin-right:auto;background:var(--panel2);border:1px solid var(--border)}
-.message-body{white-space:pre-wrap}
-.message-body strong{font-weight:800}.message-body code{background:#0c1118;padding:2px 5px;border-radius:5px}
-.message-body pre{white-space:pre-wrap;background:#0c1118;padding:11px;border-radius:10px;overflow:auto}
-.preview{display:block;max-width:280px;max-height:220px;border-radius:12px;margin-bottom:8px}
-.msg-actions{display:flex;gap:6px;flex-wrap:wrap;margin-top:10px}
-.msg-actions button,.mini{border:0;background:#222b36;color:#e5ebf3;border-radius:9px;padding:6px 9px;font-size:12px}
-.confidence{font-size:10px;color:#788392;margin-top:7px}
-.thinking{display:flex;align-items:center;gap:5px;color:#aab3bf}.dot{width:7px;height:7px;border-radius:50%;background:#aab3bf;animation:blink 1.1s infinite}.dot:nth-child(2){animation-delay:.18s}.dot:nth-child(3){animation-delay:.36s}
-@keyframes blink{0%,80%,100%{opacity:.2}40%{opacity:1}}
-.composer{border-top:1px solid var(--border);padding:9px 10px calc(9px + env(safe-area-inset-bottom));background:rgba(11,15,20,.97);backdrop-filter:blur(15px)}
-.toolbar{display:flex;gap:6px;overflow-x:auto;padding-bottom:8px}
-.tool{position:relative;z-index:2;touch-action:manipulation;pointer-events:auto;white-space:nowrap;background:var(--panel2);color:#fff;border:1px solid var(--border);border-radius:10px;padding:8px 10px}
-.tool.active{border-color:var(--accent);background:#251a45}
-.compose-row{display:flex;gap:8px}
-#input{flex:1;min-width:0;background:#151a20;color:#fff;border:1px solid #303944;border-radius:14px;padding:13px;outline:0}
-#input:focus{border-color:var(--accent)}
-#send{border:0;border-radius:14px;min-width:72px;background:linear-gradient(135deg,#8b5cf6,#4f46e5);color:#fff;font-weight:800}
-#send:disabled{opacity:.5}
-.hidden{display:none!important}
-.panel{position:fixed;pointer-events:none;inset:0;background:rgba(0,0,0,.72);display:none;align-items:flex-end;justify-content:center;z-index:20}
-.panel.open{display:flex;pointer-events:auto}
-.sheet{position:relative;z-index:101;pointer-events:auto;width:min(950px,100%);max-height:88dvh;overflow:auto;background:#111720;border:1px solid var(--border);border-radius:20px 20px 0 0;padding:18px}
-.sheet h3{margin:0 0 12px}.sheet p{color:var(--muted);font-size:12px}.sheet-row{display:flex;gap:8px;flex-wrap:wrap;margin:10px 0}
-.sheet button{border:0;background:#202833;color:#fff;border-radius:10px;padding:9px 12px}
-.sheet input,.sheet select,.sheet textarea{width:100%;background:#151a20;color:#fff;border:1px solid var(--border);border-radius:10px;padding:10px}
-#video{width:100%;max-height:55vh;object-fit:cover;border-radius:14px;background:#000}
-#shot{width:100%;max-height:50vh;object-fit:contain;border-radius:14px;background:#000}
-.camera-hint{font-size:11px;color:var(--muted);margin:8px 0;text-align:center}
-.timer{font-size:42px;text-align:center;margin:14px}
-@media(max-width:700px){.quick{grid-template-columns:repeat(2,1fr)}.quick button:last-child{grid-column:span 2}.message{max-width:95%}.icon-btn{padding:8px}}
+*{box-sizing:border-box}html,body{margin:0;height:100%;font-family:Arial,sans-serif}body{background:#0b0f14;color:#fff}
+button,input,select,textarea{font:inherit}button{cursor:pointer}.app{height:100dvh;max-width:950px;margin:auto;display:flex;flex-direction:column}
+header{height:66px;display:flex;align-items:center;gap:10px;padding:10px 14px;border-bottom:1px solid #27303b;background:#0b0f14}.logo{width:42px;height:42px;border-radius:50%;background:#fff;color:#111;display:grid;place-items:center;font-weight:800}.brand{flex:1}.brand h1{margin:0;font-size:20px}.brand p{margin:3px 0 0;font-size:11px;color:#929eae}.topbtn{background:#171d24;border:1px solid #2a3440;color:#fff;border-radius:11px;padding:9px 11px}
+#chat{flex:1;overflow:auto;padding:18px 14px 10px}.welcome{margin-bottom:20px}.welcome h2{margin:0 0 7px;font-size:28px}.welcome p{margin:0;color:#99a4b4}.quick{display:grid;grid-template-columns:repeat(5,1fr);gap:8px;margin-top:15px}.quick button{background:#121923;border:1px solid #293342;border-radius:13px;color:#fff;text-align:left;padding:10px;min-height:62px}.quick b{display:block;font-size:11px}.quick small{display:block;color:#8c97a7;font-size:9px;margin-top:4px}
+.message{max-width:90%;padding:13px 14px;border-radius:17px;line-height:1.55;margin-bottom:14px;word-break:break-word}.user{margin-left:auto;background:#2563eb}.ai{margin-right:auto;background:#171d24;border:1px solid #2a3440}.message-body{white-space:pre-wrap}.message-body pre{white-space:pre-wrap;overflow:auto;background:#0b0f14;padding:10px;border-radius:9px}.message-body code{background:#0b0f14;padding:2px 5px;border-radius:5px}.message img{max-width:280px;max-height:230px;display:block;object-fit:cover;border-radius:12px;margin-bottom:8px}.actions{display:flex;gap:6px;flex-wrap:wrap;margin-top:9px}.actions button,.mini{background:#222b36;color:#e7edf5;border:0;border-radius:9px;padding:6px 9px;font-size:12px}.conf{color:#7c8796;font-size:10px;margin-top:7px}.thinking{display:flex;align-items:center;gap:5px;color:#a8b1bd}.dot{width:7px;height:7px;border-radius:50%;background:#a8b1bd;animation:blink 1s infinite}.dot:nth-child(2){animation-delay:.15s}.dot:nth-child(3){animation-delay:.3s}@keyframes blink{0%,80%,100%{opacity:.2}40%{opacity:1}}
+.composer{border-top:1px solid #27303b;background:#0b0f14;padding:9px 10px calc(9px + env(safe-area-inset-bottom))}.toolbar{display:flex;gap:6px;overflow:auto;padding-bottom:8px}.tool{white-space:nowrap;background:#171d24;color:#fff;border:1px solid #2a3440;border-radius:10px;padding:8px 10px}.tool.active{border-color:#7c5cff}.row{display:flex;gap:8px}.row input{flex:1;min-width:0;background:#151a20;color:#fff;border:1px solid #303944;border-radius:14px;padding:13px;outline:0}.row input:focus{border-color:#7c5cff}.send{min-width:72px;border:0;border-radius:14px;background:#fff;color:#111;font-weight:800}.send.stop{background:#ef4444;color:#fff}.hidden{display:none!important}
+.panel{position:fixed;inset:0;background:rgba(0,0,0,.7);display:none;align-items:flex-end;justify-content:center;z-index:20}.panel.open{display:flex}.sheet{width:min(950px,100%);max-height:88dvh;overflow:auto;background:#111720;border:1px solid #2a3440;border-radius:20px 20px 0 0;padding:18px}.sheet h3{margin:0 0 10px}.sheet p{color:#99a4b4;font-size:12px}.sheet-row{display:flex;flex-wrap:wrap;gap:8px;margin:10px 0}.sheet button{background:#202833;color:#fff;border:0;border-radius:10px;padding:9px 12px}.sheet select,.sheet textarea{width:100%;background:#151a20;color:#fff;border:1px solid #303944;border-radius:10px;padding:10px}.camera-video{width:100%;max-height:55vh;background:#000;border-radius:14px}.camera-shot{width:100%;max-height:50vh;object-fit:contain;background:#000;border-radius:14px;margin-top:10px}.timer{font-size:42px;text-align:center;margin:15px}
+@media(max-width:700px){.quick{grid-template-columns:repeat(2,1fr)}.quick button:last-child{grid-column:1/-1}.message{max-width:95%}.welcome h2{font-size:24px}}
 </style>
 </head>
 <body>
 <div class="app">
-<header>
-  <div class="logo">N</div>
-  <div class="title"><h1>NiSa AI</h1><p>Your personal AI assistant</p></div>
-  <button class="icon-btn" id="settingsBtn" type="button">⚙️</button>
-  <button class="icon-btn" id="clearBtn" type="button">🗑️</button>
-</header>
-
-<main id="chat">
-  <div class="welcome">
-    <h2>👋 Hello! I'm <span>NiSa AI</span></h2>
-    <p>Ask me anything, upload a photo, or use the camera.</p>
-    <div class="quick">
-      <button type="button" data-prompt="Explain this topic simply with an example."><b>✨ Explain</b><small>Step-by-step</small></button>
-      <button type="button" data-prompt="Solve this problem step by step and show the final answer clearly."><b>∑ Solve</b><small>Math & Physics</small></button>
-      <button type="button" data-prompt="Summarize this into short useful revision points."><b>▤ Summarize</b><small>Fast revision</small></button>
-      <button type="button" data-prompt="Quiz me one question at a time and wait for my answer."><b>🧩 Quiz</b><small>Practice</small></button>
-      <button type="button" data-prompt="Help me write or debug this code professionally."><b>&lt;/&gt; Code</b><small>Build & debug</small></button>
-    </div>
-  </div>
-</main>
-
-<section class="composer">
-  <div class="toolbar">
-    <button class="tool" id="photoBtn" type="button">🖼️ Photo</button>
-    <button class="tool" id="cameraBtn" type="button">📷 Camera</button>
-    <button class="tool" id="voiceBtn" type="button">🎤 Voice</button>
-    <button class="tool" id="webBtn" type="button">🌐 Web: OFF</button>
-    <button class="tool" id="studyBtn" type="button">📚 Study</button>
-    <select class="tool" id="mode">
-      <option value="normal">Normal</option>
-      <option value="simple">Simple</option>
-      <option value="expert">Expert</option>
-      <option value="teacher">Teacher</option>
-      <option value="exam">Exam</option>
-      <option value="quiz">Quiz</option>
-      <option value="compare">Compare</option>
-    </select>
-  </div>
-  <div id="previewBox" class="hidden"></div>
-  <div class="compose-row">
-    <input id="input" type="text" placeholder="Message NiSa AI..." autocomplete="off">
-    <button id="send" type="button">Send</button>
-  </div>
-  <input id="file" class="hidden" type="file" accept="image/*">
-</section>
+<header><div class="logo">N</div><div class="brand"><h1>NiSa AI</h1><p>Your personal AI assistant</p></div><button class="topbtn" id="settingsBtn" type="button">⚙️</button><button class="topbtn" id="clearBtn" type="button">🗑️</button></header>
+<main id="chat"><div class="welcome"><h2>👋 Hello! I'm NiSa AI</h2><p>Ask me anything, upload a photo, or use the camera.</p><div class="quick"><button type="button" data-prompt="Explain this topic simply with an example."><b>✨ Explain</b><small>Learn step-by-step</small></button><button type="button" data-prompt="Solve this problem step by step and show the final answer clearly."><b>∑ Solve</b><small>Math & Physics</small></button><button type="button" data-prompt="Summarize this into short useful revision points."><b>▤ Summarize</b><small>Fast revision</small></button><button type="button" data-prompt="Quiz me one question at a time and wait for my answer."><b>🧩 Quiz</b><small>Practice</small></button><button type="button" data-prompt="Help me write or debug this code professionally."><b>&lt;/&gt; Code</b><small>Build & debug</small></button></div></div></main>
+<section class="composer"><div class="toolbar"><button class="tool" id="photoBtn" type="button">🖼️ Photo</button><button class="tool" id="cameraBtn" type="button">📷 Camera</button><button class="tool" id="voiceBtn" type="button">🎤 Voice</button><button class="tool" id="webBtn" type="button">🌐 Web: OFF</button><button class="tool" id="studyBtn" type="button">📚 Study</button><select class="tool" id="mode"><option value="normal">Normal</option><option value="simple">Simple</option><option value="expert">Expert</option><option value="teacher">Teacher</option><option value="exam">Exam</option><option value="quiz">Quiz</option><option value="compare">Compare</option></select></div><div id="previewBox" class="hidden"></div><div class="row"><input id="input" placeholder="Message NiSa AI..." autocomplete="off"><button id="send" class="send" type="button">Send</button></div><input id="file" class="hidden" type="file" accept="image/*"></section>
 </div>
 
-<div id="cameraPanel" class="panel">
-  <div class="sheet">
-    <h3>📷 Camera</h3>
-    <p>Allow camera access, capture a photo, then use it in chat.</p>
-    <video id="video" autoplay playsinline></video>
-    <canvas id="canvas" class="hidden"></canvas>
-    <img id="shot" class="hidden" alt="Captured photo">
-    <div class="camera-hint" id="cameraHint">Camera ready when permission is granted.</div>
-    <div class="sheet-row">
-      <button id="captureBtn" type="button">📸 Capture</button>
-      <button id="retakeBtn" type="button">🔄 Retake</button>
-      <button id="useShotBtn" type="button">✅ Use photo</button>
-      <button id="closeCameraBtn" type="button">✕ Close</button>
-    </div>
-  </div>
-</div>
-
-<div id="settingsPanel" class="panel">
-  <div class="sheet">
-    <h3>⚙️ Settings</h3>
-    <div class="sheet-row"><label>Theme</label><select id="theme"><option value="dark">Dark</option><option value="light">Light</option></select></div>
-    <div class="sheet-row"><label>Language</label><select id="language"><option value="auto">Auto</option><option value="en">English</option><option value="mr">मराठी</option><option value="hi">हिन्दी</option></select></div>
-    <div class="sheet-row"><label>Memory</label><textarea id="memory" rows="5" placeholder="Optional preferences..."></textarea></div>
-    <div class="sheet-row"><button id="saveSettings" type="button">Save</button><button id="exportBtn" type="button">📥 Export chat</button><button id="closeSettings" type="button">Close</button></div>
-  </div>
-</div>
-
-<div id="studyPanel" class="panel">
-  <div class="sheet">
-    <h3>📚 Study Tools</h3>
-    <div class="sheet-row">
-      <button type="button" data-study="teacher">🧑‍🏫 Teacher</button>
-      <button type="button" data-study="exam">📝 Exam</button>
-      <button type="button" data-study="quiz">🧩 Quiz</button>
-      <button type="button" data-study="flashcards">🃏 Flashcards</button>
-    </div>
-    <div id="timer" class="timer">25:00</div>
-    <div class="sheet-row"><button id="startTimer" type="button">▶ Start</button><button id="resetTimer" type="button">↻ Reset</button><button id="closeStudy" type="button">Close</button></div>
-  </div>
-</div>
+<div class="panel" id="cameraPanel"><div class="sheet"><h3>📷 Camera</h3><p>Allow camera access, capture a photo, then use it in chat.</p><video id="video" class="camera-video" autoplay playsinline></video><canvas id="canvas" class="hidden"></canvas><img id="shot" class="camera-shot hidden"><div class="sheet-row"><button id="captureBtn" type="button">📸 Capture</button><button id="retakeBtn" type="button">🔄 Retake</button><button id="useShotBtn" type="button">✅ Use photo</button><button id="closeCameraBtn" type="button">✕ Close</button></div></div></div>
+<div class="panel" id="settingsPanel"><div class="sheet"><h3>⚙️ Settings</h3><div class="sheet-row"><label>Theme</label><select id="theme"><option value="dark">Dark</option><option value="light">Light</option></select></div><div class="sheet-row"><label>Language</label><select id="language"><option value="auto">Auto</option><option value="en">English</option><option value="mr">मराठी</option><option value="hi">हिन्दी</option></select></div><div class="sheet-row"><label>Memory</label><textarea id="memory" rows="5" placeholder="Optional preferences..."></textarea></div><div class="sheet-row"><button id="saveSettings" type="button">Save</button><button id="exportBtn" type="button">📥 Export</button><button id="closeSettings" type="button">Close</button></div></div></div>
+<div class="panel" id="studyPanel"><div class="sheet"><h3>📚 Study Tools</h3><div class="sheet-row"><button type="button" data-study="teacher">🧑‍🏫 Teacher</button><button type="button" data-study="exam">📝 Exam</button><button type="button" data-study="quiz">🧩 Quiz</button><button type="button" data-study="flashcards">🃏 Flashcards</button></div><div id="timer" class="timer">25:00</div><div class="sheet-row"><button id="startTimer" type="button">▶ Start</button><button id="resetTimer" type="button">↻ Reset</button><button id="closeStudy" type="button">Close</button></div></div></div>
 
 <script>
-document.addEventListener('DOMContentLoaded', () => {
-  'use strict';
+(function(){
+'use strict';
+var KEY='nisa_stable_chat_v1',MEM='nisa_stable_memory_v1',THEME='nisa_stable_theme_v1',LANG='nisa_stable_lang_v1';
+var chat=document.getElementById('chat'),input=document.getElementById('input'),send=document.getElementById('send'),file=document.getElementById('file'),preview=document.getElementById('previewBox');
+var history=[],selectedImage=null,web=false,stream=null,captured=null,controller=null,timerSeconds=1500,timerId=null;
+try{history=JSON.parse(localStorage.getItem(KEY)||'[]');if(!Array.isArray(history))history=[]}catch(e){history=[]}
+function esc(s){return String(s==null?'':s).replace(/[&<>"']/g,function(c){return({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#039;'})[c]})}
+function clean(s){return String(s||'').replace(/<think>[\s\S]*?<\/think>/gi,'').trim()}
+function renderAnswer(s){return esc(clean(s)).replace(/```([\s\S]*?)```/g,'<pre>$1</pre>').replace(/\*\*(.*?)\*\*/g,'<strong>$1</strong>').replace(/`([^`]+)`/g,'<code>$1</code>').replace(/\n/g,'<br>')}
+function save(){try{localStorage.setItem(KEY,JSON.stringify(history.slice(-80)))}catch(e){}}
+function draw(role,text,img,index){var d=document.createElement('div');d.className='message '+role;if(img){var im=document.createElement('img');im.src=img;d.appendChild(im)}var b=document.createElement('div');b.className='message-body';b.innerHTML=role==='ai'?renderAnswer(text):esc(text);d.appendChild(b);var a=document.createElement('div');a.className='actions';if(role==='ai'){var c=document.createElement('button');c.type='button';c.textContent='📋 Copy';c.onclick=function(){if(navigator.clipboard)navigator.clipboard.writeText(b.innerText)};var r=document.createElement('button');r.type='button';r.textContent='🔊 Read';r.onclick=function(){if('speechSynthesis'in window){speechSynthesis.cancel();speechSynthesis.speak(new SpeechSynthesisUtterance(b.innerText))}};a.appendChild(c);a.appendChild(r)}else{var ed=document.createElement('button');ed.type='button';ed.textContent='✏️ Edit';ed.onclick=function(){input.value=text||'';if(img){selectedImage=img;showPreview(img)}input.focus()};a.appendChild(ed)}d.appendChild(a);if(role==='ai'){var cf=document.createElement('div');cf.className='confidence';cf.textContent='AI answer • verify important facts';d.appendChild(cf)}chat.appendChild(d)}
+function renderHistory(){var w=chat.querySelector('.welcome');chat.innerHTML='';if(w)chat.appendChild(w);history.forEach(function(m,i){draw(m.role==='assistant'?'ai':'user',m.text||'',m.image||null,i)});chat.scrollTop=chat.scrollHeight}
+function showPreview(src){preview.classList.remove('hidden');preview.innerHTML='';var im=document.createElement('img');im.src=src;im.className='preview';var rm=document.createElement('button');rm.className='mini';rm.type='button';rm.textContent='✕ Remove';rm.onclick=clearPreview;preview.appendChild(im);preview.appendChild(rm)}
+function clearPreview(){selectedImage=null;preview.classList.add('hidden');preview.innerHTML='';file.value=''}
+function setBusy(b){send.disabled=false;send.textContent=b?'Stop':'Send';send.className=b?'send stop':'send';send.onclick=b?stop:sendMessage}
+function stop(){if(controller)controller.abort()}
+function thinking(){var d=document.createElement('div');d.className='message ai';d.innerHTML='<div class="thinking">NiSa is thinking <span class="dot"></span><span class="dot"></span><span class="dot"></span></div>';chat.appendChild(d);chat.scrollTop=chat.scrollHeight;return d}
+async function sendMessage(){if(send.textContent==='Stop')return;var text=input.value.trim();if(!text&&!selectedImage)return;var img=selectedImage,mode=document.getElementById('mode').value,language=document.getElementById('language').value,mem=localStorage.getItem(MEM)||'';history.push({role:'user',text:text||'Please analyze this image.',image:img||null});save();draw('user',text||'Please analyze this image.',img,history.length-1);input.value='';clearPreview();var ai=thinking();setBusy(true);controller=new AbortController();try{var msgs=history.slice(-16).map(function(m){return{role:m.role,content:m.text||''}});var res=await fetch('/api/chat',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({message:text||'Analyze this image.',image:img||null,mode:mode,language:language,memory:mem,web:web,messages:msgs}),signal:controller.signal});var raw=await res.text(),data={};try{data=raw?JSON.parse(raw):{}}catch(e){throw new Error('Server returned invalid response.')}if(!res.ok)throw new Error(data.error||('Server error '+res.status));var answer=clean(data.answer||'');if(!answer)throw new Error('AI returned an empty answer.');ai.innerHTML='<div class="message-body">'+renderAnswer(answer)+'</div><div class="actions"><button type="button" class="copyAnswer">📋 Copy</button><button type="button" class="readAnswer">🔊 Read</button></div><div class="confidence">AI answer • verify important facts</div>';ai.querySelector('.copyAnswer').onclick=function(){if(navigator.clipboard)navigator.clipboard.writeText(answer)};ai.querySelector('.readAnswer').onclick=function(){if('speechSynthesis'in window){speechSynthesis.cancel();speechSynthesis.speak(new SpeechSynthesisUtterance(answer))}};history.push({role:'assistant',text:answer});save()}catch(e){ai.innerHTML='<div class="message-body">'+(e.name==='AbortError'?'⏹️ Generation stopped.':'❌ '+esc(e.message||'Something went wrong.'))+'</div>'}finally{controller=null;setBusy(false);input.focus();chat.scrollTop=chat.scrollHeight}}
+function handleImage(f){if(!f)return;if(!f.type||f.type.indexOf('image/')!==0)return alert('Please select an image.');var r=new FileReader();r.onload=function(){selectedImage=r.result;showPreview(selectedImage)};r.readAsDataURL(f)}
+async function openCamera(){openPanel('cameraPanel');var v=document.getElementById('video');try{if(!navigator.mediaDevices||!navigator.mediaDevices.getUserMedia)throw new Error();stream=await navigator.mediaDevices.getUserMedia({video:{facingMode:{ideal:'environment'}},audio:false});v.srcObject=stream;await v.play().catch(function(){})}catch(e){alert('Camera permission is unavailable. You can use Photo upload instead.')}}
+function capturePhoto(){var v=document.getElementById('video'),c=document.getElementById('canvas'),s=document.getElementById('shot');if(!v.videoWidth)return alert('Camera is not ready yet.');c.width=v.videoWidth;c.height=v.videoHeight;c.getContext('2d').drawImage(v,0,0,c.width,c.height);captured=c.toDataURL('image/jpeg',.82);s.src=captured;s.classList.remove('hidden');v.classList.add('hidden')}
+function retake(){captured=null;document.getElementById('shot').classList.add('hidden');document.getElementById('video').classList.remove('hidden')}
+function useCapture(){if(!captured)return alert('Capture a photo first.');selectedImage=captured;showPreview(captured);closeCamera()}
+function closeCamera(){if(stream){stream.getTracks().forEach(function(t){t.stop()});stream=null}closePanel('cameraPanel')}
+function openPanel(id){var x=document.getElementById(id);if(x)x.classList.add('open')}
+function closePanel(id){var x=document.getElementById(id);if(x)x.classList.remove('open')}
+function toggleWeb(){web=!web;document.getElementById('webBtn').textContent='🌐 Web: '+(web?'ON':'OFF');document.getElementById('webBtn').classList.toggle('active',web)}
+function voice(){var SR=window.SpeechRecognition||window.webkitSpeechRecognition;if(!SR)return alert('Voice input is not supported here.');var r=new SR(),l=document.getElementById('language').value;r.lang=l==='mr'?'mr-IN':l==='hi'?'hi-IN':'en-IN';r.onresult=function(e){input.value=e.results[0][0].transcript;input.focus()};r.start()}
+function setTheme(v){document.body.style.background=v==='light'?'#f6f7f9':'#0b0f14';document.body.style.color=v==='light'?'#111':'#fff';localStorage.setItem(THEME,v)}
+function study(t){var p={teacher:'Teach me this topic step by step like a teacher.',exam:'Exam mode: give important points, likely questions, short answers and a revision checklist.',quiz:'Quiz mode: ask me one question at a time and wait for my answer.',flashcards:'Create 10 study flashcards from the topic I give you.'};document.getElementById('mode').value=t==='flashcards'?'normal':t;input.value=p[t]||p.teacher;closePanel('studyPanel');input.focus()}
+function updateTimer(){var x=document.getElementById('timer');x.textContent=String(Math.floor(timerSeconds/60)).padStart(2,'0')+':'+String(timerSeconds%60).padStart(2,'0')}
+function startTimer(){if(timerId)return;timerId=setInterval(function(){timerSeconds--;updateTimer();if(timerSeconds<=0){clearInterval(timerId);timerId=null;alert('⏰ Study timer finished!')}},1000)}
+function resetTimer(){clearInterval(timerId);timerId=null;timerSeconds=1500;updateTimer()}
 
-  const KEY = 'nisa_stable_chat';
-  const MEM = 'nisa_stable_memory';
-  const THEME = 'nisa_stable_theme';
-  const LANG = 'nisa_stable_lang';
-
-  const $ = id => document.getElementById(id);
-  const chat = $('chat');
-  const input = $('input');
-  const sendBtn = $('send');
-  const file = $('file');
-  const previewBox = $('previewBox');
-
-  let history = [];
-  try {
-    history = JSON.parse(localStorage.getItem(KEY) || '[]');
-    if (!Array.isArray(history)) history = [];
-  } catch (_) { history = []; }
-
-  let selectedImage = null;
-  let webMode = false;
-  let stream = null;
-  let captured = null;
-  let timerSeconds = 1500;
-  let timerId = null;
-  let controller = null;
-
-  const memoryBox = $('memory');
-  memoryBox.value = localStorage.getItem(MEM) || '';
-  $('language').value = localStorage.getItem(LANG) || 'auto';
-  $('theme').value = localStorage.getItem(THEME) || 'dark';
-
-  function esc(s) {
-    return String(s ?? '').replace(/[&<>"']/g, c => ({
-      '&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#039;'
-    }[c]));
-  }
-
-  function renderAnswer(s) {
-    let x = esc(s);
-    x = x.replace(/```([\s\S]*?)```/g, '<pre>$1</pre>');
-    x = x.replace(/\*\*(.*?)\*\*/g, '<strong>$1</strong>');
-    x = x.replace(/`([^`]+)`/g, '<code>$1</code>');
-    return x.replace(/\n/g, '<br>');
-  }
-
-  function saveHistory() {
-    try { localStorage.setItem(KEY, JSON.stringify(history.slice(-80))); } catch (_) {}
-  }
-
-  function addMessage(role, text, image, index) {
-    const el = document.createElement('div');
-    el.className = 'message ' + role;
-
-    if (image) {
-      const img = document.createElement('img');
-      img.className = 'preview';
-      img.src = image;
-      el.appendChild(img);
-    }
-
-    const body = document.createElement('div');
-    body.className = 'message-body';
-    body.innerHTML = role === 'ai' ? renderAnswer(text) : esc(text);
-    el.appendChild(body);
-
-    const actions = document.createElement('div');
-    actions.className = 'msg-actions';
-
-    if (role === 'ai') {
-      const copy = document.createElement('button');
-      copy.type = 'button'; copy.textContent = '📋 Copy';
-      copy.onclick = () => {
-        const done = () => { copy.textContent = '✅ Copied'; setTimeout(() => copy.textContent = '📋 Copy', 900); };
-        if (navigator.clipboard) navigator.clipboard.writeText(body.innerText).then(done).catch(() => fallbackCopy(body.innerText, done));
-        else fallbackCopy(body.innerText, done);
-      };
-
-      const read = document.createElement('button');
-      read.type = 'button'; read.textContent = '🔊 Read';
-      read.onclick = () => {
-        if (!('speechSynthesis' in window)) return alert('Read-aloud is not supported here.');
-        speechSynthesis.cancel();
-        speechSynthesis.speak(new SpeechSynthesisUtterance(body.innerText));
-      };
-
-      actions.append(copy, read);
-    } else {
-      const edit = document.createElement('button');
-      edit.type = 'button'; edit.textContent = '✏️ Edit';
-      edit.onclick = () => { input.value = text || ''; if (image) { selectedImage = image; showPreview(image); } input.focus(); };
-      actions.appendChild(edit);
-    }
-
-    el.appendChild(actions);
-
-    if (role === 'ai') {
-      const c = document.createElement('div');
-      c.className = 'confidence';
-      c.textContent = 'AI answer • verify important facts';
-      el.appendChild(c);
-    }
-    chat.appendChild(el);
-  }
-
-  function fallbackCopy(text, done) {
-    try {
-      const ta = document.createElement('textarea');
-      ta.value = text;
-      document.body.appendChild(ta);
-      ta.select();
-      document.execCommand('copy');
-      ta.remove();
-      done();
-    } catch (_) {}
-  }
-
-  function renderHistory() {
-    const welcome = chat.querySelector('.welcome');
-    chat.innerHTML = '';
-    if (welcome) chat.appendChild(welcome);
-    history.forEach((m, i) => addMessage(m.role === 'assistant' ? 'ai' : 'user', m.text || '', m.image || null, i));
-    chat.scrollTop = chat.scrollHeight;
-  }
-
-  function showThinking() {
-    const el = document.createElement('div');
-    el.className = 'message ai';
-    el.dataset.thinking = '1';
-    el.innerHTML = '<div class="thinking">NiSa is thinking <span class="dot"></span><span class="dot"></span><span class="dot"></span></div>';
-    chat.appendChild(el);
-    chat.scrollTop = chat.scrollHeight;
-    return el;
-  }
-
-  function clearPreview() {
-    selectedImage = null;
-    previewBox.classList.add('hidden');
-    previewBox.innerHTML = '';
-    file.value = '';
-  }
-
-  function showPreview(src) {
-    previewBox.classList.remove('hidden');
-    previewBox.innerHTML = '';
-    const img = document.createElement('img');
-    img.src = src; img.className = 'preview'; img.alt = 'Selected photo';
-    const btn = document.createElement('button');
-    btn.type = 'button'; btn.className = 'mini'; btn.textContent = '✕ Remove photo';
-    btn.onclick = clearPreview;
-    previewBox.append(img, btn);
-  }
-
-  function setBusy(busy) {
-    sendBtn.disabled = false;
-    sendBtn.textContent = busy ? 'Stop' : 'Send';
-    sendBtn.onclick = busy ? stopGeneration : sendMessage;
-  }
-
-  function stopGeneration() {
-    if (controller) controller.abort();
-  }
-
-  async function sendMessage() {
-    if (sendBtn.textContent === 'Stop') return;
-
-    const text = input.value.trim();
-    if (!text && !selectedImage) return;
-
-    const image = selectedImage;
-    const mode = $('mode').value;
-    const language = $('language').value;
-    const memory = localStorage.getItem(MEM) || '';
-
-    history.push({ role:'user', text:text || 'Please analyze this image.', image:image || null });
-    saveHistory();
-    addMessage('user', text || 'Please analyze this image.', image, history.length - 1);
-
-    input.value = '';
-    clearPreview();
-
-    const aiEl = showThinking();
-    setBusy(true);
-    controller = new AbortController();
-
-    try {
-      const context = history.slice(-16).map(m => ({
-        role: m.role,
-        content: String(m.text || '')
-      }));
-
-      const response = await fetch('/api/chat', {
-        method:'POST',
-        headers:{'Content-Type':'application/json','Accept':'application/json'},
-        body:JSON.stringify({
-          message:text || 'Analyze this image.',
-          image,
-          mode,
-          language,
-          memory,
-          web:webMode,
-          messages:context
-        }),
-        signal:controller.signal
-      });
-
-      const raw = await response.text();
-      let data = {};
-      try { data = raw ? JSON.parse(raw) : {}; }
-      catch (_) { throw new Error('Server returned an invalid response.'); }
-
-      if (!response.ok) throw new Error(data.error || ('Server error ' + response.status));
-
-      const answer = String(data.answer || '').trim();
-      if (!answer) throw new Error('AI returned an empty answer.');
-
-      aiEl.innerHTML =
-        '<div class="message-body">' + renderAnswer(answer) + '</div>' +
-        '<div class="msg-actions">' +
-        '<button type="button" class="copy-now">📋 Copy</button>' +
-        '<button type="button" class="read-now">🔊 Read</button>' +
-        '</div>' +
-        '<div class="confidence">AI answer • verify important facts</div>';
-
-      aiEl.querySelector('.copy-now').onclick = () => navigator.clipboard?.writeText(answer);
-      aiEl.querySelector('.read-now').onclick = () => {
-        if ('speechSynthesis' in window) { speechSynthesis.cancel(); speechSynthesis.speak(new SpeechSynthesisUtterance(answer)); }
-      };
-
-      history.push({ role:'assistant', text:answer });
-      saveHistory();
-    } catch (err) {
-      aiEl.innerHTML = '<div class="message-body">❌ ' + esc(err.name === 'AbortError' ? 'Generation stopped.' : (err.message || 'Something went wrong.')) + '</div>';
-    } finally {
-      controller = null;
-      setBusy(false);
-      input.focus();
-      chat.scrollTop = chat.scrollHeight;
-    }
-  }
-
-  function openPanel(id) { const p = $(id); if (p) p.classList.add('open'); }
-  function closePanel(id) { const p = $(id); if (p) p.classList.remove('open'); }
-
-  async function openCamera() {
-    openPanel('cameraPanel');
-    const video = $('video');
-    try {
-      if (!navigator.mediaDevices?.getUserMedia) throw new Error('Camera unsupported');
-      stream = await navigator.mediaDevices.getUserMedia({ video:{facingMode:{ideal:'environment'}}, audio:false });
-      video.srcObject = stream;
-      $('cameraHint').textContent = 'Camera is ready. Capture when ready.';
-    } catch (_) {
-      $('cameraHint').textContent = 'Camera permission unavailable. You can still use Photo.';
-      alert('Camera permission is unavailable. Please allow camera access or use Photo.');
-    }
-  }
-
-  function capturePhoto() {
-    const video = $('video'), canvas = $('canvas'), shot = $('shot');
-    if (!video.videoWidth) return alert('Camera is not ready yet.');
-    canvas.width = video.videoWidth; canvas.height = video.videoHeight;
-    canvas.getContext('2d').drawImage(video, 0, 0, canvas.width, canvas.height);
-    captured = canvas.toDataURL('image/jpeg', 0.78);
-    shot.src = captured; shot.classList.remove('hidden');
-    video.classList.add('hidden');
-    $('cameraHint').textContent = 'Captured. Tap “Use photo”.';
-  }
-
-  function retakePhoto() {
-    captured = null;
-    $('shot').classList.add('hidden');
-    $('video').classList.remove('hidden');
-    $('cameraHint').textContent = 'Camera is ready. Capture when ready.';
-  }
-
-  function useCapturedPhoto() {
-    if (!captured) return alert('Capture a photo first.');
-    selectedImage = captured;
-    showPreview(captured);
-    closeCamera();
-    input.focus();
-  }
-
-  function closeCamera() {
-    if (stream) { stream.getTracks().forEach(t => t.stop()); stream = null; }
-    closePanel('cameraPanel');
-  }
-
-  function startVoice() {
-    const SR = window.SpeechRecognition || window.webkitSpeechRecognition;
-    if (!SR) return alert('Voice input is not supported in this browser.');
-    const r = new SR();
-    const l = $('language').value;
-    r.lang = l === 'mr' ? 'mr-IN' : l === 'hi' ? 'hi-IN' : 'en-IN';
-    r.interimResults = false;
-    r.maxAlternatives = 1;
-    r.onresult = e => { input.value = e.results[0][0].transcript; input.focus(); };
-    r.onerror = e => alert('Voice input error: ' + (e.error || 'unknown'));
-    r.sta
+sendBtn.onclick=sendMessage;
+input.onkeydown=function(e){if(e.key==='Enter'){e.preventDefault();sendMessage()}};
+document.getElementById('photoBtn').onclick=function(){file.click()};file.onchange=function(){handleImage(file.files&&file.files[0])};document.getElementById('cameraBtn').onclick=openCamera;document.getElementById('captureBtn').onclick=capturePhoto;document.getElementById('retakeBtn').onclick=retake;document.getElementById('useShotBtn').onclick=useCapture;document.getElementById('closeCameraBtn').onclick=closeCamera;document.getElementById('voiceBtn').onclick=voice;document.getElementById('webBtn').onclick=toggleWeb;document.getElementById('studyBtn').onclick=function(){openPanel('studyPanel')};document.getElementById('settingsBtn').onclick=function(){document.getElementById('memory').value=memory;openPanel('settingsPanel')};document.getElementById('clearBtn').onclick=clearChat;document.getElementById('saveSettings').onclick=function(){memory=document.getElementById('memory').value.trim();localStorage.setItem(MEM,memory);localStorage.setItem(LANG,document.getElementById('language').value);setTheme(document.getElementById('theme').value);closePanel('settingsPanel')};document.getElementById('exportBtn').onclick=exportChat;document.getElementById('closeSettings').onclick=function(){closePanel('settingsPanel')};document.getElementById('closeStudy').onclick=function(){closePanel('studyPanel')};document.getElementById('startTimer').onclick=startTimer;document.getElementById('resetTimer').onclick=resetTimer;
+document.querySelectorAll('[data-study]').forEach(function(b){b.onclick=function(){study(b.getAttribute('data-study'))}});document.querySelectorAll('.quick button').forEach(function(b){b.onclick=function(){input.value=b.getAttribute('data-prompt')||'';input.focus()}});document.querySelectorAll('.panel').forEach(function(p){p.addEventListener('click',function(e){if(e.target===p){if(p.id==='cameraPanel')closeCamera();else closePanel(p.id)}})});
+function exportChat(){var txt=history.map(function(m){return(m.role==='user'?'You: ':'NiSa AI: ')+(m.text||'')}).join('\n\n');var blob=new Blob([txt],{type:'text/plain'}),a=document.createElement('a');a.href=URL.createObjectURL(blob);a.download='nisa-chat.txt';document.body.appendChild(a);a.click();a.remove();setTimeout(function(){URL.revokeObjectURL(a.href)},500)}
+var savedTheme=localStorage.getItem(THEME)||'dark';document.getElementById('theme').value=savedTheme;document.getElementById('language').value=localStorage.getItem(LANG)||'auto';setTheme(savedTheme);updateTimer();renderHistory();input.focus();
+})();
+</script>
+</body>
+</html>

@@ -1486,28 +1486,254 @@ function resetTimer() {
    EVENT HANDLERS
 ------------------------- */
 
-document.addEventListener(
-  "DOMContentLoaded",
-  () => {
+document.addEventListener("DOMContentLoaded", function () {
 
-    /* Send */
+  // SEND
+  if (sendBtn) {
+    sendBtn.addEventListener("click", sendMessage);
+  }
 
-    sendBtn?.addEventListener(
-      "click",
-      sendMessage
-    );
+  if (input) {
+    input.addEventListener("keydown", function (event) {
+      if (event.key === "Enter") {
+        event.preventDefault();
+        sendMessage();
+      }
+    });
+  }
 
 
-    input?.addEventListener(
-  "keydown",
-  event => {
+  // CAMERA
+  document.getElementById("cameraBtn")?.addEventListener(
+    "click",
+    openCamera
+  );
 
-    if (event.key === "Enter") {
-      event.preventDefault();
-      sendMessage();
+  document.getElementById("captureBtn")?.addEventListener(
+    "click",
+    capturePhoto
+  );
+
+  document.getElementById("retakeBtn")?.addEventListener(
+    "click",
+    retakePhoto
+  );
+
+  document.getElementById("useShotBtn")?.addEventListener(
+    "click",
+    useCapturedPhoto
+  );
+
+  document.getElementById("closeCameraBtn")?.addEventListener(
+    "click",
+    closeCamera
+  );
+
+
+  // PHOTO
+  document.getElementById("photoBtn")?.addEventListener(
+    "click",
+    function () {
+      if (fileInput) {
+        fileInput.click();
+      }
     }
+  );
+
+  if (fileInput) {
+    fileInput.addEventListener("change", function (event) {
+      const file = event.target.files[0];
+
+      if (file) {
+        handleImage(file);
+      }
+    });
+  }
+
+
+  // REMOVE PHOTO
+  if (previewBox) {
+    previewBox.addEventListener("click", function (event) {
+      if (event.target.id === "removePhotoBtn") {
+        clearPreview();
+      }
+    });
+  }
+
+
+  // VOICE
+  document.getElementById("voiceBtn")?.addEventListener(
+    "click",
+    startVoice
+  );
+
+
+  // WEB
+  document.getElementById("webBtn")?.addEventListener(
+    "click",
+    toggleWeb
+  );
+
+
+  // SETTINGS
+  document.getElementById("settingsBtn")?.addEventListener(
+    "click",
+    function () {
+      openPanel("settingsPanel");
+    }
+  );
+
+  document.getElementById("closeSettings")?.addEventListener(
+    "click",
+    function () {
+      closePanel("settingsPanel");
+    }
+  );
+
+
+  // THEME
+  const themeSelect =
+    document.getElementById("themeSelect");
+
+  if (themeSelect) {
+    themeSelect.addEventListener("change", function () {
+      setTheme(this.value);
+    });
+
+    const savedTheme =
+      localStorage.getItem(STORAGE_THEME) || "dark";
+
+    themeSelect.value = savedTheme;
+    setTheme(savedTheme);
+  }
+
+
+  // MEMORY
+  document.getElementById("memoryBtn")?.addEventListener(
+    "click",
+    function () {
+
+      const box =
+        document.getElementById("memoryText");
+
+      if (box) {
+        box.value = memory;
+      }
+
+      closePanel("settingsPanel");
+      openPanel("memoryPanel");
+    }
+  );
+
+  document.getElementById("saveMemoryBtn")?.addEventListener(
+    "click",
+    saveMemory
+  );
+
+  document.getElementById("clearMemoryBtn")?.addEventListener(
+    "click",
+    clearMemory
+  );
+
+  document.getElementById("closeMemory")?.addEventListener(
+    "click",
+    function () {
+      closePanel("memoryPanel");
+    }
+  );
+
+
+  // EXPORT
+  document.getElementById("exportBtn")?.addEventListener(
+    "click",
+    exportChat
+  );
+
+
+  // CLEAR CHAT
+  document.getElementById("clearBtn")?.addEventListener(
+    "click",
+    clearChat
+  );
+
+
+  // STUDY
+  document.getElementById("studyBtn")?.addEventListener(
+    "click",
+    function () {
+      openPanel("studyPanel");
+    }
+  );
+
+  document.querySelectorAll("[data-study]").forEach(
+    function (button) {
+      button.addEventListener("click", function () {
+        studyPrompt(button.dataset.study);
+      });
+    }
+  );
+
+  document.getElementById("closeStudy")?.addEventListener(
+    "click",
+    function () {
+      closePanel("studyPanel");
+    }
+  );
+
+
+  // TIMER
+  document.getElementById("startTimer")?.addEventListener(
+    "click",
+    startTimer
+  );
+
+  document.getElementById("resetTimer")?.addEventListener(
+    "click",
+    resetTimer
+  );
+
+  updateTimer();
+
+
+  // CHAT BUTTONS
+  if (chat) {
+
+    chat.addEventListener("click", function (event) {
+
+      const button =
+        event.target.closest("button");
+
+      if (!button) return;
+
+      const action =
+        button.dataset.action;
+
+      if (action === "copy") {
+        copyText(button);
+      }
+
+      if (action === "read") {
+        speakText(button);
+      }
+
+      if (action === "regenerate") {
+        regenerate(
+          Number(button.dataset.index)
+        );
+      }
+
+      if (action === "edit") {
+        editMessage(
+          Number(button.dataset.index)
+        );
+      }
+
+    });
 
   }
-);
+
+
+  // START
+  renderHistory();
 
 });

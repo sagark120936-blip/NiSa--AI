@@ -152,11 +152,42 @@ If an image is supplied:
   data?.choices?.[0]?.message?.content ||
   "Sorry, I couldn't generate an answer.";
 
-// Hide Qwen thinking/reasoning from the user
+// Remove hidden reasoning / thinking text
 answer = answer
   .replace(/<think>[\s\S]*?<\/think>/gi, "")
   .replace(/<thinking>[\s\S]*?<\/thinking>/gi, "")
+  .replace(/<analysis>[\s\S]*?<\/analysis>/gi, "")
+  .replace(/<reasoning>[\s\S]*?<\/reasoning>/gi, "")
   .trim();
+
+// If an unclosed thinking tag appears, remove everything
+// before the final-answer section when possible.
+if (/^\s*<think>/i.test(answer)) {
+  const endTags = [
+    "</think>",
+    "</thinking>",
+    "</analysis>",
+    "</reasoning>"
+  ];
+
+  for (const tag of endTags) {
+    const index = answer.toLowerCase().lastIndexOf(tag.toLowerCase());
+
+    if (index !== -1) {
+      answer = answer.slice(index + tag.length).trim();
+      break;
+    }
+  }
+}
+
+// Never show raw thinking tags to the user
+answer = answer
+  .replace(/<\/?(think|thinking|analysis|reasoning)>/gi, "")
+  .trim();
+
+if (!answer) {
+  answer = "Sorry, I couldn't generate an answer.";
+}
 
 if (!answer) {
   answer = "Sorry, I couldn't generate an answer.";

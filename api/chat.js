@@ -148,8 +148,19 @@ If an image is supplied:
       });
     }
 
-    const answer =
-      data?.choices?.[0]?.message?.content?.trim();
+    let answer =
+  data?.choices?.[0]?.message?.content ||
+  "Sorry, I couldn't generate an answer.";
+
+// Hide Qwen thinking/reasoning from the user
+answer = answer
+  .replace(/<think>[\s\S]*?<\/think>/gi, "")
+  .replace(/<thinking>[\s\S]*?<\/thinking>/gi, "")
+  .trim();
+
+if (!answer) {
+  answer = "Sorry, I couldn't generate an answer.";
+};
 
     if (!answer) {
       return res.status(500).json({

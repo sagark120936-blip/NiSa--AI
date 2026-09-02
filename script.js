@@ -1499,11 +1499,15 @@ document.addEventListener(
 
 
     input?.addEventListener(
-      "keydown",
-      event => {
+  "keydown",
+  event => {
 
-        if (
-          event.key === "Enter"
-        ) {
+    if (event.key === "Enter") {
+      event.preventDefault();
+      sendMessage();
+    }
 
-          event.preventDe
+  }
+);
+
+});

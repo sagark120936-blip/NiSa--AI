@@ -37,13 +37,26 @@ export default async function handler(req, res) {
     ========================== */
 
     const languageInstruction =
-      language === "mr"
-        ? "Reply in Marathi."
-        : language === "hi"
-        ? "Reply in Hindi."
-        : language === "en"
-        ? "Reply in English."
-        : "Reply naturally in the language used by the user.";
+  language === "mr"
+    ? "Reply in Marathi. If the user uses Roman/English letters to write Marathi, reply in Roman Marathi."
+    : language === "hi"
+    ? "Reply in Hindi. Match the user's script when possible."
+    : language === "en"
+    ? "Reply in English."
+    : `
+Detect the language and writing style of the user's latest message.
+
+IMPORTANT LANGUAGE RULES:
+- If the user writes Marathi using English/Roman letters, reply in Roman Marathi.
+- If the user writes Marathi in Devanagari script, reply in Marathi Devanagari.
+- If the user writes Hindi, reply in Hindi.
+- If the user writes English, reply in English.
+- If the user writes Gujarati, reply in Gujarati.
+- Do NOT randomly switch to Gujarati or another language.
+- Match the language and script used by the user's latest message.
+- If the user mixes Marathi and English, naturally use Marathi + English in the same style.
+- Do not translate the user's message unless requested.
+`;
 
     /* =========================
        MODE

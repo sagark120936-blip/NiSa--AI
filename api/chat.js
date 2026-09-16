@@ -32,32 +32,75 @@ export default async function handler(req, res) {
       });
     }
 
-    /* =========================
-       LANGUAGE
-    ========================== */
+/* =========================
+   LANGUAGE
+========================== */
 
-    const languageInstruction =
-  language === "mr"
-    ? "Reply in Marathi. If the user uses Roman/English letters to write Marathi, reply in Roman Marathi."
-    : language === "hi"
-    ? "Reply in Hindi. Match the user's script when possible."
-    : language === "en"
-    ? "Reply in English."
-    : `
-Detect the language and writing style of the user's latest message.
+let languageInstruction = "";
 
-IMPORTANT LANGUAGE RULES:
-- If the user writes Marathi using English/Roman letters, reply in Roman Marathi.
-- If the user writes Marathi in Devanagari script, reply in Marathi Devanagari.
-- If the user writes Hindi, reply in Hindi.
-- If the user writes English, reply in English.
-- If the user writes Gujarati, reply in Gujarati.
-- Do NOT randomly switch to Gujarati or another language.
-- Match the language and script used by the user's latest message.
-- If the user mixes Marathi and English, naturally use Marathi + English in the same style.
-- Do not translate the user's message unless requested.
-- When the user's latest message is written in Roman Marathi, ALWAYS reply in Roman Marathi. Do not use Devanagari script.
+if (language === "mr") {
+  languageInstruction = `
+Reply in Marathi.
+
+IMPORTANT:
+If the user's message is written in Roman/English letters,
+reply ONLY in Roman Marathi.
+
+If the user's message is written in Devanagari,
+reply ONLY in Marathi Devanagari.
+
+Do not mix Roman Marathi and Devanagari unless the user does.
 `;
+}
+else if (language === "hi") {
+  languageInstruction = `
+Reply in Hindi.
+Match the script used by the user.
+`;
+}
+else if (language === "en") {
+  languageInstruction = `
+Reply in English.
+`;
+}
+else {
+  languageInstruction = `
+Detect the language AND SCRIPT of the user's latest message.
+
+STRICT SCRIPT MATCHING:
+
+1. If the user writes Marathi using Roman/English letters,
+   reply ONLY in Roman Marathi.
+   
+   Example:
+   User: "Maz study plan banav"
+   Reply: "Ho, tuzha study plan banvuya."
+
+2. If the user writes Marathi using Devanagari,
+   reply ONLY in Marathi Devanagari.
+
+   Example:
+   User: "माझा स्टडी प्लॅन बनव"
+   Reply: "हो, तुझा स्टडी प्लॅन बनवूया."
+
+3. If the user writes English,
+   reply in English.
+
+4. If the user writes Hindi,
+   reply in Hindi.
+
+5. If the user mixes Marathi and English in Roman script,
+   prefer Roman Marathi.
+
+6. NEVER randomly switch to Gujarati, Hindi,
+   Devanagari Marathi, or another script.
+
+7. When the user uses Roman Marathi,
+   DO NOT use ANY Devanagari characters in the answer.
+
+8. Match the user's latest message, not older messages.
+`;
+}
 
     /* =========================
        MODE

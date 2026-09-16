@@ -504,11 +504,12 @@ body.light .action-description{
     >
 
     <button
-      class="send"
-      onclick="sendMessage()"
-    >
-      ➤
-    </button>
+  type="button"
+  id="sendButton"
+  class="send"
+>
+  ➤
+</button>
 
   </div>
 
@@ -596,25 +597,46 @@ renderHistory();
    ENTER KEY
 ========================= */
 
-document
-  .getElementById("messageInput")
-  .addEventListener(
-    "keydown",
-    e => {
+/* =========================
+   SEND BUTTON + ENTER
+========================= */
 
-      if(
-        e.key === "Enter" &&
-        !e.shiftKey
-      ){
+const messageInput =
+  document.getElementById("messageInput");
 
-        e.preventDefault();
+const sendButton =
+  document.getElementById("sendButton");
 
-        sendMessage();
 
-      }
+sendButton.addEventListener(
+  "click",
+  function(e){
+
+    e.preventDefault();
+
+    sendMessage();
+
+  }
+);
+
+
+messageInput.addEventListener(
+  "keydown",
+  function(e){
+
+    if(
+      e.key === "Enter" &&
+      !e.shiftKey
+    ){
+
+      e.preventDefault();
+
+      sendMessage();
 
     }
-  );
+
+  }
+);
 
 
 /* =========================

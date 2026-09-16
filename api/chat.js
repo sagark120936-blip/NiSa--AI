@@ -43,53 +43,36 @@ export default async function handler(req, res) {
 Reply in Marathi.
 
 IMPORTANT:
-- If the user writes Marathi using Roman/English letters,
+- If user writes Marathi in Roman/English letters,
   reply ONLY in Roman Marathi.
-- If the user writes Marathi using Devanagari,
+- If user writes Marathi in Devanagari,
   reply ONLY in Marathi Devanagari.
-- Do not randomly switch scripts.
+- Do not randomly change script.
 `;
-    } 
-    else if (language === "hi") {
+    } else if (language === "hi") {
       languageInstruction = `
 Reply in Hindi.
 Match the script used by the user.
 `;
-    } 
-    else if (language === "en") {
+    } else if (language === "en") {
       languageInstruction = `
 Reply in English.
 `;
-    } 
-    else {
+    } else {
       languageInstruction = `
 Detect the language AND SCRIPT of the user's latest message.
 
-STRICT LANGUAGE RULES:
+STRICT RULES:
 
-1. Roman Marathi:
-   If the user writes Marathi using English/Roman letters,
-   reply ONLY in Roman Marathi.
-
-2. Marathi Devanagari:
-   If the user writes Marathi using Devanagari,
-   reply ONLY in Marathi Devanagari.
-
-3. English:
-   Reply in English.
-
-4. Hindi:
-   Reply in Hindi.
-
-5. Mixed Roman Marathi + English:
-   Prefer natural Roman Marathi + English.
-
+1. Roman Marathi → ONLY Roman Marathi.
+2. Marathi Devanagari → ONLY Marathi Devanagari.
+3. English → English.
+4. Hindi → Hindi.
+5. Mixed Roman Marathi + English → natural Roman Marathi + English.
 6. Never randomly switch to Gujarati or another language.
-
-7. If the user's latest message is Roman Marathi,
-   DO NOT use Devanagari characters in the answer.
-
-8. Match the user's latest message rather than older messages.
+7. If the latest message is Roman Marathi,
+   DO NOT use Devanagari characters.
+8. Match the latest message.
 `;
     }
 
@@ -140,7 +123,7 @@ Your job is to:
 - suggest useful alternatives
 - ask for missing information
 - ask for confirmation when necessary
-- never pretend that an action was performed
+- never pretend an action was performed
 
 ${languageInstruction}
 
@@ -153,138 +136,168 @@ NISA CORE BEHAVIOR
 
 For every request:
 
-1. Understand what the user actually wants.
+1. Understand the real goal.
 2. Check conversation context.
 3. Use relevant user-provided memory.
-4. Look for missing information.
+4. Detect missing information.
 5. Consider useful alternatives.
 6. Check for mistakes or risks.
-7. If a genuinely useful suggestion exists, mention it.
-8. If something is wrong or risky, warn the user.
-9. If an action requires confirmation, create an action plan.
+7. Give useful suggestions when appropriate.
+8. Warn about important problems.
+9. If a phone action is requested, create an action plan.
 10. Give the useful answer.
 
-Do not blindly agree with the user.
+Do not blindly agree.
 
 Do not invent facts.
 
-Do not reveal private chain-of-thought,
-hidden reasoning, internal analysis, or reasoning tokens.
+Do not reveal hidden chain-of-thought or internal reasoning.
 
 ================================
 ACTION PLANNER
 ================================
 
-You may identify an intended action such as:
-
-- setAlarm
-- createTimer
-- openApp
-- readNotifications
-- sendMessage
-- makeCall
-- changeAllowedSetting
-
-BUT remember:
-
-The current web application does NOT directly control the Android phone.
+The current web application does NOT directly control Android.
 
 Therefore:
 
-- Never claim that a phone action was completed.
+- Never claim an Android action was completed.
 - Never say "Done" for an unconnected phone action.
-- If an action is not connected, explain that it is not connected yet.
-- For sensitive or irreversible actions, confirmation is required.
+- Action plans are requests waiting for user confirmation.
+- Confirmation must happen before an action is sent to Android.
 
-When an action should require confirmation, your response MUST include
-this exact JSON block at the END of your answer:
+Supported first-stage actions:
 
-<action_plan>
-{
-  "requiresConfirmation": true,
-  "action": "ACTION_NAME",
-  "description": "Short description of the action"
-}
-</action_plan>
+1. setAlarm
+2. createTimer
 
-When no action is required, do NOT include an action_plan block.
+================================
+SET ALARM
+================================
 
-Examples:
-
-User:
-"Udya 7 vajta alarm lav"
-
-Response:
-"Udya 7 vajta alarm lavu ka?
+When the user requests an alarm, create:
 
 <action_plan>
 {
   "requiresConfirmation": true,
   "action": "setAlarm",
-  "description": "Udya sakali 7:00 vajta alarm set karaycha aahe."
+  "params": {
+    "hour": 7,
+    "minutes": 0,
+    "message": "NiSa Alarm"
+  },
+  "description": "7:00 vajta alarm set karaycha aahe."
 }
-</action_plan>"
+</action_plan>
 
-User:
-"10 minute timer lav"
+Rules:
 
-Response:
-"10 minute timer start karu ka?
+- hour must be 0-23.
+- minutes must be 0-59.
+- Always provide numeric hour and minutes.
+- If the exact time is missing, ASK the user for the time.
+- Do not guess the time.
+
+For a one-time alarm, do not invent repeat days.
+
+================================
+CREATE TIMER
+================================
+
+When the user requests a timer, create:
 
 <action_plan>
 {
   "requiresConfirmation": true,
   "action": "createTimer",
+  "params": {
+    "seconds": 600,
+    "message": "NiSa Timer"
+  },
   "description": "10 minute timer start karaycha aahe."
 }
-</action_plan>"
+</action_plan>
+
+Rules:
+
+- seconds must be a positive integer.
+- Convert minutes/hours into seconds.
+- If duration is missing, ASK the user.
+- Do not guess the duration.
+
+Examples:
+
+"10 minute timer lav"
+
+→ seconds = 600
+
+"1 hour timer lav"
+
+→ seconds = 3600
+
+"90 second timer lav"
+
+→ seconds = 90
 
 ================================
-SENSITIVE ACTIONS
+CONFIRMATION
 ================================
 
-For:
+For phone actions:
+
+1. Explain what NiSa wants to do.
+2. Create the action_plan.
+3. Wait for confirmation.
+
+Never execute an action merely because the user originally requested it.
+
+The frontend confirmation button is the approval step.
+
+================================
+OTHER PHONE ACTIONS
+================================
+
+Do NOT create executable plans for:
 
 - payments
 - purchases
-- deleting important information
+- deleting important data
 - account/security changes
 - sending important messages
 - sharing private information
 
-always require appropriate confirmation.
+unless a future explicitly connected and authorized tool supports them.
 
 Never ask for:
 
-- phone password
+- password
 - PIN
 - OTP
 - bank PIN
 - recovery code
 - authentication secret
 
-Use device/system authentication when a future native Android
-integration supports it.
-
 ================================
-PHONE CONTROL
+PHONE CONTROL STATUS
 ================================
 
-The current application is only the AI brain.
+Current application:
 
-Actual phone actions are NOT connected yet.
+AI brain = connected
 
-Never claim:
+Android phone control = NOT connected yet
+
+Therefore never claim:
+
+"I set the alarm."
+
+"I started the timer."
 
 "I opened the app."
 
 "I sent the message."
 
-"I changed the setting."
-
-"I set the alarm."
-
-unless an actual connected tool performed it.
+unless an actual connected Android tool performs it.
 
 ================================
 MEMORY
@@ -302,8 +315,8 @@ If an image is provided:
 
 - inspect visible information
 - read visible text when possible
-- do not invent details
-- mention uncertainty if image quality is insufficient
+- don't invent details
+- mention uncertainty when needed
 
 ================================
 ACCURACY
@@ -313,8 +326,8 @@ ACCURACY
 - Say when uncertain.
 - Show necessary calculation steps.
 - For study questions, prioritize exam-useful information.
-- Do not claim to browse the web unless actual web results are provided.
-- Do not claim to perform an action unless it actually happened.
+- Do not claim web browsing unless actual results are provided.
+- Do not claim actions were performed.
 
 ================================
 PERSONALITY
@@ -353,8 +366,8 @@ Web mode is ON.
 If actual web/search results are provided,
 use them and distinguish them from general knowledge.
 
-Do not pretend that you searched the web when
-no search results were provided.
+Do not pretend to have searched the web
+when no search results are provided.
 `
       : `
 Web mode is OFF.
@@ -438,9 +451,7 @@ ${webInstruction}
     ========================== */
 
     for (const model of models) {
-
       try {
-
         const response = await fetch(
           "https://api.groq.com/openai/v1/chat/completions",
           {
@@ -464,10 +475,8 @@ ${webInstruction}
         const result = await response.json();
 
         if (response.ok) {
-
           data = result;
           selectedModel = model;
-
           break;
         }
 
@@ -477,14 +486,11 @@ ${webInstruction}
         );
 
       } catch (error) {
-
         console.error(
           `Model ${model} request failed:`,
           error
         );
-
       }
-
     }
 
     /* =========================
@@ -492,12 +498,10 @@ ${webInstruction}
     ========================== */
 
     if (!data) {
-
       return res.status(502).json({
         error:
           "NiSa could not connect to an available Groq model. Check your GROQ_API_KEY and model access."
       });
-
     }
 
     /* =========================
@@ -505,8 +509,7 @@ ${webInstruction}
     ========================== */
 
     let rawAnswer =
-      data?.choices?.[0]?.message?.content ||
-      "";
+      data?.choices?.[0]?.message?.content || "";
 
     rawAnswer = String(rawAnswer).trim();
 
@@ -516,43 +519,32 @@ ${webInstruction}
 
     let actionPlan = null;
 
-    const actionMatch =
-      rawAnswer.match(
-        /<action_plan>\s*([\s\S]*?)\s*<\/action_plan>/i
-      );
+    const actionMatch = rawAnswer.match(
+      /<action_plan>\s*([\s\S]*?)\s*<\/action_plan>/i
+    );
 
     if (actionMatch) {
-
       try {
-
-        actionPlan =
-          JSON.parse(
-            actionMatch[1]
-          );
-
+        actionPlan = JSON.parse(actionMatch[1]);
       } catch (error) {
-
         console.error(
           "Action plan JSON parse failed:",
           error
         );
 
         actionPlan = null;
-
       }
 
-      rawAnswer =
-        rawAnswer
-          .replace(
-            /<action_plan>\s*[\s\S]*?\s*<\/action_plan>/i,
-            ""
-          )
-          .trim();
-
+      rawAnswer = rawAnswer
+        .replace(
+          /<action_plan>\s*[\s\S]*?\s*<\/action_plan>/i,
+          ""
+        )
+        .trim();
     }
 
     /* =========================
-       SAFETY VALIDATION
+       ACTION PLAN VALIDATION
     ========================== */
 
     if (
@@ -577,37 +569,106 @@ ${webInstruction}
     }
 
     /* =========================
+       ALARM VALIDATION
+    ========================== */
+
+    if (
+      actionPlan &&
+      actionPlan.action === "setAlarm"
+    ) {
+      const p = actionPlan.params;
+
+      if (
+        !p ||
+        !Number.isInteger(p.hour) ||
+        !Number.isInteger(p.minutes) ||
+        p.hour < 0 ||
+        p.hour > 23 ||
+        p.minutes < 0 ||
+        p.minutes > 59
+      ) {
+        console.error(
+          "Invalid alarm action plan:",
+          actionPlan
+        );
+
+        actionPlan = null;
+      }
+    }
+
+    /* =========================
+       TIMER VALIDATION
+    ========================== */
+
+    if (
+      actionPlan &&
+      actionPlan.action === "createTimer"
+    ) {
+      const p = actionPlan.params;
+
+      if (
+        !p ||
+        !Number.isInteger(p.seconds) ||
+        p.seconds <= 0
+      ) {
+        console.error(
+          "Invalid timer action plan:",
+          actionPlan
+        );
+
+        actionPlan = null;
+      }
+    }
+
+    /* =========================
+       ALLOWED ACTIONS ONLY
+    ========================== */
+
+    const allowedActions = [
+      "setAlarm",
+      "createTimer"
+    ];
+
+    if (
+      actionPlan &&
+      !allowedActions.includes(actionPlan.action)
+    ) {
+      console.error(
+        "Unsupported action:",
+        actionPlan.action
+      );
+
+      actionPlan = null;
+    }
+
+    /* =========================
        REMOVE THINKING TAGS
     ========================== */
 
-    let answer =
-      rawAnswer
-        .replace(
-          /<think>[\s\S]*?<\/think>/gi,
-          ""
-        )
-        .replace(
-          /<thinking>[\s\S]*?<\/thinking>/gi,
-          ""
-        )
-        .replace(
-          /<analysis>[\s\S]*?<\/analysis>/gi,
-          ""
-        )
-        .replace(
-          /<reasoning>[\s\S]*?<\/reasoning>/gi,
-          ""
-        )
-        .trim();
+    let answer = rawAnswer
+      .replace(
+        /<think>[\s\S]*?<\/think>/gi,
+        ""
+      )
+      .replace(
+        /<thinking>[\s\S]*?<\/thinking>/gi,
+        ""
+      )
+      .replace(
+        /<analysis>[\s\S]*?<\/analysis>/gi,
+        ""
+      )
+      .replace(
+        /<reasoning>[\s\S]*?<\/reasoning>/gi,
+        ""
+      )
+      .trim();
 
     /* =========================
        UNCLOSED THINKING
     ========================== */
 
-    if (
-      /^\s*<think>/i.test(answer)
-    ) {
-
+    if (/^\s*<think>/i.test(answer)) {
       const endTags = [
         "</think>",
         "</thinking>",
@@ -616,7 +677,6 @@ ${webInstruction}
       ];
 
       for (const tag of endTags) {
-
         const index =
           answer
             .toLowerCase()
@@ -625,39 +685,29 @@ ${webInstruction}
             );
 
         if (index !== -1) {
-
-          answer =
-            answer
-              .slice(
-                index + tag.length
-              )
-              .trim();
+          answer = answer
+            .slice(index + tag.length)
+            .trim();
 
           break;
-
         }
-
       }
-
     }
 
     /* =========================
        FINAL CLEANUP
     ========================== */
 
-    answer =
-      answer
-        .replace(
-          /<\/?(think|thinking|analysis|reasoning)>/gi,
-          ""
-        )
-        .trim();
+    answer = answer
+      .replace(
+        /<\/?(think|thinking|analysis|reasoning)>/gi,
+        ""
+      )
+      .trim();
 
     if (!answer) {
-
       answer =
         "Sorry, I couldn't generate a useful answer.";
-
     }
 
     /* =========================
@@ -665,33 +715,21 @@ ${webInstruction}
     ========================== */
 
     return res.status(200).json({
-
       answer,
 
       actionPlan,
 
       nisa: {
-
         model: selectedModel,
-
         proactive: true,
-
         reasoning: true,
-
         suggestions: true,
-
         safety: true,
-
-        actionPlanning: Boolean(
-          actionPlan
-        )
-
+        actionPlanning: Boolean(actionPlan)
       }
-
     });
 
   } catch (error) {
-
     console.error(
       "NiSa AI server error:",
       error
@@ -701,6 +739,5 @@ ${webInstruction}
       error:
         "NiSa server error. Please try again."
     });
-
   }
 }

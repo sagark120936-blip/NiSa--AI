@@ -32,75 +32,66 @@ export default async function handler(req, res) {
       });
     }
 
-/* =========================
-   LANGUAGE
-========================== */
+    /* =========================
+       LANGUAGE
+    ========================== */
 
-let languageInstruction = "";
+    let languageInstruction = "";
 
-if (language === "mr") {
-  languageInstruction = `
+    if (language === "mr") {
+      languageInstruction = `
 Reply in Marathi.
 
 IMPORTANT:
-If the user's message is written in Roman/English letters,
-reply ONLY in Roman Marathi.
-
-If the user's message is written in Devanagari,
-reply ONLY in Marathi Devanagari.
-
-Do not mix Roman Marathi and Devanagari unless the user does.
+- If the user writes Marathi using Roman/English letters,
+  reply ONLY in Roman Marathi.
+- If the user writes Marathi using Devanagari,
+  reply ONLY in Marathi Devanagari.
+- Do not randomly switch scripts.
 `;
-}
-else if (language === "hi") {
-  languageInstruction = `
+    } 
+    else if (language === "hi") {
+      languageInstruction = `
 Reply in Hindi.
 Match the script used by the user.
 `;
-}
-else if (language === "en") {
-  languageInstruction = `
+    } 
+    else if (language === "en") {
+      languageInstruction = `
 Reply in English.
 `;
-}
-else {
-  languageInstruction = `
+    } 
+    else {
+      languageInstruction = `
 Detect the language AND SCRIPT of the user's latest message.
 
-STRICT SCRIPT MATCHING:
+STRICT LANGUAGE RULES:
 
-1. If the user writes Marathi using Roman/English letters,
+1. Roman Marathi:
+   If the user writes Marathi using English/Roman letters,
    reply ONLY in Roman Marathi.
-   
-   Example:
-   User: "Maz study plan banav"
-   Reply: "Ho, tuzha study plan banvuya."
 
-2. If the user writes Marathi using Devanagari,
+2. Marathi Devanagari:
+   If the user writes Marathi using Devanagari,
    reply ONLY in Marathi Devanagari.
 
-   Example:
-   User: "माझा स्टडी प्लॅन बनव"
-   Reply: "हो, तुझा स्टडी प्लॅन बनवूया."
+3. English:
+   Reply in English.
 
-3. If the user writes English,
-   reply in English.
+4. Hindi:
+   Reply in Hindi.
 
-4. If the user writes Hindi,
-   reply in Hindi.
+5. Mixed Roman Marathi + English:
+   Prefer natural Roman Marathi + English.
 
-5. If the user mixes Marathi and English in Roman script,
-   prefer Roman Marathi.
+6. Never randomly switch to Gujarati or another language.
 
-6. NEVER randomly switch to Gujarati, Hindi,
-   Devanagari Marathi, or another script.
+7. If the user's latest message is Roman Marathi,
+   DO NOT use Devanagari characters in the answer.
 
-7. When the user uses Roman Marathi,
-   DO NOT use ANY Devanagari characters in the answer.
-
-8. Match the user's latest message, not older messages.
+8. Match the user's latest message rather than older messages.
 `;
-}
+    }
 
     /* =========================
        MODE
@@ -130,7 +121,7 @@ STRICT SCRIPT MATCHING:
     }[mode] || "Answer naturally and clearly.";
 
     /* =========================
-       NISA BRAIN
+       NISA SYSTEM
     ========================== */
 
     const systemPrompt = `
@@ -140,9 +131,16 @@ You are an intelligent, proactive personal AI assistant.
 
 You are NOT a blind command executor.
 
-Your job is to understand the user's actual goal,
-think about useful alternatives, detect possible mistakes,
-and help the user make a better decision.
+Your job is to:
+
+- understand the user's real goal
+- think before answering
+- detect mistakes
+- detect possible risks
+- suggest useful alternatives
+- ask for missing information
+- ask for confirmation when necessary
+- never pretend that an action was performed
 
 ${languageInstruction}
 
@@ -156,15 +154,15 @@ NISA CORE BEHAVIOR
 For every request:
 
 1. Understand what the user actually wants.
-2. Use relevant conversation context.
+2. Check conversation context.
 3. Use relevant user-provided memory.
 4. Look for missing information.
 5. Consider useful alternatives.
-6. Check for possible mistakes or risks.
-7. If there is a genuinely better option, suggest it.
-8. If something appears wrong or risky, warn the user.
-9. If confirmation is needed, ask for confirmation.
-10. Then provide the useful answer.
+6. Check for mistakes or risks.
+7. If a genuinely useful suggestion exists, mention it.
+8. If something is wrong or risky, warn the user.
+9. If an action requires confirmation, create an action plan.
+10. Give the useful answer.
 
 Do not blindly agree with the user.
 
@@ -173,62 +171,90 @@ Do not invent facts.
 Do not reveal private chain-of-thought,
 hidden reasoning, internal analysis, or reasoning tokens.
 
-Give only the useful conclusion, explanation,
-warning, suggestion, or question.
-
 ================================
-PROACTIVE SUGGESTIONS
+ACTION PLANNER
 ================================
 
-NiSa should sometimes think beyond the literal request.
+You may identify an intended action such as:
 
-Example:
+- setAlarm
+- createTimer
+- openApp
+- readNotifications
+- sendMessage
+- makeCall
+- changeAllowedSetting
+
+BUT remember:
+
+The current web application does NOT directly control the Android phone.
+
+Therefore:
+
+- Never claim that a phone action was completed.
+- Never say "Done" for an unconnected phone action.
+- If an action is not connected, explain that it is not connected yet.
+- For sensitive or irreversible actions, confirmation is required.
+
+When an action should require confirmation, your response MUST include
+this exact JSON block at the END of your answer:
+
+<action_plan>
+{
+  "requiresConfirmation": true,
+  "action": "ACTION_NAME",
+  "description": "Short description of the action"
+}
+</action_plan>
+
+When no action is required, do NOT include an action_plan block.
+
+Examples:
 
 User:
-"I need to wake up at 8."
+"Udya 7 vajta alarm lav"
 
-If the context suggests the user needs preparation time,
-NiSa can say:
+Response:
+"Udya 7 vajta alarm lavu ka?
 
-"8 AM is possible, but if you need preparation time,
-7 AM may work better. Would you like that?"
+<action_plan>
+{
+  "requiresConfirmation": true,
+  "action": "setAlarm",
+  "description": "Udya sakali 7:00 vajta alarm set karaycha aahe."
+}
+</action_plan>"
 
-Do NOT make unnecessary suggestions for every message.
+User:
+"10 minute timer lav"
 
-Suggestions must be relevant and useful.
+Response:
+"10 minute timer start karu ka?
 
-================================
-ERROR PREVENTION
-================================
-
-If the user appears to be making an important mistake:
-
-- stop
-- explain the issue
-- provide a safer or more appropriate alternative
-
-If important information is missing,
-ask the user for it instead of guessing.
+<action_plan>
+{
+  "requiresConfirmation": true,
+  "action": "createTimer",
+  "description": "10 minute timer start karaycha aahe."
+}
+</action_plan>"
 
 ================================
 SENSITIVE ACTIONS
 ================================
 
-For sensitive or irreversible actions such as:
+For:
 
-- sending important messages
-- deleting information
-- purchases
 - payments
-- account changes
-- security changes
+- purchases
+- deleting important information
+- account/security changes
+- sending important messages
 - sharing private information
 
-do not assume permission.
+always require appropriate confirmation.
 
-Ask for confirmation when appropriate.
-
-Never ask the user for:
+Never ask for:
 
 - phone password
 - PIN
@@ -237,17 +263,16 @@ Never ask the user for:
 - recovery code
 - authentication secret
 
-Future Android versions should use the device's own
-authentication mechanism instead.
+Use device/system authentication when a future native Android
+integration supports it.
 
 ================================
 PHONE CONTROL
 ================================
 
-You are currently the AI brain.
+The current application is only the AI brain.
 
-You cannot directly control the user's phone unless
-the application explicitly provides a tool for that action.
+Actual phone actions are NOT connected yet.
 
 Never claim:
 
@@ -259,22 +284,7 @@ Never claim:
 
 "I set the alarm."
 
-unless the application actually performed that action.
-
-If an action is not connected yet, say that it is
-not currently connected.
-
-Future NiSa tools may include:
-
-openApp
-setAlarm
-createTimer
-readNotifications
-sendMessage
-makeCall
-changeAllowedSetting
-
-Only use such actions when they are actually connected.
+unless an actual connected tool performed it.
 
 ================================
 MEMORY
@@ -284,36 +294,31 @@ Use user-provided memory only when relevant.
 
 Never invent memories.
 
-Never assume that an unverified memory is definitely true.
-
 ================================
 IMAGE
 ================================
 
 If an image is provided:
 
-- inspect only visible information
+- inspect visible information
 - read visible text when possible
 - do not invent details
-- mention uncertainty when image quality is insufficient
+- mention uncertainty if image quality is insufficient
 
 ================================
 ACCURACY
 ================================
 
 - Do not invent facts.
-- Say when you are uncertain.
+- Say when uncertain.
 - Show necessary calculation steps.
-- For study questions, prioritize useful exam information.
-- Do not claim to have browsed the web unless web results
-  were actually supplied.
-- Do not claim to have performed an action unless it actually happened.
+- For study questions, prioritize exam-useful information.
+- Do not claim to browse the web unless actual web results are provided.
+- Do not claim to perform an action unless it actually happened.
 
 ================================
 PERSONALITY
 ================================
-
-NiSa should feel:
 
 Smart
 Calm
@@ -345,11 +350,11 @@ ${String(memory).slice(0, 4000)}
       ? `
 Web mode is ON.
 
-If actual web/search results are provided to you,
-use them and distinguish those results from general knowledge.
+If actual web/search results are provided,
+use them and distinguish them from general knowledge.
 
-Do not pretend that you searched the web if no search
-results were provided.
+Do not pretend that you searched the web when
+no search results were provided.
 `
       : `
 Web mode is OFF.
@@ -425,7 +430,6 @@ ${webInstruction}
       "openai/gpt-oss-120b"
     ];
 
-    let response = null;
     let data = null;
     let selectedModel = null;
 
@@ -434,8 +438,10 @@ ${webInstruction}
     ========================== */
 
     for (const model of models) {
+
       try {
-        const r = await fetch(
+
+        const response = await fetch(
           "https://api.groq.com/openai/v1/chat/completions",
           {
             method: "POST",
@@ -448,77 +454,160 @@ ${webInstruction}
             body: JSON.stringify({
               model,
               messages: groqMessages,
-
               temperature: 0.7,
-
               max_completion_tokens: 2500,
-
-              /*
-                Ask Groq to return only the final answer,
-                not hidden reasoning.
-              */
               reasoning_format: "hidden"
             })
           }
         );
 
-        const d = await r.json();
+        const result = await response.json();
 
-        if (r.ok) {
-          response = r;
-          data = d;
+        if (response.ok) {
+
+          data = result;
           selectedModel = model;
+
           break;
         }
 
         console.error(
           `Groq model ${model} failed:`,
-          d
+          result
         );
 
-      } catch (modelError) {
+      } catch (error) {
+
         console.error(
           `Model ${model} request failed:`,
-          modelError
+          error
         );
+
       }
+
     }
 
     /* =========================
        ALL MODELS FAILED
     ========================== */
 
-    if (!response || !data) {
+    if (!data) {
+
       return res.status(502).json({
         error:
           "NiSa could not connect to an available Groq model. Check your GROQ_API_KEY and model access."
       });
+
     }
 
     /* =========================
-       ANSWER
+       RAW ANSWER
     ========================== */
 
-    let answer =
+    let rawAnswer =
       data?.choices?.[0]?.message?.content ||
       "";
+
+    rawAnswer = String(rawAnswer).trim();
+
+    /* =========================
+       ACTION PLAN PARSER
+    ========================== */
+
+    let actionPlan = null;
+
+    const actionMatch =
+      rawAnswer.match(
+        /<action_plan>\s*([\s\S]*?)\s*<\/action_plan>/i
+      );
+
+    if (actionMatch) {
+
+      try {
+
+        actionPlan =
+          JSON.parse(
+            actionMatch[1]
+          );
+
+      } catch (error) {
+
+        console.error(
+          "Action plan JSON parse failed:",
+          error
+        );
+
+        actionPlan = null;
+
+      }
+
+      rawAnswer =
+        rawAnswer
+          .replace(
+            /<action_plan>\s*[\s\S]*?\s*<\/action_plan>/i,
+            ""
+          )
+          .trim();
+
+    }
+
+    /* =========================
+       SAFETY VALIDATION
+    ========================== */
+
+    if (
+      actionPlan &&
+      actionPlan.requiresConfirmation !== true
+    ) {
+      actionPlan = null;
+    }
+
+    if (
+      actionPlan &&
+      typeof actionPlan.action !== "string"
+    ) {
+      actionPlan = null;
+    }
+
+    if (
+      actionPlan &&
+      typeof actionPlan.description !== "string"
+    ) {
+      actionPlan = null;
+    }
 
     /* =========================
        REMOVE THINKING TAGS
     ========================== */
 
-    answer = answer
-      .replace(/<think>[\s\S]*?<\/think>/gi, "")
-      .replace(/<thinking>[\s\S]*?<\/thinking>/gi, "")
-      .replace(/<analysis>[\s\S]*?<\/analysis>/gi, "")
-      .replace(/<reasoning>[\s\S]*?<\/reasoning>/gi, "")
-      .trim();
+    let answer =
+      rawAnswer
+        .replace(
+          /<think>[\s\S]*?<\/think>/gi,
+          ""
+        )
+        .replace(
+          /<thinking>[\s\S]*?<\/thinking>/gi,
+          ""
+        )
+        .replace(
+          /<analysis>[\s\S]*?<\/analysis>/gi,
+          ""
+        )
+        .replace(
+          /<reasoning>[\s\S]*?<\/reasoning>/gi,
+          ""
+        )
+        .trim();
 
     /* =========================
-       HANDLE UNCLOSED THINKING
+       UNCLOSED THINKING
     ========================== */
 
-    if (/^\s*<think>/i.test(answer)) {
+    if (
+      /^\s*<think>/i.test(answer)
+    ) {
+
       const endTags = [
         "</think>",
         "</thinking>",
@@ -527,34 +616,48 @@ ${webInstruction}
       ];
 
       for (const tag of endTags) {
-        const index = answer
-          .toLowerCase()
-          .lastIndexOf(tag.toLowerCase());
+
+        const index =
+          answer
+            .toLowerCase()
+            .lastIndexOf(
+              tag.toLowerCase()
+            );
 
         if (index !== -1) {
-          answer = answer
-            .slice(index + tag.length)
-            .trim();
+
+          answer =
+            answer
+              .slice(
+                index + tag.length
+              )
+              .trim();
 
           break;
+
         }
+
       }
+
     }
 
     /* =========================
        FINAL CLEANUP
     ========================== */
 
-    answer = answer
-      .replace(
-        /<\/?(think|thinking|analysis|reasoning)>/gi,
-        ""
-      )
-      .trim();
+    answer =
+      answer
+        .replace(
+          /<\/?(think|thinking|analysis|reasoning)>/gi,
+          ""
+        )
+        .trim();
 
     if (!answer) {
+
       answer =
         "Sorry, I couldn't generate a useful answer.";
+
     }
 
     /* =========================
@@ -562,20 +665,33 @@ ${webInstruction}
     ========================== */
 
     return res.status(200).json({
+
       answer,
 
+      actionPlan,
+
       nisa: {
+
         model: selectedModel,
 
         proactive: true,
+
         reasoning: true,
+
         suggestions: true,
+
         safety: true,
-        actionPlanning: true
+
+        actionPlanning: Boolean(
+          actionPlan
+        )
+
       }
+
     });
 
   } catch (error) {
+
     console.error(
       "NiSa AI server error:",
       error
@@ -585,5 +701,6 @@ ${webInstruction}
       error:
         "NiSa server error. Please try again."
     });
+
   }
 }

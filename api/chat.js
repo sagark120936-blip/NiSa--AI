@@ -56,6 +56,7 @@ IMPORTANT LANGUAGE RULES:
 - Match the language and script used by the user's latest message.
 - If the user mixes Marathi and English, naturally use Marathi + English in the same style.
 - Do not translate the user's message unless requested.
+- When the user's latest message is written in Roman Marathi, ALWAYS reply in Roman Marathi. Do not use Devanagari script.
 `;
 
     /* =========================

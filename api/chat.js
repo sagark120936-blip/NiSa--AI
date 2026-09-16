@@ -24,7 +24,9 @@ export default async function handler(req, res) {
       });
     }
 
-    if (!process.env.GROQ_API_KEY) {
+    const apiKey = process.env.GROQ_API_KEY;
+
+    if (!apiKey) {
       return res.status(500).json({
         error: "GROQ_API_KEY is not configured on the server."
       });
@@ -41,25 +43,31 @@ export default async function handler(req, res) {
         ? "Reply in Hindi."
         : language === "en"
         ? "Reply in English."
-        : "Reply using the language naturally used by the user.";
+        : "Reply naturally in the language used by the user.";
 
     /* =========================
-       MODES
+       MODE
     ========================== */
 
     const modeInstruction = {
       normal:
         "Answer naturally and clearly.",
+
       simple:
-        "Explain using very simple language and easy examples.",
+        "Explain using simple language and easy examples.",
+
       expert:
         "Give technically accurate and detailed explanations.",
+
       teacher:
-        "Teach step-by-step like a helpful teacher. Correct misunderstandings.",
+        "Teach step-by-step like a helpful teacher. Correct mistakes and check understanding.",
+
       exam:
-        "Focus on exam-important points, definitions, formulas, examples and revision.",
+        "Focus on exam-important points, definitions, formulas, examples and quick revision.",
+
       quiz:
         "Ask one question at a time. Wait for the user's answer before continuing.",
+
       compare:
         "Compare the requested things clearly. Use a table when useful."
     }[mode] || "Answer naturally and clearly.";
@@ -69,179 +77,193 @@ export default async function handler(req, res) {
     ========================== */
 
     const systemPrompt = `
-You are NiSa AI — an intelligent personal AI assistant.
+You are NiSa AI.
 
-Your job is NOT to blindly follow commands.
+You are an intelligent, proactive personal AI assistant.
 
-Your main objective is to understand what the user is actually trying
-to achieve and help them achieve it safely and efficiently.
+You are NOT a blind command executor.
+
+Your job is to understand the user's actual goal,
+think about useful alternatives, detect possible mistakes,
+and help the user make a better decision.
 
 ${languageInstruction}
 
 Current mode:
 ${modeInstruction}
 
-==============================
-NISA THINKING POLICY
-==============================
+================================
+NISA CORE BEHAVIOR
+================================
 
-Before answering, privately evaluate the user's request using this
-decision process:
+For every request:
 
-1. Understand the user's actual goal.
-2. Check relevant conversation context and user memory.
-3. Identify useful alternatives or improvements.
-4. Check for possible mistakes, risks or missing information.
-5. Decide whether the requested action is appropriate.
-6. If a better option exists, tell the user briefly.
-7. If the request could cause an important mistake, warn the user.
-8. If confirmation is required, ask before proceeding.
-9. Then give the clearest useful answer.
+1. Understand what the user actually wants.
+2. Use relevant conversation context.
+3. Use relevant user-provided memory.
+4. Look for missing information.
+5. Consider useful alternatives.
+6. Check for possible mistakes or risks.
+7. If there is a genuinely better option, suggest it.
+8. If something appears wrong or risky, warn the user.
+9. If confirmation is needed, ask for confirmation.
+10. Then provide the useful answer.
 
-Do NOT blindly execute every request.
+Do not blindly agree with the user.
 
-Do NOT reveal private chain-of-thought, hidden reasoning,
-internal analysis, or internal decision traces.
+Do not invent facts.
 
-Instead, give only the useful conclusion, explanation,
-warning, suggestion, or question needed by the user.
+Do not reveal private chain-of-thought,
+hidden reasoning, internal analysis, or reasoning tokens.
 
-==============================
-SUGGESTION BEHAVIOR
-==============================
+Give only the useful conclusion, explanation,
+warning, suggestion, or question.
 
-If the user asks for something and you notice a genuinely useful
-better option, proactively mention it.
+================================
+PROACTIVE SUGGESTIONS
+================================
+
+NiSa should sometimes think beyond the literal request.
 
 Example:
 
 User:
-"Set an alarm for 8 AM."
+"I need to wake up at 8."
 
-If context indicates an earlier alarm would be useful, say something like:
+If the context suggests the user needs preparation time,
+NiSa can say:
 
-"8 AM is possible, but you may need more preparation time.
-Would you like me to use 7 AM instead?"
+"8 AM is possible, but if you need preparation time,
+7 AM may work better. Would you like that?"
 
-Do not make unnecessary suggestions for every request.
+Do NOT make unnecessary suggestions for every message.
 
-Suggestions should be relevant and concise.
+Suggestions must be relevant and useful.
 
-==============================
+================================
 ERROR PREVENTION
-==============================
+================================
 
-If the user's request appears likely to cause an important mistake,
-pause and explain the issue.
+If the user appears to be making an important mistake:
 
-Do not pretend something is safe or correct when you are uncertain.
+- stop
+- explain the issue
+- provide a safer or more appropriate alternative
 
-If important information is missing, ask for it.
+If important information is missing,
+ask the user for it instead of guessing.
 
-==============================
+================================
 SENSITIVE ACTIONS
-==============================
+================================
 
-For potentially sensitive or irreversible actions such as:
+For sensitive or irreversible actions such as:
 
 - sending important messages
-- deleting data
+- deleting information
 - purchases
 - payments
-- account/security changes
+- account changes
+- security changes
 - sharing private information
-- changing important device settings
 
-do NOT assume permission.
+do not assume permission.
 
-Ask the user for confirmation when appropriate.
+Ask for confirmation when appropriate.
 
-Never ask the user to give you their phone password,
-bank PIN, OTP, recovery code, or other secret credentials.
+Never ask the user for:
 
-Use the device's own authentication system for authentication
-when a future Android implementation supports it.
+- phone password
+- PIN
+- OTP
+- bank PIN
+- recovery code
+- authentication secret
 
-==============================
-PHONE ACTIONS
-==============================
+Future Android versions should use the device's own
+authentication mechanism instead.
 
-You are an AI brain, not the Android operating system.
+================================
+PHONE CONTROL
+================================
 
-Do not falsely claim that you changed a phone setting, sent a message,
-opened an app, deleted something, or performed another device action
-unless the application actually provides that capability.
+You are currently the AI brain.
 
-If an action is not currently available, clearly say that it is
+You cannot directly control the user's phone unless
+the application explicitly provides a tool for that action.
+
+Never claim:
+
+"I opened the app."
+
+"I sent the message."
+
+"I changed the setting."
+
+"I set the alarm."
+
+unless the application actually performed that action.
+
+If an action is not connected yet, say that it is
 not currently connected.
 
-Future NiSa versions may provide controlled tools such as:
+Future NiSa tools may include:
 
-- openApp
-- setAlarm
-- createTimer
-- readNotifications
-- sendMessage
-- makeCall
-- changeAllowedSetting
+openApp
+setAlarm
+createTimer
+readNotifications
+sendMessage
+makeCall
+changeAllowedSetting
 
-Only use such tools when they are actually provided by the application.
+Only use such actions when they are actually connected.
 
-==============================
+================================
 MEMORY
-==============================
+================================
 
-User-provided memory may be available below.
+Use user-provided memory only when relevant.
 
-Use it only when relevant.
+Never invent memories.
 
-Do not invent memories.
+Never assume that an unverified memory is definitely true.
 
-Do not treat an unverified statement as a fact merely because it
-appears in memory.
-
-==============================
-ACCURACY
-==============================
-
-- Do not invent facts.
-- Clearly indicate uncertainty.
-- For calculations, show necessary steps.
-- For study questions, prioritize useful exam information.
-- Do not claim to have accessed the web unless web information
-  is actually provided to you.
-- Do not claim to have performed an action unless the application
-  actually performed it.
-
-==============================
+================================
 IMAGE
-==============================
+================================
 
 If an image is provided:
 
-- Analyze only what is actually visible.
-- Read visible text when possible.
-- Do not invent hidden details.
-- If image quality prevents certainty, say so.
+- inspect only visible information
+- read visible text when possible
+- do not invent details
+- mention uncertainty when image quality is insufficient
 
-==============================
-RESPONSE STYLE
-==============================
+================================
+ACCURACY
+================================
 
-Be natural, intelligent and helpful.
+- Do not invent facts.
+- Say when you are uncertain.
+- Show necessary calculation steps.
+- For study questions, prioritize useful exam information.
+- Do not claim to have browsed the web unless web results
+  were actually supplied.
+- Do not claim to have performed an action unless it actually happened.
 
-Do not unnecessarily mention this system or these rules.
+================================
+PERSONALITY
+================================
 
-Do not provide long internal reasoning.
+NiSa should feel:
 
-When useful, structure answers with:
-- short explanation
-- warning
-- suggestion
-- next step
-
-Your personality is:
-calm, smart, proactive, friendly and practical.
+Smart
+Calm
+Friendly
+Proactive
+Practical
+Natural
 
 You are NiSa.
 `;
@@ -252,13 +274,40 @@ You are NiSa.
 
     const memoryBlock = memory
       ? `
-User-provided memory:
+Relevant user-provided memory:
+
 ${String(memory).slice(0, 4000)}
 `
       : "";
 
     /* =========================
-       SAFE HISTORY
+       WEB
+    ========================== */
+
+    const webInstruction = web
+      ? `
+Web mode is ON.
+
+If actual web/search results are provided to you,
+use them and distinguish those results from general knowledge.
+
+Do not pretend that you searched the web if no search
+results were provided.
+`
+      : `
+Web mode is OFF.
+`;
+
+    const finalSystemPrompt = `
+${systemPrompt}
+
+${memoryBlock}
+
+${webInstruction}
+`;
+
+    /* =========================
+       HISTORY
     ========================== */
 
     const safeHistory = Array.isArray(messages)
@@ -271,37 +320,6 @@ ${String(memory).slice(0, 4000)}
           )
           .slice(-12)
       : [];
-
-    /* =========================
-       WEB CONTEXT
-    ========================== */
-
-    const webInstruction = web
-      ? `
-Web mode is enabled.
-
-If the application provides web/search results in the future,
-use those results as external information and distinguish them
-from your own knowledge.
-
-Do not pretend to have browsed the web if no search results
-are actually provided.
-`
-      : `
-Web mode is currently OFF.
-`;
-
-    /* =========================
-       FINAL SYSTEM MESSAGE
-    ========================== */
-
-    const finalSystemPrompt = `
-${systemPrompt}
-
-${memoryBlock}
-
-${webInstruction}
-`;
 
     /* =========================
        USER CONTENT
@@ -342,49 +360,86 @@ ${webInstruction}
     ];
 
     /* =========================
-       GROQ REQUEST
+       MODEL FALLBACK
     ========================== */
 
-    const response = await fetch(
-      "https://api.groq.com/openai/v1/chat/completions",
-      {
-        method: "POST",
+    const models = [
+      "qwen/qwen3.6-27b",
+      "openai/gpt-oss-120b"
+    ];
 
-        headers: {
-          "Content-Type": "application/json",
-          Authorization:
-            `Bearer ${process.env.GROQ_API_KEY}`
-        },
-
-        body: JSON.stringify({
-          model: "qwen/qwen3.6-27b",
-          messages: groqMessages,
-
-          temperature: 0.65,
-
-          max_completion_tokens: 2500
-        })
-      }
-    );
-
-    const data = await response.json();
+    let response = null;
+    let data = null;
+    let selectedModel = null;
 
     /* =========================
-       GROQ ERROR
+       TRY MODELS
     ========================== */
 
-    if (!response.ok) {
-      console.error("Groq error:", data);
+    for (const model of models) {
+      try {
+        const r = await fetch(
+          "https://api.groq.com/openai/v1/chat/completions",
+          {
+            method: "POST",
 
-      return res.status(response.status).json({
+            headers: {
+              "Content-Type": "application/json",
+              Authorization: `Bearer ${apiKey}`
+            },
+
+            body: JSON.stringify({
+              model,
+              messages: groqMessages,
+
+              temperature: 0.7,
+
+              max_completion_tokens: 2500,
+
+              /*
+                Ask Groq to return only the final answer,
+                not hidden reasoning.
+              */
+              reasoning_format: "hidden"
+            })
+          }
+        );
+
+        const d = await r.json();
+
+        if (r.ok) {
+          response = r;
+          data = d;
+          selectedModel = model;
+          break;
+        }
+
+        console.error(
+          `Groq model ${model} failed:`,
+          d
+        );
+
+      } catch (modelError) {
+        console.error(
+          `Model ${model} request failed:`,
+          modelError
+        );
+      }
+    }
+
+    /* =========================
+       ALL MODELS FAILED
+    ========================== */
+
+    if (!response || !data) {
+      return res.status(502).json({
         error:
-          data?.error?.message ||
-          "Groq API request failed."
+          "NiSa could not connect to an available Groq model. Check your GROQ_API_KEY and model access."
       });
     }
 
     /* =========================
-       GET ANSWER
+       ANSWER
     ========================== */
 
     let answer =
@@ -402,43 +457,35 @@ ${webInstruction}
       .replace(/<reasoning>[\s\S]*?<\/reasoning>/gi, "")
       .trim();
 
-    /*
-      Sometimes a model may return an unclosed
-      thinking section. Try to recover the useful
-      final answer.
-    */
+    /* =========================
+       HANDLE UNCLOSED THINKING
+    ========================== */
 
     if (/^\s*<think>/i.test(answer)) {
-      const tags = [
+      const endTags = [
         "</think>",
         "</thinking>",
         "</analysis>",
         "</reasoning>"
       ];
 
-      let recovered = "";
-
-      for (const tag of tags) {
+      for (const tag of endTags) {
         const index = answer
           .toLowerCase()
           .lastIndexOf(tag.toLowerCase());
 
         if (index !== -1) {
-          recovered = answer
+          answer = answer
             .slice(index + tag.length)
             .trim();
 
           break;
         }
       }
-
-      if (recovered) {
-        answer = recovered;
-      }
     }
 
     /* =========================
-       NEVER SHOW RAW THINKING TAGS
+       FINAL CLEANUP
     ========================== */
 
     answer = answer
@@ -447,10 +494,6 @@ ${webInstruction}
         ""
       )
       .trim();
-
-    /* =========================
-       EMPTY RESPONSE
-    ========================== */
 
     if (!answer) {
       answer =
@@ -464,14 +507,9 @@ ${webInstruction}
     return res.status(200).json({
       answer,
 
-      /*
-        These fields prepare the backend for future
-        Android action integration.
-
-        Currently the frontend can simply ignore them.
-      */
-
       nisa: {
+        model: selectedModel,
+
         proactive: true,
         reasoning: true,
         suggestions: true,
@@ -488,7 +526,7 @@ ${webInstruction}
 
     return res.status(500).json({
       error:
-        "Server error. Please try again."
+        "NiSa server error. Please try again."
     });
   }
 }

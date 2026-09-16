@@ -1,4 +1,3 @@
-
 <!DOCTYPE html>
 <html lang="en">
 <head>
@@ -13,7 +12,14 @@ window.MathJax = {
     displayMath: [['$$','$$'], ['\\[','\\]']]
   },
   options: {
-    skipHtmlTags: ['script','noscript','style','textarea','pre','code']
+    skipHtmlTags: [
+      'script',
+      'noscript',
+      'style',
+      'textarea',
+      'pre',
+      'code'
+    ]
   }
 };
 </script>
@@ -21,11 +27,12 @@ window.MathJax = {
 <script async src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-mml-chtml.js"></script>
 
 <style>
+
 *{
   box-sizing:border-box;
   margin:0;
   padding:0;
-  font-family:Arial,sans-serif
+  font-family:Arial,sans-serif;
 }
 
 :root{
@@ -36,23 +43,25 @@ window.MathJax = {
   --text:#fff;
   --muted:#9aa4b2;
   --accent:#4d8cff;
-  --user:#2563eb
+  --user:#2563eb;
 }
 
 body{
   background:var(--bg);
   color:var(--text);
-  height:100vh
+  height:100vh;
 }
 
-button,input,select{
-  font:inherit
+button,
+input,
+select{
+  font:inherit;
 }
 
 button{
   border:0;
   border-radius:12px;
-  cursor:pointer
+  cursor:pointer;
 }
 
 .app{
@@ -60,10 +69,12 @@ button{
   height:100vh;
   margin:auto;
   display:flex;
-  flex-direction:column
+  flex-direction:column;
 }
 
-/* HEADER */
+/* =========================
+   HEADER
+========================= */
 
 header{
   padding:12px 14px;
@@ -71,7 +82,7 @@ header{
   display:flex;
   align-items:center;
   gap:10px;
-  background:var(--bg)
+  background:var(--bg);
 }
 
 .logo{
@@ -84,49 +95,51 @@ header{
   align-items:center;
   justify-content:center;
   font-weight:bold;
-  font-size:18px
+  font-size:18px;
 }
 
 .title{
-  flex:1
+  flex:1;
 }
 
 .title h1{
-  font-size:20px
+  font-size:20px;
 }
 
 .title p{
   color:var(--muted);
   font-size:11px;
-  margin-top:3px
+  margin-top:3px;
 }
 
 .icon-btn{
   background:var(--panel2);
   color:#fff;
   padding:9px 11px;
-  border:1px solid var(--border)
+  border:1px solid var(--border);
 }
 
-/* CHAT */
+/* =========================
+   CHAT
+========================= */
 
 #chat{
   flex:1;
   overflow-y:auto;
-  padding:18px
+  padding:18px;
 }
 
 .welcome{
-  margin-bottom:22px
+  margin-bottom:22px;
 }
 
 .welcome h2{
   font-size:26px;
-  margin-bottom:7px
+  margin-bottom:7px;
 }
 
 .welcome p{
-  color:var(--muted)
+  color:var(--muted);
 }
 
 .message{
@@ -136,38 +149,38 @@ header{
   margin-bottom:14px;
   line-height:1.55;
   white-space:pre-wrap;
-  word-wrap:break-word
+  word-wrap:break-word;
 }
 
 .ai{
   background:var(--panel2);
   border:1px solid var(--border);
-  margin-right:auto
+  margin-right:auto;
 }
 
 .user{
   background:var(--user);
-  margin-left:auto
+  margin-left:auto;
 }
 
 .msg-actions{
   display:flex;
   gap:6px;
   margin-top:9px;
-  flex-wrap:wrap
+  flex-wrap:wrap;
 }
 
 .msg-actions button{
   background:#202833;
   color:#dce5f2;
   padding:6px 9px;
-  font-size:12px
+  font-size:12px;
 }
 
 .meta{
   font-size:11px;
   color:var(--muted);
-  margin-top:7px
+  margin-top:7px;
 }
 
 .preview{
@@ -175,68 +188,79 @@ header{
   max-height:180px;
   border-radius:12px;
   margin-bottom:8px;
-  display:block
+  display:block;
 }
 
-/* ACTION */
+/* =========================
+   ACTION CARD
+========================= */
 
 .action-card{
   margin-top:12px;
-  padding:13px;
+  margin-bottom:14px;
+  padding:14px;
   border:1px solid var(--border);
   border-radius:14px;
-  background:#0d131b
+  background:#0d131b;
 }
 
 .action-title{
   font-weight:bold;
-  margin-bottom:7px
+  margin-bottom:7px;
+  font-size:16px;
 }
 
 .action-description{
   color:#dce5f2;
-  font-size:14px
+  font-size:14px;
+  line-height:1.5;
 }
 
 .action-buttons{
   display:flex;
   gap:8px;
   margin-top:11px;
-  flex-wrap:wrap
+  flex-wrap:wrap;
 }
 
 .action-buttons button{
   padding:8px 13px;
-  color:#fff
+  color:#fff;
 }
 
 .action-confirm{
-  background:#2563eb!important
+  background:#2563eb!important;
 }
 
 .action-cancel{
-  background:#3a2020!important
+  background:#3a2020!important;
 }
 
 .action-info{
   color:var(--muted);
   font-size:11px;
-  margin-top:8px
+  margin-top:8px;
 }
 
-/* INPUT */
+.action-status{
+  margin-top:10px;
+}
+
+/* =========================
+   INPUT
+========================= */
 
 .input-area{
   padding:10px;
   border-top:1px solid var(--border);
-  background:var(--bg)
+  background:var(--bg);
 }
 
 .toolbar{
   display:flex;
   gap:6px;
   overflow-x:auto;
-  padding-bottom:8px
+  padding-bottom:8px;
 }
 
 .toolbar button,
@@ -246,12 +270,12 @@ header{
   border:1px solid var(--border);
   padding:8px 9px;
   border-radius:10px;
-  white-space:nowrap
+  white-space:nowrap;
 }
 
 .composer{
   display:flex;
-  gap:8px
+  gap:8px;
 }
 
 .composer input{
@@ -262,35 +286,37 @@ header{
   border:1px solid #303944;
   background:#151a20;
   color:#fff;
-  outline:none
+  outline:none;
 }
 
 .composer input:focus{
-  border-color:var(--accent)
+  border-color:var(--accent);
 }
 
 .send{
   background:#fff;
   color:#000;
-  padding:0 17px
+  padding:0 17px;
 }
 
 .status{
   text-align:center;
   color:var(--muted);
   font-size:12px;
-  padding:6px
+  padding:6px;
 }
 
 .hidden{
-  display:none!important
+  display:none!important;
 }
 
 .typing{
-  opacity:.7
+  opacity:.7;
 }
 
-/* LIGHT */
+/* =========================
+   LIGHT MODE
+========================= */
 
 body.light{
   --bg:#f5f7fa;
@@ -298,20 +324,29 @@ body.light{
   --panel2:#eef1f5;
   --border:#d7dce3;
   --text:#111;
-  --muted:#667085
+  --muted:#667085;
 }
 
 body.light .composer input{
   background:#fff;
-  color:#111
+  color:#111;
 }
 
 body.light .icon-btn,
 body.light .toolbar button,
 body.light .toolbar select,
 body.light .msg-actions button{
-  color:#111
+  color:#111;
 }
+
+body.light .action-card{
+  background:#fff;
+}
+
+body.light .action-description{
+  color:#222;
+}
+
 </style>
 </head>
 
@@ -320,64 +355,144 @@ body.light .msg-actions button{
 <div class="app">
 
 <header>
-  <div class="logo">N</div>
 
-  <div class="title">
-    <h1>NiSa AI</h1>
-    <p>Smart • Proactive • Personal AI</p>
+  <div class="logo">
+    N
   </div>
 
-  <button class="icon-btn" onclick="toggleTheme()">🌙</button>
-  <button class="icon-btn" onclick="clearChat()">🗑️</button>
+  <div class="title">
+
+    <h1>
+      NiSa AI
+    </h1>
+
+    <p>
+      Smart • Proactive • Personal AI
+    </p>
+
+  </div>
+
+  <button
+    class="icon-btn"
+    onclick="toggleTheme()"
+  >
+    🌙
+  </button>
+
+  <button
+    class="icon-btn"
+    onclick="clearChat()"
+  >
+    🗑️
+  </button>
+
 </header>
+
 
 <main id="chat">
 
   <div class="welcome">
-    <h2>Hi, I'm NiSa 👋</h2>
-    <p>Ask me anything. I'll think before I answer.</p>
+
+    <h2>
+      Hi, I'm NiSa 👋
+    </h2>
+
+    <p>
+      Ask me anything. I'll think before I answer.
+    </p>
+
   </div>
 
 </main>
 
-<div id="status" class="status hidden">
+
+<div
+  id="status"
+  class="status hidden"
+>
   NiSa is thinking...
 </div>
+
 
 <div class="input-area">
 
   <div class="toolbar">
 
-    <button onclick="startVoice()">🎤 Voice</button>
+    <button onclick="startVoice()">
+      🎤 Voice
+    </button>
 
-    <button onclick="document.getElementById('imageInput').click()">
+    <button
+      onclick="document.getElementById('imageInput').click()"
+    >
       📷 Image
     </button>
 
-    <button onclick="toggleWeb()" id="webBtn">
+    <button
+      onclick="toggleWeb()"
+      id="webBtn"
+    >
       🌐 Web OFF
     </button>
 
     <select id="mode">
-      <option value="normal">Normal</option>
-      <option value="simple">Simple</option>
-      <option value="expert">Expert</option>
-      <option value="teacher">Teacher</option>
-      <option value="exam">Exam</option>
-      <option value="quiz">Quiz</option>
-      <option value="compare">Compare</option>
+
+      <option value="normal">
+        Normal
+      </option>
+
+      <option value="simple">
+        Simple
+      </option>
+
+      <option value="expert">
+        Expert
+      </option>
+
+      <option value="teacher">
+        Teacher
+      </option>
+
+      <option value="exam">
+        Exam
+      </option>
+
+      <option value="quiz">
+        Quiz
+      </option>
+
+      <option value="compare">
+        Compare
+      </option>
+
     </select>
 
+
     <select id="langSelect">
-      <option value="auto">Auto</option>
-      <option value="mr">Marathi</option>
-      <option value="hi">Hindi</option>
-      <option value="en">English</option>
+
+      <option value="auto">
+        Auto
+      </option>
+
+      <option value="mr">
+        Marathi
+      </option>
+
+      <option value="hi">
+        Hindi
+      </option>
+
+      <option value="en">
+        English
+      </option>
+
     </select>
 
   </div>
 
+
   <div id="imagePreview"></div>
+
 
   <div class="composer">
 
@@ -388,13 +503,17 @@ body.light .msg-actions button{
       autocomplete="off"
     >
 
-    <button class="send" onclick="sendMessage()">
+    <button
+      class="send"
+      onclick="sendMessage()"
+    >
       ➤
     </button>
 
   </div>
 
 </div>
+
 
 <input
   id="imageInput"
@@ -405,19 +524,29 @@ body.light .msg-actions button{
 
 </div>
 
+
 <script>
 
 /* =========================
    STORAGE
 ========================= */
 
-const CHAT_KEY = "nisa_chat_v2";
-const MEMORY_KEY = "nisa_memory_v2";
-const THEME_KEY = "nisa_theme_v2";
+const CHAT_KEY =
+  "nisa_chat_v2";
+
+const MEMORY_KEY =
+  "nisa_memory_v2";
+
+const THEME_KEY =
+  "nisa_theme_v2";
+
 
 let history = [];
+
 let memory = "";
+
 let webMode = false;
+
 let selectedImage = null;
 
 
@@ -426,22 +555,39 @@ let selectedImage = null;
 ========================= */
 
 try{
-  history = JSON.parse(
-    localStorage.getItem(CHAT_KEY) || "[]"
-  );
+
+  history =
+    JSON.parse(
+      localStorage.getItem(CHAT_KEY) || "[]"
+    );
+
 }catch{
+
   history = [];
+
 }
+
 
 memory =
-  localStorage.getItem(MEMORY_KEY) || "";
+  localStorage.getItem(
+    MEMORY_KEY
+  ) || "";
+
 
 const savedTheme =
-  localStorage.getItem(THEME_KEY);
+  localStorage.getItem(
+    THEME_KEY
+  );
+
 
 if(savedTheme === "light"){
-  document.body.classList.add("light");
+
+  document.body.classList.add(
+    "light"
+  );
+
 }
+
 
 renderHistory();
 
@@ -452,17 +598,23 @@ renderHistory();
 
 document
   .getElementById("messageInput")
-  .addEventListener("keydown", e => {
+  .addEventListener(
+    "keydown",
+    e => {
 
-    if(e.key === "Enter" && !e.shiftKey){
+      if(
+        e.key === "Enter" &&
+        !e.shiftKey
+      ){
 
-      e.preventDefault();
+        e.preventDefault();
 
-      sendMessage();
+        sendMessage();
+
+      }
 
     }
-
-  });
+  );
 
 
 /* =========================
@@ -471,35 +623,64 @@ document
 
 document
   .getElementById("imageInput")
-  .addEventListener("change", async function(){
+  .addEventListener(
+    "change",
+    async function(){
 
-    const file = this.files[0];
+      const file =
+        this.files[0];
 
-    if(!file) return;
+      if(!file){
+        return;
+      }
 
-    if(!file.type.startsWith("image/")){
-      alert("Please select an image.");
-      return;
+
+      if(
+        !file.type.startsWith(
+          "image/"
+        )
+      ){
+
+        alert(
+          "Please select an image."
+        );
+
+        return;
+
+      }
+
+
+      const reader =
+        new FileReader();
+
+
+      reader.onload =
+        function(e){
+
+          selectedImage =
+            e.target.result;
+
+
+          document
+            .getElementById(
+              "imagePreview"
+            )
+            .innerHTML = `
+
+              <img
+                src="${selectedImage}"
+                class="preview"
+              >
+
+            `;
+
+        };
+
+
+      reader.readAsDataURL(file);
+
     }
-
-    const reader = new FileReader();
-
-    reader.onload = function(e){
-
-      selectedImage = e.target.result;
-
-      document.getElementById("imagePreview").innerHTML = `
-        <img
-          src="${selectedImage}"
-          class="preview"
-        >
-      `;
-
-    };
-
-    reader.readAsDataURL(file);
-
-  });
+  );
 
 
 /* =========================
@@ -508,14 +689,22 @@ document
 
 function toggleTheme(){
 
-  document.body.classList.toggle("light");
+  document.body.classList.toggle(
+    "light"
+  );
+
 
   const light =
-    document.body.classList.contains("light");
+    document.body.classList.contains(
+      "light"
+    );
+
 
   localStorage.setItem(
     THEME_KEY,
-    light ? "light" : "dark"
+    light
+      ? "light"
+      : "dark"
   );
 
 }
@@ -527,9 +716,13 @@ function toggleTheme(){
 
 function toggleWeb(){
 
-  webMode = !webMode;
+  webMode =
+    !webMode;
 
-  document.getElementById("webBtn").textContent =
+
+  document.getElementById(
+    "webBtn"
+  ).textContent =
     webMode
       ? "🌐 Web ON"
       : "🌐 Web OFF";
@@ -544,11 +737,31 @@ function toggleWeb(){
 function escapeHTML(text){
 
   return String(text)
-    .replace(/&/g,"&amp;")
-    .replace(/</g,"&lt;")
-    .replace(/>/g,"&gt;")
-    .replace(/"/g,"&quot;")
-    .replace(/'/g,"&#039;");
+
+    .replace(
+      /&/g,
+      "&amp;"
+    )
+
+    .replace(
+      /</g,
+      "&lt;"
+    )
+
+    .replace(
+      />/g,
+      "&gt;"
+    )
+
+    .replace(
+      /"/g,
+      "&quot;"
+    )
+
+    .replace(
+      /'/g,
+      "&#039;"
+    );
 
 }
 
@@ -562,17 +775,20 @@ function formatAnswer(text){
   let safe =
     escapeHTML(text);
 
+
   safe =
     safe.replace(
       /```([\s\S]*?)```/g,
       "<pre style='overflow:auto;background:#080b0f;padding:10px;border-radius:10px'>$1</pre>"
     );
 
+
   safe =
     safe.replace(
       /\*\*(.*?)\*\*/g,
       "<strong>$1</strong>"
     );
+
 
   return safe;
 
@@ -586,53 +802,103 @@ function formatAnswer(text){
 function renderHistory(){
 
   const chat =
-    document.getElementById("chat");
+    document.getElementById(
+      "chat"
+    );
+
 
   if(!history.length){
+
     return;
+
   }
+
 
   chat.innerHTML = "";
 
-  history.forEach((item,index)=>{
 
-    const div =
-      document.createElement("div");
+  history.forEach(
+    (item,index) => {
 
-    div.className =
-      "message " +
-      (item.role === "user"
-        ? "user"
-        : "ai");
+      const div =
+        document.createElement(
+          "div"
+        );
 
-    div.innerHTML =
-      formatAnswer(item.text || "");
 
-    if(item.role === "assistant"){
+      div.className =
+        "message " +
+        (
+          item.role === "user"
+            ? "user"
+            : "ai"
+        );
 
-      div.innerHTML += `
-        <div class="msg-actions">
 
-          <button onclick="speakText(${index})">
-            🔊 Speak
-          </button>
+      div.innerHTML =
+        formatAnswer(
+          item.text || ""
+        );
 
-          <button onclick="copyText(${index})">
-            📋 Copy
-          </button>
 
-          <button onclick="regenerate(${index})">
-            🔄 Regenerate
-          </button>
+      if(
+        item.role === "assistant"
+      ){
 
-        </div>
-      `;
+        div.innerHTML += `
+
+          <div class="msg-actions">
+
+            <button
+              onclick="speakText(${index})"
+            >
+              🔊 Speak
+            </button>
+
+            <button
+              onclick="copyText(${index})"
+            >
+              📋 Copy
+            </button>
+
+            <button
+              onclick="regenerate(${index})"
+            >
+              🔄 Regenerate
+            </button>
+
+          </div>
+
+        `;
+
+      }
+
+
+      chat.appendChild(div);
+
+
+      /*
+       * Restore Action Card
+       * after page reload.
+       */
+
+      if(
+        item.role === "assistant" &&
+        item.actionPlan &&
+        item.actionPlan.requiresConfirmation === true
+      ){
+
+        showActionCard(
+          item.actionPlan,
+          index,
+          true
+        );
+
+      }
 
     }
+  );
 
-    chat.appendChild(div);
-
-  });
 
   chat.scrollTop =
     chat.scrollHeight;
@@ -648,7 +914,9 @@ function saveHistory(){
 
   localStorage.setItem(
     CHAT_KEY,
-    JSON.stringify(history.slice(-50))
+    JSON.stringify(
+      history.slice(-50)
+    )
   );
 
 }
@@ -661,82 +929,126 @@ function saveHistory(){
 async function sendMessage(){
 
   const input =
-    document.getElementById("messageInput");
+    document.getElementById(
+      "messageInput"
+    );
+
 
   const text =
     input.value.trim();
 
-  if(!text && !selectedImage){
+
+  if(
+    !text &&
+    !selectedImage
+  ){
+
     return;
+
   }
+
 
   const imageToSend =
     selectedImage;
 
+
   input.value = "";
 
-  const userIndex =
-    history.length;
 
   history.push({
+
     role:"user",
-    text:text || "Analyze this image."
+
+    text:
+      text ||
+      "Analyze this image."
+
   });
+
 
   saveHistory();
 
   renderHistory();
 
-  const status =
-    document.getElementById("status");
 
-  status.classList.remove("hidden");
+  const status =
+    document.getElementById(
+      "status"
+    );
+
+
+  status.textContent =
+    "NiSa is thinking...";
+
+
+  status.classList.remove(
+    "hidden"
+  );
+
 
   let answer =
     "Sorry, something went wrong.";
 
+
   let actionPlan =
     null;
+
 
   try{
 
     const response =
-      await fetch("/api/chat",{
+      await fetch(
+        "/api/chat",
+        {
 
-        method:"POST",
+          method:"POST",
 
-        headers:{
-          "Content-Type":"application/json"
-        },
+          headers:{
+            "Content-Type":
+              "application/json"
+          },
 
-        body:JSON.stringify({
+          body:
+            JSON.stringify({
 
-          message:
-            text || "Analyze this image.",
+              message:
+                text ||
+                "Analyze this image.",
 
-          image:
-            imageToSend,
+              image:
+                imageToSend,
 
-          mode:
-            document.getElementById("mode").value,
+              mode:
+                document
+                  .getElementById(
+                    "mode"
+                  )
+                  .value,
 
-          language:
-            document.getElementById("langSelect").value,
+              language:
+                document
+                  .getElementById(
+                    "langSelect"
+                  )
+                  .value,
 
-          memory,
+              memory,
 
-          web:
-            webMode,
+              web:
+                webMode,
 
-          messages:
-            history.slice(-12)
+              messages:
+                history.slice(-12)
 
-        })
+            })
 
-      });
+        }
+      );
+
 
     const data =
       await response.json();
+
 
     if(!response.ok){
 
@@ -747,15 +1059,24 @@ async function sendMessage(){
 
     }
 
+
     answer =
       data.answer ||
       "No answer received.";
+
 
     actionPlan =
       data.actionPlan ||
       null;
 
+
   }catch(error){
+
+    console.error(
+      "NiSa error:",
+      error
+    );
+
 
     answer =
       "❌ NiSa error: " +
@@ -763,44 +1084,76 @@ async function sendMessage(){
 
   }
 
-  status.classList.add("hidden");
+
+  status.classList.add(
+    "hidden"
+  );
+
 
   const assistantIndex =
     history.length;
 
+
   history.push({
+
     role:"assistant",
+
     text:answer,
+
     actionPlan
+
   });
+
 
   saveHistory();
 
   renderHistory();
 
-  /* ACTION CARD */
+
+  /*
+   * ACTION CARD
+   */
 
   if(
     actionPlan &&
     actionPlan.requiresConfirmation === true
   ){
 
-    showActionCard(
-      actionPlan,
-      assistantIndex
-    );
+    /*
+     * renderHistory() already restored
+     * the card, so don't duplicate it.
+     */
+
+    const chat =
+      document.getElementById(
+        "chat"
+      );
+
+    /*
+     * If needed, scroll to bottom.
+     */
+
+    chat.scrollTop =
+      chat.scrollHeight;
 
   }
 
-  /* SPEAK */
+
+  /*
+   * SPEAK
+   */
 
   speak(answer);
 
-  selectedImage = null;
+
+  selectedImage =
+    null;
+
 
   document.getElementById(
     "imagePreview"
   ).innerHTML = "";
+
 
   document.getElementById(
     "imageInput"
@@ -815,25 +1168,126 @@ async function sendMessage(){
 
 function showActionCard(
   actionPlan,
-  assistantIndex
+  assistantIndex,
+  restored = false
 ){
 
   const chat =
-    document.getElementById("chat");
+    document.getElementById(
+      "chat"
+    );
+
 
   const card =
-    document.createElement("div");
+    document.createElement(
+      "div"
+    );
+
 
   card.className =
     "action-card";
+
+
+  /*
+   * Store complete action plan
+   * directly on the card.
+   */
+
+  card._actionPlan =
+    actionPlan;
+
 
   const description =
     actionPlan.description ||
     "NiSa wants to perform an action.";
 
+
   const action =
     actionPlan.action ||
     "unknown";
+
+
+  let details = "";
+
+
+  /* =========================
+     TIMER DETAILS
+  ========================== */
+
+  if(
+    action === "createTimer" &&
+    actionPlan.params
+  ){
+
+    const seconds =
+      Number(
+        actionPlan.params.seconds || 0
+      );
+
+
+    const minutes =
+      Math.floor(
+        seconds / 60
+      );
+
+
+    const remainingSeconds =
+      seconds % 60;
+
+
+    if(minutes > 0){
+
+      details =
+        remainingSeconds > 0
+
+          ? `⏱️ Timer: ${minutes} min ${remainingSeconds} sec`
+
+          : `⏱️ Timer: ${minutes} min`;
+
+    }else{
+
+      details =
+        `⏱️ Timer: ${remainingSeconds} sec`;
+
+    }
+
+  }
+
+
+  /* =========================
+     ALARM DETAILS
+  ========================== */
+
+  if(
+    action === "setAlarm" &&
+    actionPlan.params
+  ){
+
+    const hour =
+      Number(
+        actionPlan.params.hour
+      );
+
+
+    const minutes =
+      Number(
+        actionPlan.params.minutes
+      );
+
+
+    const time =
+      `${String(hour).padStart(2,"0")}:${String(minutes).padStart(2,"0")}`;
+
+
+    details =
+      `⏰ Alarm: ${time}`;
+
+  }
+
+
+  /* =========================
+     CARD HTML
+  ========================== */
 
   card.innerHTML = `
 
@@ -841,13 +1295,28 @@ function showActionCard(
       ⚡ Action Confirmation
     </div>
 
+
     <div class="action-description">
       ${formatAnswer(description)}
     </div>
 
+
     <div class="action-info">
-      Action: ${escapeHTML(action)}
+      Action:
+      ${escapeHTML(action)}
     </div>
+
+
+    ${
+      details
+        ? `
+          <div class="action-info">
+            ${escapeHTML(details)}
+          </div>
+        `
+        : ""
+    }
+
 
     <div class="action-buttons">
 
@@ -858,6 +1327,7 @@ function showActionCard(
         ✅ Confirm
       </button>
 
+
       <button
         class="action-cancel"
         onclick="cancelAction(this)"
@@ -867,13 +1337,18 @@ function showActionCard(
 
     </div>
 
-    <div class="action-info">
-      Actual Android phone control is not connected yet.
+
+    <div class="action-info action-status">
+      Waiting for confirmation...
     </div>
 
   `;
 
-  chat.appendChild(card);
+
+  chat.appendChild(
+    card
+  );
+
 
   chat.scrollTop =
     chat.scrollHeight;
@@ -882,327 +1357,197 @@ function showActionCard(
 
 
 /* =========================
-   CONFIRM
+   ANDROID BRIDGE CHECK
+========================= */
+
+function androidBridgeAvailable(){
+
+  return (
+    window.AndroidBridge &&
+    typeof window.AndroidBridge === "object"
+  );
+
+}
+
+
+/* =========================
+   CONFIRM ACTION
 ========================= */
 
 function confirmAction(button){
 
   const card =
-    button.closest(".action-card");
-
-  if(!card) return;
-
-  card.innerHTML = `
-
-    <div class="action-title">
-      ✅ Confirmed
-    </div>
-
-    <div class="action-description">
-      Action confirmed.
-    </div>
-
-    <div class="action-info">
-      Android phone control is not connected yet,
-      so NiSa has not performed the action.
-    </div>
-
-  `;
-
-}
-
-
-/* =========================
-   CANCEL
-========================= */
-
-function cancelAction(button){
-
-  const card =
-    button.closest(".action-card");
-
-  if(!card) return;
-
-  card.innerHTML = `
-
-    <div class="action-title">
-      ❌ Cancelled
-    </div>
-
-    <div class="action-description">
-      NiSa will not perform this action.
-    </div>
-
-  `;
-
-}
-
-
-/* =========================
-   SPEECH
-========================= */
-
-function speak(text){
-
-  if(
-    !("speechSynthesis" in window)
-  ){
-    return;
-  }
-
-  window.speechSynthesis.cancel();
-
-  const utterance =
-    new SpeechSynthesisUtterance(
-      text
+    button.closest(
+      ".action-card"
     );
 
-  const lang =
-    document.getElementById(
-      "langSelect"
-    ).value;
 
-  if(lang === "mr"){
-    utterance.lang = "mr-IN";
-  }
-  else if(lang === "hi"){
-    utterance.lang = "hi-IN";
-  }
-  else{
-    utterance.lang = "en-IN";
+  if(!card){
+    return;
   }
 
-  window.speechSynthesis.speak(
-    utterance
-  );
 
-}
+  const actionPlan =
+    card._actionPlan;
 
 
-/* =========================
-   VOICE
-========================= */
+  if(!actionPlan){
 
-function startVoice(){
+    card.innerHTML = `
 
-  const SpeechRecognition =
-    window.SpeechRecognition ||
-    window.webkitSpeechRecognition;
+      <div class="action-title">
+        ❌ Action data missing
+      </div>
 
-  if(!SpeechRecognition){
+      <div class="action-description">
+        NiSa could not read the action details.
+      </div>
 
-    alert(
-      "Voice recognition is not supported in this browser."
-    );
+    `;
 
     return;
 
   }
 
-  const recognition =
-    new SpeechRecognition();
 
-  const lang =
-    document.getElementById(
-      "langSelect"
-    ).value;
+  const action =
+    actionPlan.action;
 
-  if(lang === "mr"){
-    recognition.lang = "mr-IN";
-  }
-  else if(lang === "hi"){
-    recognition.lang = "hi-IN";
-  }
-  else{
-    recognition.lang = "en-IN";
-  }
 
-  recognition.interimResults =
-    false;
+  const params =
+    actionPlan.params || {};
 
-  recognition.maxAlternatives =
-    1;
 
-  recognition.onstart = function(){
+  try{
 
-    document.getElementById(
-      "status"
-    ).textContent =
-      "🎤 Listening...";
+    /* =========================
+       TIMER
+    ========================== */
 
-    document.getElementById(
-      "status"
-    ).classList.remove("hidden");
+    if(
+      action === "createTimer"
+    ){
 
-  };
+      const seconds =
+        Number(
+          params.seconds
+        );
 
-  recognition.onresult =
-    function(event){
 
-      const transcript =
-        event.results[0][0].transcript;
+      const message =
+        params.message ||
+        "NiSa Timer";
 
-      document.getElementById(
-        "messageInput"
-      ).value =
-        transcript;
 
-      document.getElementById(
-        "status"
-      ).classList.add("hidden");
+      if(
+        !Number.isInteger(seconds) ||
+        seconds <= 0
+      ){
 
-    };
+        throw new Error(
+          "Invalid timer duration."
+        );
 
-  recognition.onerror =
-    function(event){
+      }
 
-      console.error(
-        "Voice error:",
-        event.error
-      );
 
-      document.getElementById(
-        "status"
-      ).classList.add("hidden");
+      /*
+       * Native Android App
+       */
 
-    };
+      if(
+        androidBridgeAvailable() &&
+        typeof
+          window.AndroidBridge.setTimer ===
+          "function"
+      ){
 
-  recognition.onend =
-    function(){
+        window.AndroidBridge.setTimer(
+          message,
+          seconds
+        );
 
-      document.getElementById(
-        "status"
-      ).classList.add("hidden");
 
-    };
+        card.innerHTML = `
 
-  recognition.start();
+          <div class="action-title">
+            ✅ Timer Started
+          </div>
 
-}
+          <div class="action-description">
+            ${escapeHTML(
+              actionPlan.description ||
+              "Timer started."
+            )}
+          </div>
 
+          <div class="action-info">
+            Android Timer command sent.
+          </div>
 
-/* =========================
-   COPY
-========================= */
+        `;
 
-function copyText(index){
 
-  const item =
-    history[index];
+        return;
 
-  if(!item) return;
+      }
 
-  navigator.clipboard
-    .writeText(item.text || "")
-    .then(()=>{
 
-      alert("Copied!");
+      /*
+       * Website mode
+       */
 
-    });
+      card.innerHTML = `
 
-}
+        <div class="action-title">
+          ✅ Confirmed
+        </div>
 
+        <div class="action-description">
+          ${escapeHTML(
+            actionPlan.description ||
+            "Action confirmed."
+          )}
+        </div>
 
-/* =========================
-   SPEAK HISTORY
-========================= */
+        <div class="action-info">
+          Android Bridge अजून connect केलेला नाही.
+        </div>
 
-function speakText(index){
+      `;
 
-  const item =
-    history[index];
 
-  if(item){
+      return;
 
-    speak(
-      item.text || ""
-    );
+    }
 
-  }
 
-}
+    /* =========================
+       ALARM
+    ========================== */
 
+    if(
+      action === "setAlarm"
+    ){
 
-/* =========================
-   REGENERATE
-========================= */
+      const hour =
+        Number(
+          params.hour
+        );
 
-async function regenerate(index){
 
-  if(index < 0) return;
+      const minutes =
+        Number(
+          params.minutes
+        );
 
-  const previous =
-    history[index - 1];
 
-  if(
-    !previous ||
-    previous.role !== "user"
-  ){
-    return;
-  }
+      const message =
+        params.message ||
+        "NiSa Alarm";
 
-  const text =
-    previous.text || "";
 
-  history =
-    history.slice(0,index);
-
-  saveHistory();
-
-  renderHistory();
-
-  document.getElementById(
-    "messageInput"
-  ).value =
-    text;
-
-  await sendMessage();
-
-}
-
-
-/* =========================
-   CLEAR
-========================= */
-
-function clearChat(){
-
-  if(
-    !confirm(
-      "Clear NiSa chat history?"
-    )
-  ){
-    return;
-  }
-
-  history = [];
-
-  localStorage.removeItem(
-    CHAT_KEY
-  );
-
-  const chat =
-    document.getElementById("chat");
-
-  chat.innerHTML = `
-
-    <div class="welcome">
-
-      <h2>
-        Hi, I'm NiSa 👋
-      </h2>
-
-      <p>
-        Ask me anything. I'll think before I answer.
-      </p>
-
-    </div>
-
-  `;
-
-}
-
-</script>
-
-</body>
-</html>
+      if(
+        !Number.isInteger(hour) ||
+        hour < 0 ||
+       

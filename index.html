@@ -1,3 +1,4 @@
+
 <!DOCTYPE html>
 <html lang="en">
 <head>
@@ -5,14 +6,11 @@
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>NiSa AI</title>
 
-<!-- =========================
-     MATHJAX
-========================== -->
 <script>
 window.MathJax = {
   tex: {
-    inlineMath: [['$','$'], ['\','\']],
-    displayMath: [['$$','$$'], ['\','\']]
+    inlineMath: [['$','$'], ['\\(','\\)']],
+    displayMath: [['$$','$$'], ['\\[','\\]']]
   },
   options: {
     skipHtmlTags: ['script','noscript','style','textarea','pre','code']
@@ -38,23 +36,23 @@ window.MathJax = {
   --text:#fff;
   --muted:#9aa4b2;
   --accent:#4d8cff;
-  --user:#2563eb;
+  --user:#2563eb
 }
 
 body{
   background:var(--bg);
   color:var(--text);
-  height:100vh;
+  height:100vh
 }
 
 button,input,select{
-  font:inherit;
+  font:inherit
 }
 
 button{
   border:0;
   border-radius:12px;
-  cursor:pointer;
+  cursor:pointer
 }
 
 .app{
@@ -62,12 +60,10 @@ button{
   height:100vh;
   margin:auto;
   display:flex;
-  flex-direction:column;
+  flex-direction:column
 }
 
-/* =========================
-   HEADER
-========================== */
+/* HEADER */
 
 header{
   padding:12px 14px;
@@ -75,8 +71,7 @@ header{
   display:flex;
   align-items:center;
   gap:10px;
-  background:var(--bg);
-  position:relative;
+  background:var(--bg)
 }
 
 .logo{
@@ -89,52 +84,49 @@ header{
   align-items:center;
   justify-content:center;
   font-weight:bold;
-  font-size:18px;
-  flex:none;
+  font-size:18px
 }
 
 .title{
-  flex:1;
+  flex:1
 }
 
 .title h1{
-  font-size:20px;
+  font-size:20px
 }
 
 .title p{
   color:var(--muted);
   font-size:11px;
-  margin-top:3px;
+  margin-top:3px
 }
 
 .icon-btn{
   background:var(--panel2);
   color:#fff;
   padding:9px 11px;
-  border:1px solid var(--border);
+  border:1px solid var(--border)
 }
 
-/* =========================
-   CHAT
-========================== */
+/* CHAT */
 
 #chat{
   flex:1;
   overflow-y:auto;
-  padding:18px;
+  padding:18px
 }
 
 .welcome{
-  margin-bottom:22px;
+  margin-bottom:22px
 }
 
 .welcome h2{
   font-size:26px;
-  margin-bottom:7px;
+  margin-bottom:7px
 }
 
 .welcome p{
-  color:var(--muted);
+  color:var(--muted)
 }
 
 .message{
@@ -144,45 +136,38 @@ header{
   margin-bottom:14px;
   line-height:1.55;
   white-space:pre-wrap;
-  word-wrap:break-word;
+  word-wrap:break-word
 }
 
 .ai{
   background:var(--panel2);
   border:1px solid var(--border);
-  margin-right:auto;
+  margin-right:auto
 }
 
 .user{
   background:var(--user);
-  margin-left:auto;
+  margin-left:auto
 }
 
 .msg-actions{
   display:flex;
   gap:6px;
   margin-top:9px;
-  flex-wrap:wrap;
+  flex-wrap:wrap
 }
 
-.msg-actions button,
-.mini{
+.msg-actions button{
   background:#202833;
   color:#dce5f2;
   padding:6px 9px;
-  font-size:12px;
+  font-size:12px
 }
 
 .meta{
   font-size:11px;
   color:var(--muted);
-  margin-top:7px;
-}
-
-.confidence{
-  font-size:11px;
-  color:var(--muted);
-  margin-top:6px;
+  margin-top:7px
 }
 
 .preview{
@@ -190,73 +175,68 @@ header{
   max-height:180px;
   border-radius:12px;
   margin-bottom:8px;
-  display:block;
+  display:block
 }
 
-/* =========================
-   ACTION PLANNER
-========================== */
+/* ACTION */
 
 .action-card{
   margin-top:12px;
   padding:13px;
   border:1px solid var(--border);
   border-radius:14px;
-  background:#0d131b;
+  background:#0d131b
 }
 
 .action-title{
   font-weight:bold;
-  margin-bottom:7px;
+  margin-bottom:7px
 }
 
 .action-description{
   color:#dce5f2;
-  font-size:14px;
+  font-size:14px
 }
 
 .action-buttons{
   display:flex;
   gap:8px;
   margin-top:11px;
-  flex-wrap:wrap;
+  flex-wrap:wrap
 }
 
 .action-buttons button{
   padding:8px 13px;
-  border-radius:10px;
-  color:#fff;
+  color:#fff
 }
 
 .action-confirm{
-  background:#2563eb!important;
+  background:#2563eb!important
 }
 
 .action-cancel{
-  background:#3a2020!important;
+  background:#3a2020!important
 }
 
 .action-info{
   color:var(--muted);
   font-size:11px;
-  margin-top:8px;
+  margin-top:8px
 }
 
-/* =========================
-   INPUT
-========================== */
+/* INPUT */
 
 .input-area{
   padding:10px;
   border-top:1px solid var(--border);
-  background:var(--bg);
+  background:var(--bg)
 }
 
 .toolbar{
   display:flex;
   gap:6px;
   overflow-x:auto;
-  padding-bottom:8px;
+  padding-bottom:8px
 }
 
 .toolbar button,
@@ -266,12 +246,12 @@ header{
   border:1px solid var(--border);
   padding:8px 9px;
   border-radius:10px;
-  white-space:nowrap;
+  white-space:nowrap
 }
 
 .composer{
   display:flex;
-  gap:8px;
+  gap:8px
 }
 
 .composer input{
@@ -282,15 +262,947 @@ header{
   border:1px solid #303944;
   background:#151a20;
   color:#fff;
-  outline:none;
+  outline:none
 }
 
 .composer input:focus{
-  border-color:var(--accent);
+  border-color:var(--accent)
 }
 
 .send{
   background:#fff;
   color:#000;
-  padding:0 17px;
- 
+  padding:0 17px
+}
+
+.status{
+  text-align:center;
+  color:var(--muted);
+  font-size:12px;
+  padding:6px
+}
+
+.hidden{
+  display:none!important
+}
+
+.typing{
+  opacity:.7
+}
+
+/* LIGHT */
+
+body.light{
+  --bg:#f5f7fa;
+  --panel:#fff;
+  --panel2:#eef1f5;
+  --border:#d7dce3;
+  --text:#111;
+  --muted:#667085
+}
+
+body.light .composer input{
+  background:#fff;
+  color:#111
+}
+
+body.light .icon-btn,
+body.light .toolbar button,
+body.light .toolbar select,
+body.light .msg-actions button{
+  color:#111
+}
+</style>
+</head>
+
+<body>
+
+<div class="app">
+
+<header>
+  <div class="logo">N</div>
+
+  <div class="title">
+    <h1>NiSa AI</h1>
+    <p>Smart • Proactive • Personal AI</p>
+  </div>
+
+  <button class="icon-btn" onclick="toggleTheme()">🌙</button>
+  <button class="icon-btn" onclick="clearChat()">🗑️</button>
+</header>
+
+<main id="chat">
+
+  <div class="welcome">
+    <h2>Hi, I'm NiSa 👋</h2>
+    <p>Ask me anything. I'll think before I answer.</p>
+  </div>
+
+</main>
+
+<div id="status" class="status hidden">
+  NiSa is thinking...
+</div>
+
+<div class="input-area">
+
+  <div class="toolbar">
+
+    <button onclick="startVoice()">🎤 Voice</button>
+
+    <button onclick="document.getElementById('imageInput').click()">
+      📷 Image
+    </button>
+
+    <button onclick="toggleWeb()" id="webBtn">
+      🌐 Web OFF
+    </button>
+
+    <select id="mode">
+      <option value="normal">Normal</option>
+      <option value="simple">Simple</option>
+      <option value="expert">Expert</option>
+      <option value="teacher">Teacher</option>
+      <option value="exam">Exam</option>
+      <option value="quiz">Quiz</option>
+      <option value="compare">Compare</option>
+    </select>
+
+    <select id="langSelect">
+      <option value="auto">Auto</option>
+      <option value="mr">Marathi</option>
+      <option value="hi">Hindi</option>
+      <option value="en">English</option>
+    </select>
+
+  </div>
+
+  <div id="imagePreview"></div>
+
+  <div class="composer">
+
+    <input
+      id="messageInput"
+      type="text"
+      placeholder="Message NiSa..."
+      autocomplete="off"
+    >
+
+    <button class="send" onclick="sendMessage()">
+      ➤
+    </button>
+
+  </div>
+
+</div>
+
+<input
+  id="imageInput"
+  type="file"
+  accept="image/*"
+  class="hidden"
+>
+
+</div>
+
+<script>
+
+/* =========================
+   STORAGE
+========================= */
+
+const CHAT_KEY = "nisa_chat_v2";
+const MEMORY_KEY = "nisa_memory_v2";
+const THEME_KEY = "nisa_theme_v2";
+
+let history = [];
+let memory = "";
+let webMode = false;
+let selectedImage = null;
+
+
+/* =========================
+   LOAD
+========================= */
+
+try{
+  history = JSON.parse(
+    localStorage.getItem(CHAT_KEY) || "[]"
+  );
+}catch{
+  history = [];
+}
+
+memory =
+  localStorage.getItem(MEMORY_KEY) || "";
+
+const savedTheme =
+  localStorage.getItem(THEME_KEY);
+
+if(savedTheme === "light"){
+  document.body.classList.add("light");
+}
+
+renderHistory();
+
+
+/* =========================
+   ENTER KEY
+========================= */
+
+document
+  .getElementById("messageInput")
+  .addEventListener("keydown", e => {
+
+    if(e.key === "Enter" && !e.shiftKey){
+
+      e.preventDefault();
+
+      sendMessage();
+
+    }
+
+  });
+
+
+/* =========================
+   IMAGE
+========================= */
+
+document
+  .getElementById("imageInput")
+  .addEventListener("change", async function(){
+
+    const file = this.files[0];
+
+    if(!file) return;
+
+    if(!file.type.startsWith("image/")){
+      alert("Please select an image.");
+      return;
+    }
+
+    const reader = new FileReader();
+
+    reader.onload = function(e){
+
+      selectedImage = e.target.result;
+
+      document.getElementById("imagePreview").innerHTML = `
+        <img
+          src="${selectedImage}"
+          class="preview"
+        >
+      `;
+
+    };
+
+    reader.readAsDataURL(file);
+
+  });
+
+
+/* =========================
+   THEME
+========================= */
+
+function toggleTheme(){
+
+  document.body.classList.toggle("light");
+
+  const light =
+    document.body.classList.contains("light");
+
+  localStorage.setItem(
+    THEME_KEY,
+    light ? "light" : "dark"
+  );
+
+}
+
+
+/* =========================
+   WEB
+========================= */
+
+function toggleWeb(){
+
+  webMode = !webMode;
+
+  document.getElementById("webBtn").textContent =
+    webMode
+      ? "🌐 Web ON"
+      : "🌐 Web OFF";
+
+}
+
+
+/* =========================
+   ESCAPE HTML
+========================= */
+
+function escapeHTML(text){
+
+  return String(text)
+    .replace(/&/g,"&amp;")
+    .replace(/</g,"&lt;")
+    .replace(/>/g,"&gt;")
+    .replace(/"/g,"&quot;")
+    .replace(/'/g,"&#039;");
+
+}
+
+
+/* =========================
+   FORMAT
+========================= */
+
+function formatAnswer(text){
+
+  let safe =
+    escapeHTML(text);
+
+  safe =
+    safe.replace(
+      /```([\s\S]*?)```/g,
+      "<pre style='overflow:auto;background:#080b0f;padding:10px;border-radius:10px'>$1</pre>"
+    );
+
+  safe =
+    safe.replace(
+      /\*\*(.*?)\*\*/g,
+      "<strong>$1</strong>"
+    );
+
+  return safe;
+
+}
+
+
+/* =========================
+   RENDER HISTORY
+========================= */
+
+function renderHistory(){
+
+  const chat =
+    document.getElementById("chat");
+
+  if(!history.length){
+    return;
+  }
+
+  chat.innerHTML = "";
+
+  history.forEach((item,index)=>{
+
+    const div =
+      document.createElement("div");
+
+    div.className =
+      "message " +
+      (item.role === "user"
+        ? "user"
+        : "ai");
+
+    div.innerHTML =
+      formatAnswer(item.text || "");
+
+    if(item.role === "assistant"){
+
+      div.innerHTML += `
+        <div class="msg-actions">
+
+          <button onclick="speakText(${index})">
+            🔊 Speak
+          </button>
+
+          <button onclick="copyText(${index})">
+            📋 Copy
+          </button>
+
+          <button onclick="regenerate(${index})">
+            🔄 Regenerate
+          </button>
+
+        </div>
+      `;
+
+    }
+
+    chat.appendChild(div);
+
+  });
+
+  chat.scrollTop =
+    chat.scrollHeight;
+
+}
+
+
+/* =========================
+   SAVE
+========================= */
+
+function saveHistory(){
+
+  localStorage.setItem(
+    CHAT_KEY,
+    JSON.stringify(history.slice(-50))
+  );
+
+}
+
+
+/* =========================
+   SEND MESSAGE
+========================= */
+
+async function sendMessage(){
+
+  const input =
+    document.getElementById("messageInput");
+
+  const text =
+    input.value.trim();
+
+  if(!text && !selectedImage){
+    return;
+  }
+
+  const imageToSend =
+    selectedImage;
+
+  input.value = "";
+
+  const userIndex =
+    history.length;
+
+  history.push({
+    role:"user",
+    text:text || "Analyze this image."
+  });
+
+  saveHistory();
+
+  renderHistory();
+
+  const status =
+    document.getElementById("status");
+
+  status.classList.remove("hidden");
+
+  let answer =
+    "Sorry, something went wrong.";
+
+  let actionPlan =
+    null;
+
+  try{
+
+    const response =
+      await fetch("/api/chat",{
+
+        method:"POST",
+
+        headers:{
+          "Content-Type":"application/json"
+        },
+
+        body:JSON.stringify({
+
+          message:
+            text || "Analyze this image.",
+
+          image:
+            imageToSend,
+
+          mode:
+            document.getElementById("mode").value,
+
+          language:
+            document.getElementById("langSelect").value,
+
+          memory,
+
+          web:
+            webMode,
+
+          messages:
+            history.slice(-12)
+
+        })
+
+      });
+
+    const data =
+      await response.json();
+
+    if(!response.ok){
+
+      throw new Error(
+        data.error ||
+        "Server error"
+      );
+
+    }
+
+    answer =
+      data.answer ||
+      "No answer received.";
+
+    actionPlan =
+      data.actionPlan ||
+      null;
+
+  }catch(error){
+
+    answer =
+      "❌ NiSa error: " +
+      error.message;
+
+  }
+
+  status.classList.add("hidden");
+
+  const assistantIndex =
+    history.length;
+
+  history.push({
+    role:"assistant",
+    text:answer,
+    actionPlan
+  });
+
+  saveHistory();
+
+  renderHistory();
+
+  /* ACTION CARD */
+
+  if(
+    actionPlan &&
+    actionPlan.requiresConfirmation === true
+  ){
+
+    showActionCard(
+      actionPlan,
+      assistantIndex
+    );
+
+  }
+
+  /* SPEAK */
+
+  speak(answer);
+
+  selectedImage = null;
+
+  document.getElementById(
+    "imagePreview"
+  ).innerHTML = "";
+
+  document.getElementById(
+    "imageInput"
+  ).value = "";
+
+}
+
+
+/* =========================
+   ACTION CARD
+========================= */
+
+function showActionCard(
+  actionPlan,
+  assistantIndex
+){
+
+  const chat =
+    document.getElementById("chat");
+
+  const card =
+    document.createElement("div");
+
+  card.className =
+    "action-card";
+
+  const description =
+    actionPlan.description ||
+    "NiSa wants to perform an action.";
+
+  const action =
+    actionPlan.action ||
+    "unknown";
+
+  card.innerHTML = `
+
+    <div class="action-title">
+      ⚡ Action Confirmation
+    </div>
+
+    <div class="action-description">
+      ${formatAnswer(description)}
+    </div>
+
+    <div class="action-info">
+      Action: ${escapeHTML(action)}
+    </div>
+
+    <div class="action-buttons">
+
+      <button
+        class="action-confirm"
+        onclick="confirmAction(this)"
+      >
+        ✅ Confirm
+      </button>
+
+      <button
+        class="action-cancel"
+        onclick="cancelAction(this)"
+      >
+        ❌ Cancel
+      </button>
+
+    </div>
+
+    <div class="action-info">
+      Actual Android phone control is not connected yet.
+    </div>
+
+  `;
+
+  chat.appendChild(card);
+
+  chat.scrollTop =
+    chat.scrollHeight;
+
+}
+
+
+/* =========================
+   CONFIRM
+========================= */
+
+function confirmAction(button){
+
+  const card =
+    button.closest(".action-card");
+
+  if(!card) return;
+
+  card.innerHTML = `
+
+    <div class="action-title">
+      ✅ Confirmed
+    </div>
+
+    <div class="action-description">
+      Action confirmed.
+    </div>
+
+    <div class="action-info">
+      Android phone control is not connected yet,
+      so NiSa has not performed the action.
+    </div>
+
+  `;
+
+}
+
+
+/* =========================
+   CANCEL
+========================= */
+
+function cancelAction(button){
+
+  const card =
+    button.closest(".action-card");
+
+  if(!card) return;
+
+  card.innerHTML = `
+
+    <div class="action-title">
+      ❌ Cancelled
+    </div>
+
+    <div class="action-description">
+      NiSa will not perform this action.
+    </div>
+
+  `;
+
+}
+
+
+/* =========================
+   SPEECH
+========================= */
+
+function speak(text){
+
+  if(
+    !("speechSynthesis" in window)
+  ){
+    return;
+  }
+
+  window.speechSynthesis.cancel();
+
+  const utterance =
+    new SpeechSynthesisUtterance(
+      text
+    );
+
+  const lang =
+    document.getElementById(
+      "langSelect"
+    ).value;
+
+  if(lang === "mr"){
+    utterance.lang = "mr-IN";
+  }
+  else if(lang === "hi"){
+    utterance.lang = "hi-IN";
+  }
+  else{
+    utterance.lang = "en-IN";
+  }
+
+  window.speechSynthesis.speak(
+    utterance
+  );
+
+}
+
+
+/* =========================
+   VOICE
+========================= */
+
+function startVoice(){
+
+  const SpeechRecognition =
+    window.SpeechRecognition ||
+    window.webkitSpeechRecognition;
+
+  if(!SpeechRecognition){
+
+    alert(
+      "Voice recognition is not supported in this browser."
+    );
+
+    return;
+
+  }
+
+  const recognition =
+    new SpeechRecognition();
+
+  const lang =
+    document.getElementById(
+      "langSelect"
+    ).value;
+
+  if(lang === "mr"){
+    recognition.lang = "mr-IN";
+  }
+  else if(lang === "hi"){
+    recognition.lang = "hi-IN";
+  }
+  else{
+    recognition.lang = "en-IN";
+  }
+
+  recognition.interimResults =
+    false;
+
+  recognition.maxAlternatives =
+    1;
+
+  recognition.onstart = function(){
+
+    document.getElementById(
+      "status"
+    ).textContent =
+      "🎤 Listening...";
+
+    document.getElementById(
+      "status"
+    ).classList.remove("hidden");
+
+  };
+
+  recognition.onresult =
+    function(event){
+
+      const transcript =
+        event.results[0][0].transcript;
+
+      document.getElementById(
+        "messageInput"
+      ).value =
+        transcript;
+
+      document.getElementById(
+        "status"
+      ).classList.add("hidden");
+
+    };
+
+  recognition.onerror =
+    function(event){
+
+      console.error(
+        "Voice error:",
+        event.error
+      );
+
+      document.getElementById(
+        "status"
+      ).classList.add("hidden");
+
+    };
+
+  recognition.onend =
+    function(){
+
+      document.getElementById(
+        "status"
+      ).classList.add("hidden");
+
+    };
+
+  recognition.start();
+
+}
+
+
+/* =========================
+   COPY
+========================= */
+
+function copyText(index){
+
+  const item =
+    history[index];
+
+  if(!item) return;
+
+  navigator.clipboard
+    .writeText(item.text || "")
+    .then(()=>{
+
+      alert("Copied!");
+
+    });
+
+}
+
+
+/* =========================
+   SPEAK HISTORY
+========================= */
+
+function speakText(index){
+
+  const item =
+    history[index];
+
+  if(item){
+
+    speak(
+      item.text || ""
+    );
+
+  }
+
+}
+
+
+/* =========================
+   REGENERATE
+========================= */
+
+async function regenerate(index){
+
+  if(index < 0) return;
+
+  const previous =
+    history[index - 1];
+
+  if(
+    !previous ||
+    previous.role !== "user"
+  ){
+    return;
+  }
+
+  const text =
+    previous.text || "";
+
+  history =
+    history.slice(0,index);
+
+  saveHistory();
+
+  renderHistory();
+
+  document.getElementById(
+    "messageInput"
+  ).value =
+    text;
+
+  await sendMessage();
+
+}
+
+
+/* =========================
+   CLEAR
+========================= */
+
+function clearChat(){
+
+  if(
+    !confirm(
+      "Clear NiSa chat history?"
+    )
+  ){
+    return;
+  }
+
+  history = [];
+
+  localStorage.removeItem(
+    CHAT_KEY
+  );
+
+  const chat =
+    document.getElementById("chat");
+
+  chat.innerHTML = `
+
+    <div class="welcome">
+
+      <h2>
+        Hi, I'm NiSa 👋
+      </h2>
+
+      <p>
+        Ask me anything. I'll think before I answer.
+      </p>
+
+    </div>
+
+  `;
+
+}
+
+</script>
+
+</body>
+</html>

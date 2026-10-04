@@ -7,6 +7,26 @@
   <title>NiSa AI</title>
 
   <style>
+html,
+body {
+  width: 100%;
+  height: 100%;
+  overflow: hidden;
+  overscroll-behavior: none;
+  touch-action: manipulation;
+}
+
+.app {
+  width: 100%;
+  height: 100%;
+  overflow: hidden;
+}
+
+#chat {
+  overscroll-behavior-y: contain;
+  overscroll-behavior-x: none;
+  touch-action: pan-y;
+}
     * {
       box-sizing: border-box;
       margin: 0;

@@ -773,75 +773,7 @@ sendButton.addEventListener(
 );
 
 
-/* =========================================================
-   VOICE
-   ========================================================= */
 
-let recognition = null;
-
-function startVoice() {
-
-  const SpeechRecognition =
-    window.SpeechRecognition ||
-    window.webkitSpeechRecognition;
-
-  if (!SpeechRecognition) {
-
-    alert(
-      "Voice recognition browser madhe supported nahi."
-    );
-
-    return;
-  }
-
-  recognition =
-    new SpeechRecognition();
-
-  recognition.lang = "en-IN";
-
-  recognition.continuous = false;
-
-  recognition.interimResults = false;
-
-  recognition.onstart = () => {
-
-    voiceButton.textContent =
-      "🔴";
-
-  };
-
-  recognition.onresult =
-    (event) => {
-
-      const text =
-        event.results[0][0].transcript;
-
-      messageInput.value = text;
-
-    };
-
-  recognition.onerror = () => {
-
-    voiceButton.textContent =
-      "🎤";
-
-  };
-
-  recognition.onend = () => {
-
-    voiceButton.textContent =
-      "🎤";
-
-  };
-
-  recognition.start();
-}
-
-
-voiceButton.addEventListener(
-  "click",
-  startVoice
-);
 
 
 /* =========================================================
@@ -889,7 +821,90 @@ function speakText(text) {
 
 }
 
+/* =========================================================
+   NATIVE ANDROID VOICE
+   ========================================================= */
 
+function startVoice() {
+
+  if (
+    window.AndroidBridge &&
+    typeof window.AndroidBridge.startVoice === "function"
+  ) {
+
+    voiceButton.textContent = "🔴";
+
+    window.AndroidBridge.startVoice();
+
+    return;
+  }
+
+  alert("NiSa Android voice bridge available nahi.");
+}
+
+
+/* =========================================================
+   NATIVE VOICE STATUS
+   ========================================================= */
+
+window.onNativeVoiceStatus = function(status) {
+
+  if (status === "ready") {
+
+    voiceButton.textContent = "🔴";
+
+  } else if (status === "listening") {
+
+    voiceButton.textContent = "🔴";
+
+  } else if (status === "processing") {
+
+    voiceButton.textContent = "⏳";
+
+  } else {
+
+    voiceButton.textContent = "🎤";
+  }
+};
+
+
+/* =========================================================
+   NATIVE VOICE RESULT
+   ========================================================= */
+
+window.onNativeVoiceResult = function(text) {
+
+  voiceButton.textContent = "🎤";
+
+  messageInput.value = text;
+
+  sendMessage();
+};
+
+
+/* =========================================================
+   NATIVE VOICE ERROR
+   ========================================================= */
+
+window.onNativeVoiceError = function(error) {
+
+  voiceButton.textContent = "🎤";
+
+  console.log(
+    "NiSa Voice Error:",
+    error
+  );
+};
+
+
+/* =========================================================
+   VOICE BUTTON
+   ========================================================= */
+
+voiceButton.addEventListener(
+  "click",
+  startVoice
+);
 /* =========================================================
    ACTION CARD
    ========================================================= */

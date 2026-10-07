@@ -1,3 +1,6 @@
+if (req.headers["x-nisa-pin"] !== process.env.NISA_PIN) {
+  return res.status(401).json({ error: "Unauthorized" });
+}
 export default async function handler(req, res) {
   if (req.method !== "POST") {
     return res.status(405).json({
